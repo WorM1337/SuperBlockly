@@ -26,10 +26,13 @@ class ViewIntBlock(
     initialY: Dp
 ) : ViewBlock(literalBlock, initialX, initialY) {
 
-    override val outputConnectors: List<connectionView> = listOf(
+    override val listConnectors: List<connectionView> = listOf(
         connectionView(literalBlock.outputConnector, initialX, initialY)
     )
 
-
+    @Composable
+    override fun render() {
+        TODO("Not yet implemented")
+    }
 
 }

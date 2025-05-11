@@ -128,7 +128,7 @@ fun CreateNewProject(navController: NavHostController){
                 ) {
                     val variableBlock = VariableBlock("value")
                     val view = ViewVariableBlock(variableBlock, 100.dp, 100.dp)
-                    view.startView(DrawConnection) // нужно еще во viewer закинуть все переменные
+                    view.render() // нужно еще во viewer закинуть все переменные
                 }
             }
         )
