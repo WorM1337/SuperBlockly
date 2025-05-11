@@ -42,37 +42,15 @@ class ViewVariableBlock(
 ) : ViewBlock(variableBlock, initialX, initialY) {
 
     // Список соединителей
-    override val inputConnectors: List<connectionView> = listOf(
+    override val listConnectors: List<connectionView> = listOf(
         connectionView(variableBlock.valueConnector, initialX, initialY)
     )
 
     @Composable
-    fun startView(connection: DrawConnection) {
-        val density = LocalDensity.current
+    override fun render() {
+        _render({
+            var name by remember { mutableStateOf(TextFieldValue(variableBlock.name)) }
 
-        // Переводим Dp в пиксели один раз при старте
-        val initialPxX = with(density) { initialX.toPx() }
-        val initialPxY = with(density) { initialY.toPx() }
-
-        // Состояния для текущей позиции в пикселях
-        var offsetX by remember { mutableStateOf(initialPxX) }
-        var offsetY by remember { mutableStateOf(initialPxY) }
-
-        var name by remember { mutableStateOf(TextFieldValue(variableBlock.name)) }
-
-        Box(
-            modifier = Modifier
-                .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
-                .size(200.dp, 60.dp)
-                .background(Color(0xFFE0E0E0), shape = MaterialTheme.shapes.small)
-                .pointerInput(Unit) {
-                    detectDragGestures { _, dragAmount ->
-                        offsetX += dragAmount.x
-                        offsetY += dragAmount.y
-                    }
-                }
-                .padding(horizontal = 8.dp, vertical = 4.dp)
-        ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
@@ -100,8 +78,7 @@ class ViewVariableBlock(
                     modifier = Modifier.padding(start = 4.dp)
                 )
             }
-        }
+        })
     }
-
 
 }
