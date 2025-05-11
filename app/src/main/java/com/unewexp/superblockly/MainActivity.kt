@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,6 +36,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.myfirstapplicatioin.blocks.VariableBlock
+import com.example.myfirstapplicatioin.viewBlocks.DrawConnection
+import com.example.myfirstapplicatioin.viewBlocks.ViewVariableBlock
 import com.unewexp.superblockly.ui.theme.SuperBlocklyTheme
 
 sealed class Routes(val route: String) {
@@ -114,7 +118,20 @@ fun CreateNewProject(navController: NavHostController){
     Box(
         contentAlignment = Alignment.Center
     ){
-
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            content = { paddingValues ->
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)
+                ) {
+                    val variableBlock = VariableBlock("value")
+                    val view = ViewVariableBlock(variableBlock, 100.dp, 100.dp)
+                    view.startView(DrawConnection) // нужно еще во viewer закинуть все переменные
+                }
+            }
+        )
     }
 }
 
