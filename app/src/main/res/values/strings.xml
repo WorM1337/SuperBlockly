@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">SuperBlockly</string>
+    <string name="create_new_project">Создать новый проект</string>
+    <string name="my_projects">Мои проекты</string>
+    <string name="about">Описание</string>
+    <string name="to_home">Домой</string>
+    <string name="about_title">Программируйте просто перетаскивая блоки</string>
+    <string name="about_body1">Легко - понятный интерфейс</string>
+    <string name="about_body2">Быстро - не пиши, перетаскивай блоки</string>
+    <string name="about_body3">Интересно - собирай конструктор и развлекайся</string>
 </resources>
