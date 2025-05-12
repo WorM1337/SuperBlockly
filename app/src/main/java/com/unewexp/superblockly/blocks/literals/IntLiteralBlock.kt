@@ -18,4 +18,8 @@ class IntLiteralBlock(
 
     }
 
+    override fun getInformationForTree(): MutableList<Block>? {
+        return null //Заглушка пока что
+    }
+
 }

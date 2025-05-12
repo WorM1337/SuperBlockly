@@ -24,6 +24,7 @@ enum class BlockType{
     STRING,
     VARIABLE,
     EXPRESSION,
+    NONE,
 }
 
 enum class VariableSupports{

@@ -8,4 +8,5 @@ import java.util.UUID
 // это класс описывает функционал блока
 abstract class Block(val id: UUID, val blockType: BlockType) {
     abstract fun execution(context: ExecutionContext);
+    abstract fun getInformationForTree(): MutableList<Block>?;
 }

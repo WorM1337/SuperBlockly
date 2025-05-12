@@ -10,7 +10,6 @@ class ExecutionContext {
     private val variables = mutableMapOf<String, Value>()
 
 
-
     fun declareVariable(name: String, value: Value = Value.Undefined){
         variables[name] = value
     }

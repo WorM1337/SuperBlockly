@@ -16,4 +16,8 @@ class VariableBlock(val name: String): Block(UUID.randomUUID(), BlockType.VARIAB
     override fun execution(context: ExecutionContext) {
         context.declareVariable(name)
     }
+
+    override fun getInformationForTree(): MutableList<Block>? {
+        return null // пока что заглушка
+    }
 }
