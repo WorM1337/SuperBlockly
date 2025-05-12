@@ -8,8 +8,6 @@ object DrawConnection {
     private val inputConnectors = mutableListOf<connectionView>()
     private val outputConnectors = mutableListOf<connectionView>()
 
-
-
     fun onDrugElement(block: Block){
         var num = 0;
 
