@@ -1,0 +1,15 @@
+package com.unewexp.superblockly.enums
+
+enum class BlockType{
+    OPERAND,
+    SET_VARIABLE_VALUE,
+    START,
+    VARIABLE_DECLARATION,
+    INT_LITERAL,
+    STRING_LITERAL,
+    BOOLEAN_LITERAL,
+    VARIABLE_REFERENCE,
+    STRING_CONCAT,
+    STRING_APPEND,
+    VOID_BLOCK
+}
