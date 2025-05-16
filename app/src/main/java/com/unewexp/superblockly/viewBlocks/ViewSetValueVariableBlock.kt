@@ -34,7 +34,7 @@ class ViewSetValueVariableBlock(initialX: Dp, initialY: Dp) : InlineViewBlock(in
     @Composable
     private fun Content(enabled: Boolean = true){
 
-        var name by remember { mutableStateOf(TextFieldValue(block.variableName)) }
+        var name by remember { mutableStateOf(TextFieldValue(block.selectedVariableName)) }
 
         Row(verticalAlignment = Alignment.CenterVertically){
             Text(

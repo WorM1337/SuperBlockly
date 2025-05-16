@@ -7,5 +7,4 @@ fun main() {
     var start = StartBlock()
     var variableBlock = VariableDeclarationBlock("X")
     connectTo(start.nextBlockConnector, variableBlock.topConnector)
-    connec
 }

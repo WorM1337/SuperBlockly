@@ -54,8 +54,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.myfirstapplicatioin.viewBlocks.ViewBlock
-import com.example.myfirstapplicatioin.viewBlocks.ViewIntBlock
-import com.example.myfirstapplicatioin.viewBlocks.ViewVariableBlock
+import com.example.myfirstapplicatioin.viewBlocks.ViewIntLiteralBlock
 import com.unewexp.superblockly.ui.theme.DrawerColor
 import com.unewexp.superblockly.ui.theme.SuperBlocklyTheme
 import com.unewexp.superblockly.viewBlocks.ViewSetValueVariableBlock
@@ -71,12 +70,12 @@ sealed class Routes(val route: String) {
 }
 
 object BlockFactory {
-    fun createIntBlock(x: Dp, y: Dp): ViewIntBlock {
-        return ViewIntBlock(x, y)
+    fun createIntBlock(x: Dp, y: Dp): ViewIntLiteralBlock {
+        return ViewIntLiteralBlock(x, y)
     }
 
-    fun createVariableBlock(x: Dp, y: Dp): ViewVariableBlock {
-        return ViewVariableBlock(x, y)
+    fun createVariableBlock(x: Dp, y: Dp): ViewSetValueVariableBlock {
+        return ViewSetValueVariableBlock(x, y)
     }
 }
 
@@ -198,7 +197,7 @@ fun CreateNewProject(navController: NavHostController){
                         */
                     ) {
                         Text("Математика", color = Color.White)
-                        BlockCard(ViewIntBlock(100.dp, 100.dp))
+                        BlockCard(ViewIntLiteralBlock(100.dp, 100.dp))
                     }
                 }
             }
