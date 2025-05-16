@@ -11,5 +11,6 @@ enum class BlockType{
     VARIABLE_REFERENCE,
     STRING_CONCAT,
     STRING_APPEND,
-    VOID_BLOCK
+    VOID_BLOCK,
+    PRINT_BLOCK
 }
