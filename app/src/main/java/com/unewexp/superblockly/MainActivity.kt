@@ -1,63 +1,65 @@
+@file:OptIn(ExperimentalFoundationApi::class)
+
 package com.unewexp.superblockly
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.gestures.detectTransformGestures
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.rememberTransformableState
 import androidx.compose.foundation.gestures.transformable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredSize
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.List
 import androidx.compose.material3.Button
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clipToBounds
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.myfirstapplicatioin.blocks.VariableBlock
-import com.example.myfirstapplicatioin.viewBlocks.DrawConnection
+import com.example.myfirstapplicatioin.viewBlocks.ViewBlock
+import com.example.myfirstapplicatioin.viewBlocks.ViewIntBlock
 import com.example.myfirstapplicatioin.viewBlocks.ViewVariableBlock
+import com.unewexp.superblockly.ui.theme.DrawerColor
 import com.unewexp.superblockly.ui.theme.SuperBlocklyTheme
-import kotlin.math.pow
-import kotlin.math.sqrt
+import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 sealed class Routes(val route: String) {
 
@@ -65,6 +67,29 @@ sealed class Routes(val route: String) {
     object CreateProject : Routes("create project")
     object MyProjects : Routes("my projects")
     object About : Routes("about")
+}
+
+object BlockFactory {
+    fun createIntBlock(x: Dp, y: Dp): ViewIntBlock {
+        return ViewIntBlock(x, y)
+    }
+
+    fun createVariableBlock(x: Dp, y: Dp): ViewVariableBlock {
+        return ViewVariableBlock(x, y)
+    }
+}
+
+class CanvasState {
+    private val _blocks = mutableStateListOf<ViewBlock>()
+    val blocks: List<ViewBlock> get() = _blocks
+
+    fun addBlock(block: ViewBlock) {
+        _blocks.add(block)
+    }
+
+    fun removeBlock(block: ViewBlock) {
+        _blocks.remove(block)
+    }
 }
 
 object Modifiers{
@@ -128,47 +153,105 @@ fun Home(navController: NavHostController) {
 
 @Composable
 fun CreateNewProject(navController: NavHostController){
-    val zoomFactor = 0.7f
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        topBar = {
-            Box(contentAlignment = Alignment.TopStart) {
-                toHomeBtn(navController)
-            }
-        },
-        content = { paddingValues ->
-            val offset = remember { mutableStateOf(Offset.Zero) }
-            val scale = remember { mutableFloatStateOf(1f) }
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
 
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .background(Color.LightGray)
+    val transferAction = "action"
+    val blockTypeTransferData = "block_type"
+    val blockViewTransferData = "block_view"
 
-                    .transformable(
-                        state = rememberTransformableState { zoomChange, offsetChange, _ ->
-                            scale.value *= 1f + (zoomChange - 1f) * zoomFactor
-                            offset.value += offsetChange
-                        }
-                    )
-                    .graphicsLayer(
-                        scaleX = scale.value,
-                        scaleY = scale.value,
-                        translationX = offset.value.x,
-                        translationY = offset.value.y
-                    )
-            ) {
-                val variableBlock = VariableBlock("value")
-                val view = ViewVariableBlock(variableBlock, 100.dp, 100.dp)
-                view.render()
-                val variableBlock2 = VariableBlock("value")
-                val view2 = ViewVariableBlock(variableBlock2, 200.dp, 100.dp)
-                view2.render()
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            Box(modifier = Modifier
+                    .background(DrawerColor)
+            ){
+                Column(
+                    modifier = Modifier
+                        .padding(5.dp, 5.dp)
+                ) {
+                    Button(onClick = { scope.launch { drawerState.close() } }) {
+                        Text("Закрыть")
+                    }
+                    Column(
+                        modifier = Modifier
+                            .padding(10.dp, 0.dp)
+                            /*
+                            .dragAndDropSource(drawDragDecoration = {
+                                // UI перетаскиваемого элемента
+                            }){
+                                startTransfer(
+                                    DragAndDropTransferData(
+                                        clipData = ClipData.newIntent(
+                                            "block_type",
+                                            Intent(transferAction).apply {
+                                                putExtra(
+                                                    blockTypeTransferData,
+
+                                                )
+                                            }
+                                        )
+                                    )
+                                )
+                            }
+                        */
+                    ) {
+                        Text("Математика", color = Color.White)
+                        BlockCard(ViewIntBlock(100.dp, 100.dp))
+                    }
+                }
             }
         }
-    )
+    ) {
+        val zoomFactor = 0.7f
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            topBar = {
+                Row {
+                    Box(contentAlignment = Alignment.TopStart) {
+                        IconButton(onClick = { scope.launch { drawerState.open() } }) {
+                            Icon(Icons.Filled.List, null)
+                        }
+                    }
+                    Box(contentAlignment = Alignment.TopEnd) {
+                        toHomeBtn(navController)
+                    }
+                }
+            },
+            content = { paddingValues ->
+                val offset = remember { mutableStateOf(Offset.Zero) }
+                val scale = remember { mutableFloatStateOf(1f) }
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)
+                        .background(Color.LightGray)
+
+                        .transformable(
+                            state = rememberTransformableState { zoomChange, offsetChange, _ ->
+                                scale.value *= 1f + (zoomChange - 1f) * zoomFactor
+                                offset.value += offsetChange
+                            }
+                        )
+                        .graphicsLayer(
+                            scaleX = scale.value,
+                            scaleY = scale.value,
+                            translationX = offset.value.x,
+                            translationY = offset.value.y
+                        )
+                ) {
+                    val view = ViewVariableBlock(100.dp, 100.dp)
+                    view.render()
+                    val view2 = ViewIntBlock(400.dp, 100.dp)
+                    view2.render()
+                }
+            }
+        )
+    }
 }
+
+
 
 @Composable
 fun MyProjects(navController: NavHostController){
