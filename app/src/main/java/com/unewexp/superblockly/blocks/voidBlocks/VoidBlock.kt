@@ -12,13 +12,13 @@ open class VoidBlock(
     blockType: BlockType
 ) : Block(id, blockType) {
     val topConnector = Connector(
-        connectionType = ConnectorType.INPUT,
+        connectionType = ConnectorType.OUTPUT,
         sourceBlock = this,
         allowedBlockTypes = setOf(BlockType.START, BlockType.VOID_BLOCK)
     )
 
     val bottomConnector = Connector(
-        connectionType = ConnectorType.OUTPUT,
+        connectionType = ConnectorType.INPUT,
         sourceBlock = this,
         allowedBlockTypes = setOf(BlockType.VOID_BLOCK)
     )
