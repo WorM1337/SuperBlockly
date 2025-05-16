@@ -1,12 +1,12 @@
 package com.example.myfirstapplicatioin.viewBlocks
 
 import com.example.myfirstapplicatioin.blocks.Block
-import com.example.myfirstapplicatioin.model.ConnectionView
+import com.example.myfirstapplicatioin.model.connectionView
 
 object DrawConnection {
 
-    private val inputConnectors = mutableListOf<ConnectionView>()
-    private val outputConnectors = mutableListOf<ConnectionView>()
+    private val inputConnectors = mutableListOf<connectionView>()
+    private val outputConnectors = mutableListOf<connectionView>()
 
     fun onDrugElement(block: Block){
         var num = 0;
