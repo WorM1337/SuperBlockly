@@ -51,6 +51,7 @@ import com.example.myfirstapplicatioin.viewBlocks.ViewBlock
 import com.example.myfirstapplicatioin.viewBlocks.ViewIntLiteralBlock
 import com.unewexp.superblockly.ui.theme.DrawerColor
 import com.unewexp.superblockly.ui.theme.SuperBlocklyTheme
+import com.unewexp.superblockly.viewBlocks.ViewSetValueVariableBlock
 import kotlinx.coroutines.launch
 
 sealed class Routes(val route: String) {
@@ -229,6 +230,8 @@ fun CreateNewProject(navController: NavHostController){
                             translationY = offset.value.y
                         )
                 ) {
+                    val view = ViewSetValueVariableBlock(100.dp, 100.dp)
+                    view.render()
                     val view2 = ViewIntLiteralBlock(400.dp, 100.dp)
                     view2.render()
                 }
