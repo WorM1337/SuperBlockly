@@ -9,7 +9,7 @@ import com.example.myfirstapplicatioin.model.VariableSupports
 
 import java.util.UUID
 
-class VariableBlock(val name: String): Block(UUID.randomUUID(), BlockType.VARIABLE) {
+class VariableBlock(var name: String): Block(UUID.randomUUID(), BlockType.VARIABLE) {
 
     val valueConnector = Connector(ConnectorType.INPUT, this) // для соединения со значением.
 

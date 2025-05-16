@@ -16,6 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,52 +34,60 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.example.myfirstapplicatioin.blocks.VariableBlock
 import com.example.myfirstapplicatioin.model.connectionView
+import com.unewexp.superblockly.viewBlocks.InlineViewBlock
 import kotlin.math.roundToInt
 
 class ViewVariableBlock(
-    val variableBlock: VariableBlock,
     initialX: Dp,
     initialY: Dp
-) : ViewBlock(variableBlock, initialX, initialY) {
+) : InlineViewBlock(initialX, initialY) {
 
-    // Список соединителей
-    override val listConnectors: List<connectionView> = listOf(
-        connectionView(variableBlock.valueConnector, initialX, initialY)
-    )
+    var variableBlock: VariableBlock = VariableBlock("value")
+
+    override var listConnectors: List<connectionView> = listOf(connectionView(variableBlock.valueConnector, initialX, initialY))
+
+    @Composable
+    fun Content(enabled: Boolean = true){
+        var name by remember { mutableStateOf(TextFieldValue(variableBlock.name)) }
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(
+                text = "Set",
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(end = 4.dp)
+            )
+
+            TextField(
+                enabled = enabled,
+                value = name,
+                onValueChange = { name = it },
+                placeholder = { Text("Var") },
+                singleLine = true,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = 4.dp),
+                textStyle = MaterialTheme.typography.bodySmall
+            )
+
+            Text(
+                text = "To",
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(start = 4.dp)
+            )
+        }
+    }
+
+    @Composable
+    override fun View(){
+        Content(false)
+    }
 
     @Composable
     override fun render() {
-        _render({
-            var name by remember { mutableStateOf(TextFieldValue(variableBlock.name)) }
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(
-                    text = "Set",
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(end = 4.dp)
-                )
-
-                TextField(
-                    value = name,
-                    onValueChange = { name = it },
-                    placeholder = { Text("Var") },
-                    singleLine = true,
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(horizontal = 4.dp),
-                    textStyle = MaterialTheme.typography.bodySmall
-                )
-
-                Text(
-                    text = "To",
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(start = 4.dp)
-                )
-            }
-        })
+        _render({ Content() }, 200.dp, 40.dp)
     }
 
 }
