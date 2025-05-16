@@ -1,12 +1,15 @@
 package com.unewexp.superblockly.blocks.voidBlocks
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import com.example.myfirstapplicatioin.model.Connector
 import com.unewexp.superblockly.blocks.ExecutionContext
 import com.unewexp.superblockly.enums.BlockType
 import com.unewexp.superblockly.enums.ConnectorType
 import java.util.UUID
 
-class VariableDeclarationBlock(var name: String = "Undefined") : VoidBlock(UUID.randomUUID(), BlockType.VARIABLE_DECLARATION) {
+class VariableDeclarationBlock(var initialName: String = "Undefined") : VoidBlock(UUID.randomUUID(), BlockType.VARIABLE_DECLARATION) {
     val valueInputConnector = Connector(
         connectionType = ConnectorType.INPUT,
         sourceBlock = this,
@@ -20,9 +23,8 @@ class VariableDeclarationBlock(var name: String = "Undefined") : VoidBlock(UUID.
         )
     )
 
-    fun setNameVariable(name: String){
-        ExecutionContext.hasVariable(name)
-    }
+    var name by mutableStateOf(initialName)
+
 
     private var variableType: Class<*>? = null
 
@@ -35,6 +37,8 @@ class VariableDeclarationBlock(var name: String = "Undefined") : VoidBlock(UUID.
         ExecutionContext.setVariable(name, value)
         variableType = value.javaClass
     }
+
+
 
     private fun validateName() {
         if (name.isBlank()) throw IllegalStateException("Имя переменной не может быть пустым")
