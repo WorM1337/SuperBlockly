@@ -26,7 +26,7 @@ class ViewIntLiteralBlock(
     initialY: Dp
 ) : InlineViewBlock(initialX, initialY) {
 
-    var literalBlock = IntLiteralBlock(0)
+    var literalBlock = IntLiteralBlock()
     override var listConnectors: List<ConnectionView> = listOf(ConnectionView(literalBlock.outputConnector, initialX, initialY))
 
     private val modifier = Modifier

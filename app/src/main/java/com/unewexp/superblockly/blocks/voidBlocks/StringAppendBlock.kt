@@ -28,7 +28,7 @@ class StringAppendBlock : VoidBlock(UUID.randomUUID(), BlockType.STRING_APPEND) 
     )
 
     override fun execute() {
-        val variableName = (variableInputConnector.connectedTo as? VariableReferenceBlock)?.name
+        val variableName = (variableInputConnector.connectedTo as? VariableReferenceBlock)?.selectedVariableName
             ?: throw IllegalStateException("Не указана переменная")
 
         val currentValue = ExecutionContext.getVariable(variableName) as? String
