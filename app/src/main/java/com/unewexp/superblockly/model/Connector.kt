@@ -1,50 +1,55 @@
 package com.example.myfirstapplicatioin.model
 
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.Dp
 import com.example.myfirstapplicatioin.blocks.Block
+import com.unewexp.superblockly.blocks.returnBlocks.VariableReferenceBlock
+import com.unewexp.superblockly.enums.BlockType
+import com.unewexp.superblockly.enums.ConnectorType
 
-enum class ConnectorType {
-    INPUT,
-    OUTPUT,
-    STRING_CONNECTOR_INPUT,
-    STRING_CONNECTOR_OUTPUT,
-}
 
-enum class ValueType{
-    INT,
-    STRING,
-    BOOLEAN,
-    ALL,
-    EXPRESSION
-}
-
-enum class BlockType{
-    INT,
-    STRING,
-    VARIABLE,
-    EXPRESSION,
-    NONE,
-}
-
-enum class VariableSupports{
-    INT,
-    STRING,
-    BOOLEAN,
-    EXPRESSION,
-}
-
-// эта штука нужна для отрисовки соединения
-// в дальнейшем для каждого типа input или output нужно будет создать отдельную отрисовку, чтобы красиво отрисовывать)
-data class connectionView(
+data class ConnectionView(
     val connector: Connector,
-    var positionX: Dp, // это позиция отностительно блока, поэтому нужно будет провести перерасчет
+    var positionX: Dp,
     var positionY: Dp
 )
-
 
 data class Connector(
     val connectionType: ConnectorType,
     val sourceBlock: Block,
-    var connectedTo: Block? = null
-)
+    var connectedTo: Block? = null,
+    val allowedBlockTypes: Set<BlockType> = emptySet(),
+    val allowedDataTypes: Set<Class<*>> = emptySet()
+    // Class<*> объект Java-класса неизвестного типа
+) {
+    fun canConnect(target: Connector): Boolean {
+        // Проверяем базовые условия соединения
+        if (connectionType == target.connectionType) return false
+        if (connectedTo != null || target.connectedTo != null) return false
+
+
+        // Проверяем допустимые типы блоков
+        if (allowedBlockTypes.isNotEmpty() &&
+            !allowedBlockTypes.contains(target.sourceBlock.blockType)) {
+            return false
+        }
+
+        // Проверяем совместимость типов данных
+        if (allowedDataTypes.isNotEmpty()) {
+            val targetDataType = getDataType(target.sourceBlock)
+            if (targetDataType != null && !allowedDataTypes.contains(targetDataType)) {
+                return false
+            }
+        }
+
+        return true
+    }
+
+    private fun getDataType(block: Block): Class<*>? {
+        return when (block.blockType) {
+            BlockType.INT_LITERAL -> Int::class.java
+            BlockType.STRING_LITERAL -> String::class.java
+            BlockType.BOOLEAN_LITERAL -> Boolean::class.java
+            else -> null
+        }
+    }
+}
