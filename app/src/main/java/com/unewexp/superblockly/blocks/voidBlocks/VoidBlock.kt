@@ -22,4 +22,8 @@ open class VoidBlock(
         sourceBlock = this,
         allowedBlockTypes = setOf(BlockType.VOID_BLOCK)
     )
+
+    fun getNextBlock(): Block?{
+        return bottomConnector.connectedTo
+    }
 }

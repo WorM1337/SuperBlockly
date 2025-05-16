@@ -1,8 +1,21 @@
 package com.example.myfirstapplicatioin.utils
 
 import com.example.myfirstapplicatioin.model.Connector
+import com.unewexp.superblockly.blocks.ErrorHandler
+
+
+fun safeConnect(source: Connector, target: Connector){ // для сани, пользуемся этой штукой для соединения блоков
+        try{
+                connectTo(source, target)
+        } catch (ex: Exception){
+                ErrorHandler.setError(source.sourceBlock.id, ex.message ?: "Ошибка соединения блоков")
+                ErrorHandler.setError(target.sourceBlock.id, ex.message ?: "Ошибка соединения блоков")
+        }
+}
+
 
 fun connectTo(source: Connector, target: Connector) {
+
         require(source.connectionType != target.connectionType) {
                 "Нельзя соединять два коннектора одного типа"
         }
