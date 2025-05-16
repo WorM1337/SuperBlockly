@@ -55,7 +55,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.myfirstapplicatioin.viewBlocks.ViewBlock
 import com.example.myfirstapplicatioin.viewBlocks.ViewIntBlock
-import com.example.myfirstapplicatioin.viewBlocks.ViewVariableBlock
 import com.unewexp.superblockly.ui.theme.DrawerColor
 import com.unewexp.superblockly.ui.theme.SuperBlocklyTheme
 import kotlinx.coroutines.launch
@@ -72,10 +71,6 @@ sealed class Routes(val route: String) {
 object BlockFactory {
     fun createIntBlock(x: Dp, y: Dp): ViewIntBlock {
         return ViewIntBlock(x, y)
-    }
-
-    fun createVariableBlock(x: Dp, y: Dp): ViewVariableBlock {
-        return ViewVariableBlock(x, y)
     }
 }
 
@@ -241,8 +236,6 @@ fun CreateNewProject(navController: NavHostController){
                             translationY = offset.value.y
                         )
                 ) {
-                    val view = ViewVariableBlock(100.dp, 100.dp)
-                    view.render()
                     val view2 = ViewIntBlock(400.dp, 100.dp)
                     view2.render()
                 }
