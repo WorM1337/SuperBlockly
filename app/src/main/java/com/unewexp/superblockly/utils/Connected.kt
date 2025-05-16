@@ -1,7 +1,12 @@
 package com.example.myfirstapplicatioin.utils
 
+import com.example.myfirstapplicatioin.model.ConnectionView
 import com.example.myfirstapplicatioin.model.Connector
 import com.unewexp.superblockly.blocks.ErrorHandler
+import java.lang.Math.pow
+import kotlin.math.abs
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 
 fun safeConnect(source: Connector, target: Connector){ // для сани, пользуемся этой штукой для соединения блоков
@@ -37,4 +42,12 @@ fun disconnect(source: Connector, target: Connector) {
 fun canConnect(source: Connector, target: Connector): Boolean {
         return source.connectionType != target.connectionType &&
                 source.canConnect(target)
+}
+
+fun isConnected(connector: Connector): Boolean{
+        return connector.connectedTo != null
+}
+
+fun connectorDistance(connectionView1: ConnectionView, connectionView2: ConnectionView): Float {
+        return sqrt((connectionView1.positionX.value - connectionView2.positionX.value).pow(2) + (connectionView1.positionY.value - connectionView2.positionY.value).pow(2))
 }

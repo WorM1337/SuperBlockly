@@ -17,5 +17,4 @@ abstract class ViewBlock(
     abstract fun render()
     @Composable
     abstract fun View()
-
 }

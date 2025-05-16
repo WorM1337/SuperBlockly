@@ -79,7 +79,7 @@ object BlockFactory {
     }
 }
 
-class CanvasState {
+object CanvasState {
     private val _blocks = mutableStateListOf<ViewBlock>()
     val blocks: List<ViewBlock> get() = _blocks
 
@@ -90,6 +90,7 @@ class CanvasState {
     fun removeBlock(block: ViewBlock) {
         _blocks.remove(block)
     }
+
 }
 
 object Modifiers{
@@ -241,10 +242,10 @@ fun CreateNewProject(navController: NavHostController){
                             translationY = offset.value.y
                         )
                 ) {
-                    val view = ViewSetValueVariableBlock(100.dp, 100.dp)
-                    view.render()
-                    val view2 = ViewIntLiteralBlock(400.dp, 100.dp)
-                    view2.render()
+                    CanvasState.addBlock(BlockFactory.createIntBlock(400.dp, 100.dp))
+                    CanvasState.blocks.last().render()
+                    CanvasState.addBlock(BlockFactory.createVariableBlock(100.dp, 100.dp))
+                    CanvasState.blocks.last().render()
                 }
             }
         )
