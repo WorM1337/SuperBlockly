@@ -4,7 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.Dp
 import com.example.myfirstapplicatioin.model.ConnectionView
 
-abstract class ViewBlock(
+abstract class
+ViewBlock(
     var initialX: Dp,
     var initialY: Dp
 ) {
@@ -17,5 +18,6 @@ abstract class ViewBlock(
     abstract fun render()
     @Composable
     abstract fun View()
+
 
 }
