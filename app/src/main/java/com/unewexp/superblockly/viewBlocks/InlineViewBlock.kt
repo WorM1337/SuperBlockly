@@ -37,7 +37,7 @@ abstract class InlineViewBlock(initialX: Dp, initialY: Dp) : ViewBlock( initialX
         Box(
             modifier = Modifier
                 .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
-                .size(width, height)
+                .size(width, 60.dp)
                 .background(Color(0xFFE0E0E0), shape = MaterialTheme.shapes.small)
                 .pointerInput(Unit) {
                     detectDragGestures { _, dragAmount ->
