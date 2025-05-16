@@ -7,21 +7,18 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.rememberTransformableState
 import androidx.compose.foundation.gestures.transformable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material3.Button
 import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -29,7 +26,6 @@ import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableFloatStateOf
@@ -43,10 +39,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -54,12 +48,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.myfirstapplicatioin.viewBlocks.ViewBlock
-import com.example.myfirstapplicatioin.viewBlocks.ViewIntBlock
-import com.example.myfirstapplicatioin.viewBlocks.ViewVariableBlock
+import com.example.myfirstapplicatioin.viewBlocks.ViewIntLiteralBlock
 import com.unewexp.superblockly.ui.theme.DrawerColor
 import com.unewexp.superblockly.ui.theme.SuperBlocklyTheme
 import kotlinx.coroutines.launch
-import kotlin.math.roundToInt
 
 sealed class Routes(val route: String) {
 
@@ -70,12 +62,8 @@ sealed class Routes(val route: String) {
 }
 
 object BlockFactory {
-    fun createIntBlock(x: Dp, y: Dp): ViewIntBlock {
-        return ViewIntBlock(x, y)
-    }
-
-    fun createVariableBlock(x: Dp, y: Dp): ViewVariableBlock {
-        return ViewVariableBlock(x, y)
+    fun createIntBlock(x: Dp, y: Dp): ViewIntLiteralBlock {
+        return ViewIntLiteralBlock(x, y)
     }
 }
 
@@ -197,7 +185,7 @@ fun CreateNewProject(navController: NavHostController){
                         */
                     ) {
                         Text("Математика", color = Color.White)
-                        BlockCard(ViewIntBlock(100.dp, 100.dp))
+                        BlockCard(ViewIntLiteralBlock(100.dp, 100.dp))
                     }
                 }
             }
@@ -241,9 +229,7 @@ fun CreateNewProject(navController: NavHostController){
                             translationY = offset.value.y
                         )
                 ) {
-                    val view = ViewVariableBlock(100.dp, 100.dp)
-                    view.render()
-                    val view2 = ViewIntBlock(400.dp, 100.dp)
+                    val view2 = ViewIntLiteralBlock(400.dp, 100.dp)
                     view2.render()
                 }
             }
