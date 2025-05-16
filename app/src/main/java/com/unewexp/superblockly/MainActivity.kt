@@ -58,6 +58,7 @@ import com.example.myfirstapplicatioin.viewBlocks.ViewIntBlock
 import com.example.myfirstapplicatioin.viewBlocks.ViewVariableBlock
 import com.unewexp.superblockly.ui.theme.DrawerColor
 import com.unewexp.superblockly.ui.theme.SuperBlocklyTheme
+import com.unewexp.superblockly.viewBlocks.ViewSetValueVariableBlock
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -241,9 +242,9 @@ fun CreateNewProject(navController: NavHostController){
                             translationY = offset.value.y
                         )
                 ) {
-                    val view = ViewVariableBlock(100.dp, 100.dp)
+                    val view = ViewSetValueVariableBlock(100.dp, 100.dp)
                     view.render()
-                    val view2 = ViewIntBlock(400.dp, 100.dp)
+                    val view2 = ViewIntLiteralBlock(400.dp, 100.dp)
                     view2.render()
                 }
             }
