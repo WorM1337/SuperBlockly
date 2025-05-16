@@ -29,7 +29,6 @@ class PrintBlock(
         val value = inputConnector.connectedTo?.evaluate()
             ?: throw IllegalStateException("В PrintBlock не добавлено значение вывода")
 
-        //ExecutionContext.appendLog(value.toString());
     }
 
 }

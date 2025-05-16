@@ -1,5 +1,8 @@
 package com.unewexp.superblockly.blocks.voidBlocks
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import com.example.myfirstapplicatioin.model.Connector
 
 import com.unewexp.superblockly.blocks.ExecutionContext
@@ -8,8 +11,8 @@ import com.unewexp.superblockly.enums.ConnectorType
 import java.util.UUID
 
 class SetValueVariableBlock : VoidBlock(UUID.randomUUID(), BlockType.SET_VARIABLE_VALUE) {
-    var variableName: String = ""
-        private set
+
+    var selectedVariableName by mutableStateOf("Undefined")
 
     val valueConnector = Connector(
         connectionType = ConnectorType.INPUT,
@@ -25,25 +28,19 @@ class SetValueVariableBlock : VoidBlock(UUID.randomUUID(), BlockType.SET_VARIABL
     )
 
     override fun execute() {
-        if (variableName.isBlank()) {
+        if (selectedVariableName.isBlank()) {
             throw IllegalStateException("Не указано имя переменной")
         }
 
         val value = valueConnector.connectedTo?.evaluate()
-            ?: throw IllegalStateException("Не указано значение для переменной '$variableName'")
+            ?: throw IllegalStateException("Не указано значение для переменной '$selectedVariableName'")
 
-        val currentValue = ExecutionContext.getVariable(variableName)
+        val currentValue = ExecutionContext.getVariable(selectedVariableName)
         if (currentValue != null && currentValue.javaClass != value.javaClass) {
-            throw IllegalStateException("Нельзя изменить тип переменной '$variableName'")
+            throw IllegalStateException("Нельзя изменить тип переменной '$selectedVariableName'")
         }
 
-        ExecutionContext.setVariable(variableName, value)
+        ExecutionContext.setVariable(selectedVariableName, value)
     }
 
-    fun setNameVariable(name: String) {
-        if (name.isBlank()) {
-            throw IllegalArgumentException("Имя переменной не может быть пустым")
-        }
-        this.variableName = name
-    }
 }
