@@ -48,6 +48,11 @@ fun DraggableBase(
                     onPositionChanged(offsetX, offsetY)
                 }
             }
+            .pointerInput(Unit){
+                detectTapGestures(
+                    onDoubleTap = { onLongPress(draggableBlock.id) }
+                )
+            }
             .padding(horizontal = 8.dp, vertical = 4.dp)
     ) {
         content()

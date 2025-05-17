@@ -2,20 +2,19 @@ package com.unewexp.superblockly
 
 import androidx.lifecycle.ViewModel
 import com.example.myfirstapplicatioin.blocks.literals.IntLiteralBlock
+import com.example.myfirstapplicatioin.model.ConnectionView
+import com.unewexp.superblockly.blocks.voidBlocks.SetValueVariableBlock
 import com.unewexp.superblockly.viewBlocks.DraggableBlock
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import java.util.UUID
 
 class DraggableViewModel: ViewModel() {
     private val _blocks = MutableStateFlow<List<DraggableBlock>>(emptyList())
     val blocks = _blocks.asStateFlow()
 
-    init {
-        _blocks.value = listOf(
-            DraggableBlock(id = "3", IntLiteralBlock(), x = 100f, y = 100f),
-            DraggableBlock(id = "2", IntLiteralBlock(), x = 300f, y = 200f)
-        )
-    }
+    private val _inputConnectors = MutableStateFlow<MutableMap<UUID, ConnectionView>>(mutableMapOf())
+    private val _outputConnectors = MutableStateFlow<MutableMap<UUID, ConnectionView>>(mutableMapOf())
 
     fun addBlock(block: DraggableBlock) {
         _blocks.value = _blocks.value + block
@@ -33,10 +32,17 @@ class DraggableViewModel: ViewModel() {
 
     fun updateValue(id: String, newValue: String){
         _blocks.value.forEach {
-            if(it.id == id && it.block is IntLiteralBlock){
-                val v = newValue.toFloatOrNull()
-                if(v != null){
-                    it.block.value = v.toInt()
+            if(it.id == id){
+                if(it.block is IntLiteralBlock){
+                    val v = newValue.toFloatOrNull()
+                    if(v != null){
+                        it.block.value = v.toInt()
+                    }else{
+                        it.block.value = 0
+                    }
+                }
+                if(it.block is SetValueVariableBlock){
+                    it.block.selectedVariableName = newValue
                 }
             }
         }

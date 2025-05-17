@@ -7,21 +7,19 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.rememberTransformableState
 import androidx.compose.foundation.gestures.transformable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material3.Button
 import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -29,7 +27,6 @@ import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -45,10 +42,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -59,15 +54,17 @@ import androidx.navigation.compose.rememberNavController
 import com.example.myfirstapplicatioin.blocks.literals.IntLiteralBlock
 import com.example.myfirstapplicatioin.viewBlocks.ViewBlock
 import com.example.myfirstapplicatioin.viewBlocks.ViewIntLiteralBlock
+import com.unewexp.superblockly.blocks.voidBlocks.SetValueVariableBlock
+import com.unewexp.superblockly.enums.BlockType
 import com.unewexp.superblockly.ui.theme.DrawerColor
 import com.unewexp.superblockly.ui.theme.SuperBlocklyTheme
 import com.unewexp.superblockly.viewBlocks.DraggableBase
 import com.unewexp.superblockly.viewBlocks.DraggableBlock
-import com.unewexp.superblockly.viewBlocks.TestView
-import com.unewexp.superblockly.viewBlocks.TestViewForCard
+import com.unewexp.superblockly.viewBlocks.IntLiteralView
+import com.unewexp.superblockly.viewBlocks.IntLiteralViewForCard
+import com.unewexp.superblockly.viewBlocks.SetValueVariableView
 import com.unewexp.superblockly.viewBlocks.ViewSetValueVariableBlock
 import kotlinx.coroutines.launch
-import kotlin.math.roundToInt
 
 sealed class Routes(val route: String) {
 
@@ -76,6 +73,25 @@ sealed class Routes(val route: String) {
     object MyProjects : Routes("my projects")
     object About : Routes("about")
 }
+
+sealed class ComponentConfig {
+    data class ChangeConfig(val onChange: (String) -> Unit) : ComponentConfig()
+}
+
+val componentMap: Map<BlockType, @Composable (ComponentConfig) -> Unit> = mapOf(
+    BlockType.INT_LITERAL to { config ->
+        when (config) {
+            is ComponentConfig.ChangeConfig -> IntLiteralView(config.onChange)
+            else -> error("Неверный тип конфига для кнопки")
+        }
+    },
+    BlockType.SET_VARIABLE_VALUE to { config ->
+        when (config) {
+            is ComponentConfig.ChangeConfig -> SetValueVariableView(config.onChange)
+            else -> error("Неверный тип конфига для чекбокса")
+        }
+    }
+)
 
 object BlockFactory {
     fun createIntBlock(x: Dp, y: Dp): ViewIntLiteralBlock {
@@ -87,19 +103,6 @@ object BlockFactory {
     }
 }
 
-object CanvasState {
-    private val _blocks = mutableStateListOf<ViewBlock>()
-    val blocks: List<ViewBlock> get() = _blocks
-
-    fun addBlock(block: ViewBlock) {
-        _blocks.add(block)
-    }
-
-    fun removeBlock(block: ViewBlock) {
-        _blocks.remove(block)
-    }
-
-}
 
 object Modifiers{
     val homeBtnModifier: Modifier = Modifier
@@ -211,10 +214,15 @@ fun CreateNewProject(
                         */
                     ) {
                         Text("Математика", color = Color.White)
-                        BlockCard({ TestViewForCard() }, {
+                        IntLiteralBlockCard {
                             val newBlock = IntLiteralBlock()
                             viewModel.addBlock(DraggableBlock(newBlock.id.toString(), newBlock, 500f, 300f))
-                        } )
+                        }
+                        Text("Переменные", color = Color.White)
+                        SetValueVariableCard {
+                            val newBlock = SetValueVariableBlock()
+                            viewModel.addBlock(DraggableBlock(newBlock.id.toString(), newBlock, 500f, 300f, 200))
+                        }
                     }
                 }
             }
@@ -258,16 +266,12 @@ fun CreateNewProject(
                             translationY = offset.value.y
                         )
                 ) {
-//                    CanvasState.addBlock(BlockFactory.createIntBlock(400.dp, 100.dp))
-//                    CanvasState.blocks.last().render()
-//                    CanvasState.addBlock(BlockFactory.createVariableBlock(100.dp, 100.dp))
-//                    CanvasState.blocks.last().render()
                     blocks.forEach {
                         DraggableBase(
                             content = {
-                                TestView({ newValue ->
+                                componentMap.get(it.block.blockType)?.invoke(ComponentConfig.ChangeConfig({ newValue ->
                                     viewModel.updateValue(it.id, newValue)
-                                })
+                                }))
                             },
                                     it,
                             onPositionChanged = { newX, newY ->
