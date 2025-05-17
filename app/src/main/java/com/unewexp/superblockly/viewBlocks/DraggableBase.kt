@@ -1,0 +1,55 @@
+package com.unewexp.superblockly.viewBlocks
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.dp
+import kotlin.math.roundToInt
+
+@Composable
+fun DraggableBase(
+    content: @Composable () -> Unit,
+    draggableBlock: DraggableBlock,
+    onPositionChanged: (Float, Float) -> Unit,
+    onLongPress: (String) -> Unit
+){
+
+    var offsetX by remember { mutableStateOf(draggableBlock.x) }
+    var offsetY by remember { mutableStateOf(draggableBlock.y) }
+
+    Box(
+        modifier = Modifier
+            .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
+            .size(draggableBlock.width.dp, draggableBlock.height.dp)
+            .background(Color(0xFFE0E0E0), shape = MaterialTheme.shapes.small)
+            .pointerInput(Unit) {
+                detectDragGestures(
+                    onDragEnd = {
+                        //ConnectorManager.tryConnect(listConnectors)
+                    }
+                ) { change, dragAmount ->
+                    change.consume()
+                    offsetX += dragAmount.x
+                    offsetY += dragAmount.y
+                    onPositionChanged(offsetX, offsetY)
+                }
+            }
+            .padding(horizontal = 8.dp, vertical = 4.dp)
+    ) {
+        content()
+    }
+}

@@ -43,7 +43,7 @@ abstract class InlineViewBlock(initialX: Dp, initialY: Dp) : ViewBlock( initialX
                 .pointerInput(Unit) {
                     detectDragGestures(
                         onDragEnd = {
-                            ConnectorManager.tryConnect(listConnectors)
+                            //ConnectorManager.tryConnect(listConnectors)
                         }
                     ) { _, dragAmount ->
                         offsetX += dragAmount.x
