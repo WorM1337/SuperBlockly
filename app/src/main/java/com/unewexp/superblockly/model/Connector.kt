@@ -18,10 +18,12 @@ data class Connector(
     val sourceBlock: Block,
     var connectedTo: Block? = null,
     val allowedBlockTypes: Set<BlockType> = emptySet(),
-    val allowedDataTypes: Set<Class<*>> = emptySet()
+    val allowedDataTypes: Set<Class<*>> = emptySet(),
+
     // Class<*> объект Java-класса неизвестного типа
 ) {
     fun canConnect(target: Connector): Boolean {
+
         // Проверяем базовые условия соединения
         if (connectionType == target.connectionType) return false
         if (connectedTo != null || target.connectedTo != null) return false
@@ -41,6 +43,7 @@ data class Connector(
             }
         }
 
+
         return true
     }
 
@@ -49,6 +52,11 @@ data class Connector(
             BlockType.INT_LITERAL -> Int::class.java
             BlockType.STRING_LITERAL -> String::class.java
             BlockType.BOOLEAN_LITERAL -> Boolean::class.java
+            BlockType.BOOLEAN_LOGIC_BLOCK -> Boolean::class.java
+            BlockType.COMPARE_NUMBERS_BLOCK -> Boolean::class.java
+            BlockType.STRING_CONCAT -> String::class.java
+            BlockType.STRING_APPEND -> String::class.java
+
             else -> null
         }
     }

@@ -12,5 +12,3 @@ fun BlockCard(block: ViewBlock){
         block.View()
     }
 }
-
-enum class BlockType { INT, VARIABLE }

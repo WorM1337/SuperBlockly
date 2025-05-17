@@ -17,11 +17,14 @@ class VariableReferenceBlock : Block(UUID.randomUUID(), BlockType.VARIABLE_REFER
     val outputConnector = Connector(
         connectionType = ConnectorType.OUTPUT,
         sourceBlock = this,
-        allowedBlockTypes = setOf(
-            BlockType.OPERAND,
-            BlockType.STRING_CONCAT,
-            BlockType.SET_VARIABLE_VALUE
-        )
+//        allowedBlockTypes = setOf(  скорее всего это не нужно
+//            BlockType.OPERAND,
+//            BlockType.STRING_CONCAT,
+//            BlockType.SET_VARIABLE_VALUE,
+//            BlockType.BOOLEAN_LOGIC_BLOCK,
+//            BlockType.COMPARE_NUMBERS_BLOCK,
+//            BlockType.VARIABLE_DECLARATION
+//        )
     )
 
 
