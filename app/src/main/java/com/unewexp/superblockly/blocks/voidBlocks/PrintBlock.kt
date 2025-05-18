@@ -28,7 +28,7 @@ class PrintBlock(
     override fun execute() {
         val value = inputConnector.connectedTo?.evaluate()
             ?: throw IllegalStateException("В PrintBlock не добавлено значение вывода")
-
+        ExecutionContext.appendLog(value.toString())
     }
 
 }

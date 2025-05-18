@@ -10,9 +10,9 @@ import com.unewexp.superblockly.enums.BlockType
 import com.unewexp.superblockly.enums.ConnectorType
 import java.util.UUID
 
-class StringLiteralBlock() : Block(UUID.randomUUID(), BlockType.STRING_LITERAL) {
+class StringLiteralBlock(var initialValue: String = "Empty String") : Block(UUID.randomUUID(), BlockType.STRING_LITERAL) {
 
-    var value by mutableStateOf("EmptyString")
+    var value by mutableStateOf(initialValue)
 
     val outputConnector = Connector(
         connectionType = ConnectorType.OUTPUT,

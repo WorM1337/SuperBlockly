@@ -9,7 +9,7 @@ import com.unewexp.superblockly.enums.BlockType
 import com.unewexp.superblockly.enums.ConnectorType
 import java.util.UUID
 
-class BooleanLiteralBlock() : Block(UUID.randomUUID(), BlockType.BOOLEAN_LITERAL) {
+class BooleanLiteralBlock(var initialValue: Boolean = false) : Block(UUID.randomUUID(), BlockType.BOOLEAN_LITERAL) {
     val outputConnector = Connector(
         connectionType = ConnectorType.OUTPUT,
         sourceBlock = this,
@@ -19,7 +19,7 @@ class BooleanLiteralBlock() : Block(UUID.randomUUID(), BlockType.BOOLEAN_LITERAL
         allowedDataTypes = setOf(Boolean::class.java)
     )
 
-    var value by mutableStateOf(false)
+    var value by mutableStateOf(initialValue)
 
 
     override fun evaluate(): Boolean = value

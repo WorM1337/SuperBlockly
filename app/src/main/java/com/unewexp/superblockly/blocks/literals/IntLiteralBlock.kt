@@ -10,7 +10,7 @@ import com.unewexp.superblockly.enums.BlockType
 import com.unewexp.superblockly.enums.ConnectorType
 import java.util.UUID
 
-class IntLiteralBlock() : Block(UUID.randomUUID(), BlockType.INT_LITERAL) {
+class IntLiteralBlock(var initialValue: Int = 123 ) : Block(UUID.randomUUID(), BlockType.INT_LITERAL) {
     val outputConnector = Connector(
         connectionType = ConnectorType.OUTPUT,
         sourceBlock = this,
@@ -23,7 +23,7 @@ class IntLiteralBlock() : Block(UUID.randomUUID(), BlockType.INT_LITERAL) {
         // Int::class.java - означает, что тут можно использовать только тип данных int
     )
 
-    var value by mutableStateOf(123)
+    var value by mutableStateOf(initialValue)
 
     override fun evaluate(): Int = value
 }
