@@ -32,6 +32,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -49,15 +51,20 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.myfirstapplicatioin.blocks.literals.IntLiteralBlock
 import com.example.myfirstapplicatioin.viewBlocks.ViewBlock
-import com.example.myfirstapplicatioin.viewBlocks.ViewIntBlock
-import com.example.myfirstapplicatioin.viewBlocks.ViewVariableBlock
+import com.example.myfirstapplicatioin.viewBlocks.ViewIntLiteralBlock
 import com.unewexp.superblockly.ui.theme.DrawerColor
 import com.unewexp.superblockly.ui.theme.SuperBlocklyTheme
+import com.unewexp.superblockly.viewBlocks.DraggableBase
+import com.unewexp.superblockly.viewBlocks.DraggableBlock
+import com.unewexp.superblockly.viewBlocks.TestView
+import com.unewexp.superblockly.viewBlocks.TestViewForCard
 import com.unewexp.superblockly.viewBlocks.ViewSetValueVariableBlock
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -71,16 +78,16 @@ sealed class Routes(val route: String) {
 }
 
 object BlockFactory {
-    fun createIntBlock(x: Dp, y: Dp): ViewIntBlock {
-        return ViewIntBlock(x, y)
+    fun createIntBlock(x: Dp, y: Dp): ViewIntLiteralBlock {
+        return ViewIntLiteralBlock(x, y)
     }
 
-    fun createVariableBlock(x: Dp, y: Dp): ViewVariableBlock {
-        return ViewVariableBlock(x, y)
+    fun createVariableBlock(x: Dp, y: Dp): ViewSetValueVariableBlock {
+        return ViewSetValueVariableBlock(x, y)
     }
 }
 
-class CanvasState {
+object CanvasState {
     private val _blocks = mutableStateListOf<ViewBlock>()
     val blocks: List<ViewBlock> get() = _blocks
 
@@ -91,6 +98,7 @@ class CanvasState {
     fun removeBlock(block: ViewBlock) {
         _blocks.remove(block)
     }
+
 }
 
 object Modifiers{
@@ -153,9 +161,14 @@ fun Home(navController: NavHostController) {
 }
 
 @Composable
-fun CreateNewProject(navController: NavHostController){
+fun CreateNewProject(
+    navController: NavHostController,
+    viewModel: DraggableViewModel = viewModel()
+){
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
+
+    val blocks by viewModel.blocks.collectAsState()
 
     val transferAction = "action"
     val blockTypeTransferData = "block_type"
@@ -198,7 +211,10 @@ fun CreateNewProject(navController: NavHostController){
                         */
                     ) {
                         Text("Математика", color = Color.White)
-                        BlockCard(ViewIntBlock(100.dp, 100.dp))
+                        BlockCard({ TestViewForCard() }, {
+                            val newBlock = IntLiteralBlock()
+                            viewModel.addBlock(DraggableBlock(newBlock.id.toString(), newBlock, 500f, 300f))
+                        } )
                     }
                 }
             }
@@ -242,10 +258,26 @@ fun CreateNewProject(navController: NavHostController){
                             translationY = offset.value.y
                         )
                 ) {
-                    val view = ViewSetValueVariableBlock(100.dp, 100.dp)
-                    view.render()
-                    val view2 = ViewIntLiteralBlock(400.dp, 100.dp)
-                    view2.render()
+//                    CanvasState.addBlock(BlockFactory.createIntBlock(400.dp, 100.dp))
+//                    CanvasState.blocks.last().render()
+//                    CanvasState.addBlock(BlockFactory.createVariableBlock(100.dp, 100.dp))
+//                    CanvasState.blocks.last().render()
+                    blocks.forEach {
+                        DraggableBase(
+                            content = {
+                                TestView({ newValue ->
+                                    viewModel.updateValue(it.id, newValue)
+                                })
+                            },
+                                    it,
+                            onPositionChanged = { newX, newY ->
+                                viewModel.updateBlockPosition(it.id, newX, newY)
+                            },
+                            onLongPress = { id ->
+                                viewModel.removeBlock(it.id)
+                            }
+                        )
+                    }
                 }
             }
         )

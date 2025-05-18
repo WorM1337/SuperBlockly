@@ -11,6 +11,7 @@ open class VoidBlock(
     id: UUID = UUID.randomUUID(),
     blockType: BlockType
 ) : Block(id, blockType) {
+
     open val topConnector = Connector(
         connectionType = ConnectorType.INPUT,
         sourceBlock = this,
@@ -26,8 +27,10 @@ open class VoidBlock(
         )
     )
 
+
     open val bottomConnector = Connector(
         connectionType = ConnectorType.OUTPUT,
+
         sourceBlock = this,
         allowedBlockTypes = setOf(
             BlockType.IF_BLOCK,

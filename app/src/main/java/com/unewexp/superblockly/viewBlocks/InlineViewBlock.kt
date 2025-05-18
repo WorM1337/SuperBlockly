@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.example.myfirstapplicatioin.blocks.Block
 import com.example.myfirstapplicatioin.viewBlocks.ViewBlock
+import com.unewexp.superblockly.model.ConnectorManager
 import kotlin.math.roundToInt
 
 abstract class InlineViewBlock(initialX: Dp, initialY: Dp) : ViewBlock( initialX, initialY) {
@@ -40,7 +41,11 @@ abstract class InlineViewBlock(initialX: Dp, initialY: Dp) : ViewBlock( initialX
                 .size(width, 60.dp)
                 .background(Color(0xFFE0E0E0), shape = MaterialTheme.shapes.small)
                 .pointerInput(Unit) {
-                    detectDragGestures { _, dragAmount ->
+                    detectDragGestures(
+                        onDragEnd = {
+                            //ConnectorManager.tryConnect(listConnectors)
+                        }
+                    ) { _, dragAmount ->
                         offsetX += dragAmount.x
                         offsetY += dragAmount.y
                     }
