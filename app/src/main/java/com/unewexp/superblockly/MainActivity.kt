@@ -6,15 +6,17 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.rememberTransformableState
 import androidx.compose.foundation.gestures.transformable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.List
@@ -32,7 +34,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -40,8 +41,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -52,7 +57,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.myfirstapplicatioin.blocks.literals.IntLiteralBlock
-import com.example.myfirstapplicatioin.viewBlocks.ViewBlock
 import com.example.myfirstapplicatioin.viewBlocks.ViewIntLiteralBlock
 import com.unewexp.superblockly.blocks.voidBlocks.SetValueVariableBlock
 import com.unewexp.superblockly.enums.BlockType
@@ -61,7 +65,6 @@ import com.unewexp.superblockly.ui.theme.SuperBlocklyTheme
 import com.unewexp.superblockly.viewBlocks.DraggableBase
 import com.unewexp.superblockly.viewBlocks.DraggableBlock
 import com.unewexp.superblockly.viewBlocks.IntLiteralView
-import com.unewexp.superblockly.viewBlocks.IntLiteralViewForCard
 import com.unewexp.superblockly.viewBlocks.SetValueVariableView
 import com.unewexp.superblockly.viewBlocks.ViewSetValueVariableBlock
 import kotlinx.coroutines.launch
@@ -177,11 +180,13 @@ fun CreateNewProject(
     val blockTypeTransferData = "block_type"
     val blockViewTransferData = "block_view"
 
+    val background_image = ImageBitmap.imageResource(id = R.drawable.holst_net)
+
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
             Box(modifier = Modifier
-                    .background(DrawerColor)
+                .background(DrawerColor)
             ){
                 Column(
                     modifier = Modifier
@@ -193,25 +198,25 @@ fun CreateNewProject(
                     Column(
                         modifier = Modifier
                             .padding(10.dp, 0.dp)
-                            /*
-                            .dragAndDropSource(drawDragDecoration = {
-                                // UI перетаскиваемого элемента
-                            }){
-                                startTransfer(
-                                    DragAndDropTransferData(
-                                        clipData = ClipData.newIntent(
-                                            "block_type",
-                                            Intent(transferAction).apply {
-                                                putExtra(
-                                                    blockTypeTransferData,
+                        /*
+                        .dragAndDropSource(drawDragDecoration = {
+                            // UI перетаскиваемого элемента
+                        }){
+                            startTransfer(
+                                DragAndDropTransferData(
+                                    clipData = ClipData.newIntent(
+                                        "block_type",
+                                        Intent(transferAction).apply {
+                                            putExtra(
+                                                blockTypeTransferData,
 
-                                                )
-                                            }
-                                        )
+                                            )
+                                        }
                                     )
                                 )
-                            }
-                        */
+                            )
+                        }
+                    */
                     ) {
                         Text("Математика", color = Color.White)
                         IntLiteralBlockCard {
@@ -221,7 +226,7 @@ fun CreateNewProject(
                         Text("Переменные", color = Color.White)
                         SetValueVariableCard {
                             val newBlock = SetValueVariableBlock()
-                            viewModel.addBlock(DraggableBlock(newBlock.id.toString(), newBlock, 500f, 300f, 200))
+                            viewModel.addBlock(DraggableBlock(newBlock.id.toString(), newBlock, 500f, 300f))
                         }
                     }
                 }
@@ -247,11 +252,20 @@ fun CreateNewProject(
                 val offset = remember { mutableStateOf(Offset.Zero) }
                 val scale = remember { mutableFloatStateOf(1f) }
 
+                Image(
+
+                    painter = painterResource(id = R.drawable.holst_net),
+                    "someInfo",
+                    modifier = Modifier.fillMaxSize().padding(paddingValues),
+                    contentScale = ContentScale.FillBounds
+
+                )
+
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(paddingValues)
-                        .background(Color.LightGray)
+                        .background(Color.Transparent)
 
                         .transformable(
                             state = rememberTransformableState { zoomChange, offsetChange, _ ->
@@ -272,12 +286,29 @@ fun CreateNewProject(
                                 componentMap.get(it.block.blockType)?.invoke(ComponentConfig.ChangeConfig({ newValue ->
                                     viewModel.updateValue(it.id, newValue)
                                 }))
+
+                                Box(
+                                    modifier = Modifier
+                                        .size(15.dp, 15.dp)
+                                        .offset(it.outputConnectionView!!.positionX - 7.dp, it.outputConnectionView!!.positionY - 7.dp)
+                                        .background(Color.Red)
+                                )
+
+                                it.inputConnectionViews.forEach{
+                                    Box(
+                                        modifier = Modifier
+                                            .size(15.dp, 15.dp)
+                                            .offset(it.positionX - 7.dp, it.positionY - 7.dp)
+                                            .background(Color.Red)
+                                    )
+                                }
+                                //Здесь будет отрисовка connector-ов
                             },
-                                    it,
+                            it,
                             onPositionChanged = { newX, newY ->
                                 viewModel.updateBlockPosition(it.id, newX, newY)
                             },
-                            onLongPress = { id ->
+                            onDoubleTap = { id ->
                                 viewModel.removeBlock(it.id)
                             }
                         )
@@ -286,6 +317,7 @@ fun CreateNewProject(
             }
         )
     }
+
 }
 
 

@@ -25,7 +25,7 @@ fun DraggableBase(
     content: @Composable () -> Unit,
     draggableBlock: DraggableBlock,
     onPositionChanged: (Float, Float) -> Unit,
-    onLongPress: (String) -> Unit
+    onDoubleTap: (String) -> Unit,
 ){
 
     var offsetX by remember { mutableStateOf(draggableBlock.x) }
@@ -50,7 +50,9 @@ fun DraggableBase(
             }
             .pointerInput(Unit){
                 detectTapGestures(
-                    onDoubleTap = { onLongPress(draggableBlock.id) }
+                    onDoubleTap = {
+                        onDoubleTap(draggableBlock.id)
+                    }
                 )
             }
             .padding(horizontal = 8.dp, vertical = 4.dp)

@@ -1,9 +1,12 @@
 package com.unewexp.superblockly
 
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import com.example.myfirstapplicatioin.blocks.literals.IntLiteralBlock
 import com.example.myfirstapplicatioin.model.ConnectionView
 import com.unewexp.superblockly.blocks.voidBlocks.SetValueVariableBlock
+import com.unewexp.superblockly.blocks.voidBlocks.VoidBlock
+import com.unewexp.superblockly.enums.BlockType
 import com.unewexp.superblockly.viewBlocks.DraggableBlock
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,9 +18,11 @@ class DraggableViewModel: ViewModel() {
 
     private val _inputConnectors = MutableStateFlow<MutableMap<UUID, ConnectionView>>(mutableMapOf())
     private val _outputConnectors = MutableStateFlow<MutableMap<UUID, ConnectionView>>(mutableMapOf())
+    private val _topConnectors = MutableStateFlow<MutableMap<UUID, ConnectionView>>(mutableMapOf())
+    private val _bottomConnectors = MutableStateFlow<MutableMap<UUID, ConnectionView>>(mutableMapOf())
 
-    fun addBlock(block: DraggableBlock) {
-        _blocks.value = _blocks.value + block
+    fun addBlock(dragBlock: DraggableBlock) {
+        _blocks.value = _blocks.value + dragBlock
     }
 
     fun updateBlockPosition(id: String, newX: Float, newY: Float) {
