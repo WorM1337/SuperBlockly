@@ -42,7 +42,7 @@ class VariableDeclarationBlock(var initialName: String = "Undefined") : VoidBloc
 
     private fun validateName() {
         if (name.isBlank()) throw IllegalStateException("Имя переменной не может быть пустым")
-        if (ExecutionContext.hasVariable(name) || name.equals("Undefined")) {
+        if (ExecutionContext.hasVariable(name) || name == "Undefined") {
             throw IllegalStateException("Имя переменной существует или Undefined")
         }
     }

@@ -34,7 +34,7 @@ class StringConcatenationBlock : Block(UUID.randomUUID(), BlockType.STRING_CONCA
     val outputConnector = Connector(
         connectionType = ConnectorType.OUTPUT,
         sourceBlock = this,
-        allowedDataTypes = setOf(String::class.java)
+//        allowedDataTypes = setOf(String::class.java)
     )
 
     override fun evaluate(): String {

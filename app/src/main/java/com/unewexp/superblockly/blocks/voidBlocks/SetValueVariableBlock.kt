@@ -35,6 +35,10 @@ class SetValueVariableBlock : VoidBlock(UUID.randomUUID(), BlockType.SET_VARIABL
         val value = valueConnector.connectedTo?.evaluate()
             ?: throw IllegalStateException("Не указано значение для переменной '$selectedVariableName'")
 
+        if (!ExecutionContext.hasVariable(selectedVariableName)){
+            throw IllegalStateException("Указанная переменная не объявлена")
+        }
+
         val currentValue = ExecutionContext.getVariable(selectedVariableName)
         if (currentValue != null && currentValue.javaClass != value.javaClass) {
             throw IllegalStateException("Нельзя изменить тип переменной '$selectedVariableName'")
