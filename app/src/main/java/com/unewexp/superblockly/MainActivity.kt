@@ -74,6 +74,7 @@ import com.unewexp.superblockly.blocks.returnBlocks.VariableReferenceBlock
 import com.unewexp.superblockly.blocks.voidBlocks.SetValueVariableBlock
 import com.unewexp.superblockly.blocks.voidBlocks.VariableDeclarationBlock
 import com.unewexp.superblockly.enums.BlockType
+import com.unewexp.superblockly.model.ConnectorManager
 import com.unewexp.superblockly.ui.theme.DrawerColor
 import com.unewexp.superblockly.ui.theme.SuperBlocklyTheme
 import com.unewexp.superblockly.viewBlocks.DeclarationVariableView
@@ -398,11 +399,14 @@ fun CreateNewProject(
 
                             },
                                     it,
-                            onPositionChanged = { newX, newY ->
-                                viewModel.updateBlockPosition(it.id, newX, newY)
+                            onPositionChanged = { offsetX, offsetY ->
+                                viewModel.updateBlockPosition(it.id, offsetX, offsetY)
                             },
                             onDoubleTap = { id ->
                                 viewModel.removeBlock(it.id)
+                            },
+                            onDragEnd = {
+                                ConnectorManager.tryConnectDrag(it, viewModel)
                             }
                         )
                     }

@@ -1,5 +1,6 @@
 package com.unewexp.superblockly
 
+import android.util.Log
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import com.example.myfirstapplicatioin.blocks.literals.IntLiteralBlock
@@ -13,6 +14,7 @@ import com.unewexp.superblockly.viewBlocks.DraggableBlock
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import java.util.UUID
+import kotlin.math.abs
 
 class DraggableViewModel: ViewModel() {
     private val _blocks = MutableStateFlow<MutableList<DraggableBlock>>(mutableListOf())
@@ -28,15 +30,37 @@ class DraggableViewModel: ViewModel() {
     }
 
     fun updateBlockPosition(id: String, offsetX: Float, offsetY: Float) {
-        _blocks.value.forEach { block ->
-            if (block.id == id){
-                block.x = block.x + offsetX
-                block.y = block.y + offsetY
-                block.scope.forEach {
-                    updateBlockPosition(it.id, offsetX, offsetY)
-                }
+
+
+        val currentBlock = findBlockById(id)
+        currentBlock?.let {
+            currentBlock.x = currentBlock.x + offsetX
+            currentBlock.y = currentBlock.y + offsetY
+            Log.i("${currentBlock.block.blockType}", "(${currentBlock.x} : ${currentBlock.y})")
+            currentBlock.scope.forEach {
+                if (abs(offsetX) < 1.0 && abs(offsetY) < 1.0) return
+                updateBlockPosition(it.id, offsetX, offsetY)
             }
         }
+        _blocks.value = _blocks.value.map { block ->
+            if (block.id == id) block.copy() else block
+        }.toMutableList()
+    }
+    fun updateBlockPositionByXY(id: String, newX: Float, newY: Float) {
+
+        val currentBlock = findBlockById(id)
+        currentBlock?.let{
+            val offsetX = newX - currentBlock.x
+            val offsetY = newY - currentBlock.y
+            currentBlock.x = newX
+            currentBlock.y = newY
+            Log.i("${currentBlock.block.blockType}", "(${currentBlock.x} : ${currentBlock.y})")
+            currentBlock.scope.forEach {
+                if(abs(offsetX) < 1.0 && abs(offsetY) < 1.0) return
+                updateBlockPosition(it.id, offsetX, offsetY)
+            }
+        }
+
     }
 
     fun removeBlock(id: String) {

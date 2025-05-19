@@ -28,20 +28,27 @@ import kotlin.math.min
 import kotlin.math.sqrt
 
 object ConnectorManager {
-    val connetionLength = 30.0
+    val connetionLength = 200.0
 
 
-    fun tryConnectDrag(sourceDragBlock: DraggableBlock, viewModel: DraggableViewModel) : Boolean{
-        val nearestBlock = getBlockWithNearestConnection(sourceDragBlock, viewModel)
-        val nearestConnection = getNearestConnection(sourceDragBlock, viewModel)
+    fun tryConnectDrag(sourceDragBlock: DraggableBlock, viewModel: DraggableViewModel){
 
-        if(nearestBlock == null || sourceDragBlock.outputConnectionView == null || nearestConnection == null) return false
+        val listDragBlocks = viewModel.blocks.value.filter { !(it in sourceDragBlock.scope) && (it != sourceDragBlock) }.toMutableList()
+
+        val nearestBlock = getBlockWithNearestConnection(sourceDragBlock, listDragBlocks)
+        val nearestConnection = getNearestConnection(sourceDragBlock, listDragBlocks)
+
+        if(nearestBlock == null || sourceDragBlock.outputConnectionView == null || nearestConnection == null) return
 
         if(getLengthFromConnections(sourceDragBlock, nearestBlock, sourceDragBlock.outputConnectionView!!, nearestConnection) <= connetionLength){
             safeConnect(sourceDragBlock.outputConnectionView!!.connector, nearestConnection.connector)
-            return true
+            viewModel.updateBlockPosition(
+                nearestBlock.id,
+                nearestBlock.x + nearestConnection.positionX.value - sourceDragBlock.x,
+                nearestBlock.y + nearestConnection.positionY.value - sourceDragBlock.y
+            )
+            nearestBlock.scope.add(sourceDragBlock)
         }
-        return false
     }
 
 
@@ -58,17 +65,17 @@ object ConnectorManager {
 
         return sqrt(pow(x1-x2,2.0) + pow(y1-y2, 2.0))
     }
-    fun getBlockWithNearestConnection(dragBlock: DraggableBlock, viewModel: DraggableViewModel): DraggableBlock? {
+    fun getBlockWithNearestConnection(dragBlock: DraggableBlock, listBlocks: MutableList<DraggableBlock>): DraggableBlock? {
 
         var ans: DraggableBlock? = null
 
         var r = 1000000.0
 
-        for(block in viewModel.blocks.value) {
+        for(block in listBlocks) {
 
             for(connection in block.inputConnectionViews){
                 val length = getLengthFromConnections(dragBlock, block, dragBlock.outputConnectionView!!, connection)
-                if( length < r && canConnect(dragBlock.outputConnectionView!!.connector, connection.connector)){
+                if( length < r){
                     r = length
                     ans = block
                 }
@@ -76,17 +83,17 @@ object ConnectorManager {
         }
         return ans
     }
-    fun getNearestConnection(dragBlock: DraggableBlock, viewModel: DraggableViewModel): ConnectionView? {
+    fun getNearestConnection(dragBlock: DraggableBlock,listBlocks: MutableList<DraggableBlock>): ConnectionView? {
 
         var ans: ConnectionView? = null
 
         var r = 1000000.0
 
-        for(block in viewModel.blocks.value) {
+        for(block in listBlocks) {
 
             for(connection in block.inputConnectionViews){
                 val length = getLengthFromConnections(dragBlock, block, dragBlock.outputConnectionView!!, connection)
-                if( length < r && canConnect(dragBlock.outputConnectionView!!.connector, connection.connector)){
+                if( length < r){
                     r = length
                     ans = connection
                 }

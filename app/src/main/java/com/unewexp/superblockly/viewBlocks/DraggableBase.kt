@@ -18,6 +18,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import com.unewexp.superblockly.DraggableViewModel
+import com.unewexp.superblockly.model.ConnectorManager
 import kotlin.math.roundToInt
 
 @Composable
@@ -26,6 +28,7 @@ fun DraggableBase(
     draggableBlock: DraggableBlock,
     onPositionChanged: (Float, Float) -> Unit,
     onDoubleTap: (String) -> Unit,
+    onDragEnd: () -> Unit
 ){
 
     var offsetX by remember { mutableStateOf(draggableBlock.x) }
@@ -39,7 +42,7 @@ fun DraggableBase(
             .pointerInput(Unit) {
                 detectDragGestures(
                     onDragEnd = {
-                        //ConnectorManager.tryConnect(listConnectors)
+                        onDragEnd()
                     }
                 ) { change, dragAmount ->
                     change.consume()
