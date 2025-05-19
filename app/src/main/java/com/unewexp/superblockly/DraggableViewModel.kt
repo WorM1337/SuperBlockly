@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import java.util.UUID
 
 class DraggableViewModel: ViewModel() {
-    private val _blocks = MutableStateFlow<List<DraggableBlock>>(emptyList())
+    private val _blocks = MutableStateFlow<MutableList<DraggableBlock>>(mutableListOf())
     val blocks = _blocks.asStateFlow()
 
     private val _inputConnectors = MutableStateFlow<MutableMap<UUID, ConnectionView>>(mutableMapOf())
@@ -24,17 +24,36 @@ class DraggableViewModel: ViewModel() {
     private val _bottomConnectors = MutableStateFlow<MutableMap<UUID, ConnectionView>>(mutableMapOf())
 
     fun addBlock(dragBlock: DraggableBlock) {
-        _blocks.value = _blocks.value + dragBlock
+        _blocks.value.add(dragBlock)
     }
 
-    fun updateBlockPosition(id: String, newX: Float, newY: Float) {
-        _blocks.value = _blocks.value.map { block ->
-            if (block.id == id) block.copy(x = newX, y = newY) else block
+    fun updateBlockPosition(id: String, offsetX: Float, offsetY: Float) {
+        _blocks.value.forEach { block ->
+            if (block.id == id){
+                block.x = block.x + offsetX
+                block.y = block.y + offsetY
+                block.scope.forEach {
+                    updateBlockPosition(it.id, offsetX, offsetY)
+                }
+            }
         }
     }
 
     fun removeBlock(id: String) {
-        _blocks.value = _blocks.value.filter { it.id != id }
+        val block = findBlockById(id)
+        if(block == null){
+            return
+        }
+        _blocks.value.remove(block)
+    }
+
+    fun findBlockById(id: String): DraggableBlock?{
+        _blocks.value.forEach { block ->
+            if (block.id == id){
+                return block
+            }
+        }
+        return null
     }
 
     fun updateValue(id: String, newValue: String){

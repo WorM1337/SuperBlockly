@@ -13,6 +13,7 @@ data class DraggableBlock(
     var y: Float,
     var outputConnectionView: ConnectionView? = null,
     var inputConnectionViews: MutableList<ConnectionView> = mutableListOf(),
+    val scope: MutableList<DraggableBlock> = mutableListOf(),
     var width: Int = 100,
     var height: Int = 60,
 ){

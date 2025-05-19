@@ -45,7 +45,7 @@ fun DraggableBase(
                     change.consume()
                     offsetX += dragAmount.x
                     offsetY += dragAmount.y
-                    onPositionChanged(offsetX, offsetY)
+                    onPositionChanged(dragAmount.x, dragAmount.y)
                 }
             }
             .pointerInput(Unit){
