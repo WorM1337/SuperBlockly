@@ -24,6 +24,10 @@ open class VoidBlock(
             BlockType.IF_BLOCK,
             BlockType.ELSE_BLOCK,
             BlockType.IF_ELSE_BLOCK,
+            BlockType.REPEAT_N_TIMES,
+            BlockType.WHILE_BLOCK,
+            BlockType.SHORTHAND_ARITHMETIC_BLOCK,
+            BlockType.FOR_BLOCK,
         )
     )
 
@@ -38,6 +42,10 @@ open class VoidBlock(
             BlockType.SET_VARIABLE_VALUE,
             BlockType.PRINT_BLOCK,
             BlockType.VARIABLE_DECLARATION,
+            BlockType.REPEAT_N_TIMES,
+            BlockType.WHILE_BLOCK,
+            BlockType.SHORTHAND_ARITHMETIC_BLOCK,
+            BlockType.FOR_BLOCK,
         )
     )
 

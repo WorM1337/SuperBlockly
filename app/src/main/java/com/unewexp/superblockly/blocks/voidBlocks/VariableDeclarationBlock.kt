@@ -34,7 +34,7 @@ class VariableDeclarationBlock(var initialName: String = "Undefined") : VoidBloc
             ?: throw IllegalStateException("Не указано значение для переменной '$name'")
 
         checkTypeConsistency(value)
-        ExecutionContext.setVariable(name, value)
+        ExecutionContext.declareVariable(name, value)
         variableType = value.javaClass
     }
 

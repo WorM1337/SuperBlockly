@@ -6,4 +6,5 @@ enum class OperandType{
     MINUS,
     DIVISION,
     MULTIPLICATION,
+    MODULO,
 }

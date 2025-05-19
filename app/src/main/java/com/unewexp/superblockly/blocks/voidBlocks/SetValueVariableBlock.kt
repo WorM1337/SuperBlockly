@@ -44,7 +44,7 @@ class SetValueVariableBlock : VoidBlock(UUID.randomUUID(), BlockType.SET_VARIABL
             throw IllegalStateException("Нельзя изменить тип переменной '$selectedVariableName'")
         }
 
-        ExecutionContext.setVariable(selectedVariableName, value)
+        ExecutionContext.changeVariableValue(selectedVariableName, value)
     }
 
 }

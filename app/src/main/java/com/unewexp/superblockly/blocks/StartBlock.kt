@@ -9,17 +9,6 @@ import java.lang.IllegalStateException
 import java.util.UUID
 
 class StartBlock : VoidBlock(UUID.randomUUID(), BlockType.START) {
-    val nextBlockConnector = Connector(
-        connectionType = ConnectorType.OUTPUT,
-        sourceBlock = this,
-        allowedBlockTypes = setOf(
-            BlockType.PRINT_BLOCK,
-            BlockType.IF_BLOCK,
-            BlockType.VARIABLE_DECLARATION,
-            BlockType.SET_VARIABLE_VALUE,
-            BlockType.STRING_APPEND,
-        )
-    )
 
     override fun execute() {
         ErrorHandler.clearAllErrors()

@@ -40,6 +40,7 @@ open class ConditionBlock(
             BlockType.PRINT_BLOCK,
             BlockType.VARIABLE_DECLARATION,
             BlockType.SET_VARIABLE_VALUE,
+            BlockType.REPEAT_N_TIMES,
         )
     )
 

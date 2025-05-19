@@ -71,6 +71,6 @@ class StringAppendBlock : VoidBlock(UUID.randomUUID(), BlockType.STRING_APPEND) 
 
         var stringToAppend = inputConnector.connectedTo?.evaluate()
 
-        ExecutionContext.setVariable(variableName, currentValue + stringToAppend)
+        ExecutionContext.changeVariableValue(variableName, currentValue + stringToAppend)
     }
 }
