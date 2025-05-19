@@ -9,8 +9,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
+import com.unewexp.superblockly.viewBlocks.DeclarationVariableViewForCard
 import com.unewexp.superblockly.viewBlocks.IntLiteralViewForCard
 import com.unewexp.superblockly.viewBlocks.SetValueVariableViewForCard
+import com.unewexp.superblockly.viewBlocks.VariableReferenceViewForCard
 
 @Composable
 fun BlockCard(content: @Composable () -> Unit, onClick: () -> Unit){
@@ -24,14 +26,9 @@ fun BlockCard(content: @Composable () -> Unit, onClick: () -> Unit){
 }
 
 @Composable
-fun IntLiteralBlockCard(createBlock: () -> Unit){
+fun IntLiteralBlockCard(){
     Card(
         modifier = Modifier
-            .pointerInput(Unit){
-                detectTapGestures(onLongPress = {
-                    createBlock()
-                })
-            }
             .width(200.dp)
             .padding(2.dp)
     ){
@@ -40,18 +37,35 @@ fun IntLiteralBlockCard(createBlock: () -> Unit){
 }
 
 @Composable
-fun SetValueVariableCard(createBlock: () -> Unit){
+fun SetValueVariableCard(){
     Card(
         modifier = Modifier
-            .pointerInput(Unit){
-                detectTapGestures(onLongPress = {
-                    createBlock()
-                })
-            }
             .width(200.dp)
             .padding(2.dp)
     ){
         SetValueVariableViewForCard()
+    }
+}
+
+@Composable
+fun DeclarationVariableCard(){
+    Card(
+        modifier = Modifier
+            .width(200.dp)
+            .padding(2.dp)
+    ){
+        DeclarationVariableViewForCard()
+    }
+}
+
+@Composable
+fun ReferenceVariableCard(){
+    Card(
+        modifier = Modifier
+            .width(200.dp)
+            .padding(2.dp)
+    ){
+        VariableReferenceViewForCard()
     }
 }
 

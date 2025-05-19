@@ -2,12 +2,16 @@
 
 package com.unewexp.superblockly
 
+import android.content.ClipData
+import android.content.ClipDescription
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.draganddrop.dragAndDropSource
+import androidx.compose.foundation.draganddrop.dragAndDropTarget
 import androidx.compose.foundation.gestures.rememberTransformableState
 import androidx.compose.foundation.gestures.transformable
 import androidx.compose.foundation.layout.Box
@@ -34,20 +38,26 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draganddrop.DragAndDropEvent
+import androidx.compose.ui.draganddrop.DragAndDropTarget
+import androidx.compose.ui.draganddrop.DragAndDropTransferData
+import androidx.compose.ui.draganddrop.mimeTypes
+import androidx.compose.ui.draganddrop.toAndroidDragEvent
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.imageResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.drawText
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -57,15 +67,22 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.myfirstapplicatioin.blocks.literals.IntLiteralBlock
+import com.example.myfirstapplicatioin.viewBlocks.ViewBlock
 import com.example.myfirstapplicatioin.viewBlocks.ViewIntLiteralBlock
+import com.unewexp.superblockly.blocks.returnBlocks.VariableReferenceBlock
 import com.unewexp.superblockly.blocks.voidBlocks.SetValueVariableBlock
+import com.unewexp.superblockly.blocks.voidBlocks.VariableDeclarationBlock
 import com.unewexp.superblockly.enums.BlockType
 import com.unewexp.superblockly.ui.theme.DrawerColor
 import com.unewexp.superblockly.ui.theme.SuperBlocklyTheme
+import com.unewexp.superblockly.viewBlocks.DeclarationVariableView
 import com.unewexp.superblockly.viewBlocks.DraggableBase
 import com.unewexp.superblockly.viewBlocks.DraggableBlock
 import com.unewexp.superblockly.viewBlocks.IntLiteralView
+import com.unewexp.superblockly.viewBlocks.IntLiteralViewForCard
 import com.unewexp.superblockly.viewBlocks.SetValueVariableView
+import com.unewexp.superblockly.viewBlocks.SetValueVariableViewForCard
+import com.unewexp.superblockly.viewBlocks.VariableReferenceView
 import com.unewexp.superblockly.viewBlocks.ViewSetValueVariableBlock
 import kotlinx.coroutines.launch
 
@@ -76,25 +93,6 @@ sealed class Routes(val route: String) {
     object MyProjects : Routes("my projects")
     object About : Routes("about")
 }
-
-sealed class ComponentConfig {
-    data class ChangeConfig(val onChange: (String) -> Unit) : ComponentConfig()
-}
-
-val componentMap: Map<BlockType, @Composable (ComponentConfig) -> Unit> = mapOf(
-    BlockType.INT_LITERAL to { config ->
-        when (config) {
-            is ComponentConfig.ChangeConfig -> IntLiteralView(config.onChange)
-            else -> error("Неверный тип конфига для кнопки")
-        }
-    },
-    BlockType.SET_VARIABLE_VALUE to { config ->
-        when (config) {
-            is ComponentConfig.ChangeConfig -> SetValueVariableView(config.onChange)
-            else -> error("Неверный тип конфига для чекбокса")
-        }
-    }
-)
 
 object BlockFactory {
     fun createIntBlock(x: Dp, y: Dp): ViewIntLiteralBlock {
@@ -180,13 +178,12 @@ fun CreateNewProject(
     val blockTypeTransferData = "block_type"
     val blockViewTransferData = "block_view"
 
-    val background_image = ImageBitmap.imageResource(id = R.drawable.holst_net)
-
     ModalNavigationDrawer(
         drawerState = drawerState,
+        gesturesEnabled = false,
         drawerContent = {
             Box(modifier = Modifier
-                .background(DrawerColor)
+                    .background(DrawerColor)
             ){
                 Column(
                     modifier = Modifier
@@ -198,35 +195,100 @@ fun CreateNewProject(
                     Column(
                         modifier = Modifier
                             .padding(10.dp, 0.dp)
-                        /*
-                        .dragAndDropSource(drawDragDecoration = {
-                            // UI перетаскиваемого элемента
-                        }){
-                            startTransfer(
-                                DragAndDropTransferData(
-                                    clipData = ClipData.newIntent(
-                                        "block_type",
-                                        Intent(transferAction).apply {
-                                            putExtra(
-                                                blockTypeTransferData,
-
-                                            )
-                                        }
-                                    )
-                                )
-                            )
-                        }
-                    */
                     ) {
                         Text("Математика", color = Color.White)
-                        IntLiteralBlockCard {
-                            val newBlock = IntLiteralBlock()
-                            viewModel.addBlock(DraggableBlock(newBlock.id.toString(), newBlock, 500f, 300f))
+                        Box(
+                            modifier = Modifier
+                                .dragAndDropSource(
+                                    drawDragDecoration = {
+                                        // Потом тут будет просто картинка, и в остальных перетаскиваемых блоках тоже
+                                        drawRect(
+                                            color = Color.Gray.copy(alpha = 0.7f),
+                                            size = Size(200f, 40f)
+                                        )
+                                    }
+                                ) {
+                                    startTransfer(
+                                        DragAndDropTransferData(
+                                            clipData = ClipData.newPlainText(
+                                                "block_type",
+                                                "IntLiteralBlock"
+                                            )
+                                        )
+                                    )
+                                }
+                        ) {
+                            IntLiteralBlockCard()
                         }
                         Text("Переменные", color = Color.White)
-                        SetValueVariableCard {
-                            val newBlock = SetValueVariableBlock()
-                            viewModel.addBlock(DraggableBlock(newBlock.id.toString(), newBlock, 500f, 300f))
+                        Box(
+                            modifier = Modifier
+                                .dragAndDropSource(
+                                    drawDragDecoration = {
+                                        // Потом тут будет просто картинка, и в остальных перетаскиваемых блоках тоже
+                                        drawRect(
+                                            color = Color.Gray.copy(alpha = 0.7f),
+                                            size = Size(20f, 40f)
+                                        )
+                                    }
+                                ) {
+                                    startTransfer(
+                                        DragAndDropTransferData(
+                                            clipData = ClipData.newPlainText(
+                                                "block_type",
+                                                "SetValueVariableBlock"
+                                            )
+                                        )
+                                    )
+                                }
+                        ) {
+                            SetValueVariableCard()
+                        }
+                        Box(
+                            modifier = Modifier
+                                .dragAndDropSource(
+                                    drawDragDecoration = {
+                                        // Потом тут будет просто картинка, и в остальных перетаскиваемых блоках тоже
+                                        drawRect(
+                                            color = Color.Gray.copy(alpha = 0.7f),
+                                            size = Size(20f, 40f)
+                                        )
+                                    }
+                                ) {
+                                    startTransfer(
+                                        DragAndDropTransferData(
+                                            clipData = ClipData.newPlainText(
+                                                "block_type",
+                                                "VariableDeclarationBlock"
+                                            )
+                                        )
+                                    )
+                                }
+                        ) {
+                            DeclarationVariableCard()
+                        }
+                        Box(
+                            modifier = Modifier
+                                .dragAndDropSource(
+                                    drawDragDecoration = {
+                                        // Потом тут будет просто картинка, и в остальных перетаскиваемых блоках тоже
+                                        drawRect(
+                                            color = Color.Gray.copy(alpha = 0.7f),
+                                            size = Size(20f, 40f)
+                                        )
+                                    }
+                                ) {
+                                    startTransfer(
+                                        DragAndDropTransferData(
+                                            clipData = ClipData.newPlainText(
+                                                "block_type",
+                                                "VariableReferenceBlock"
+                                            )
+                                        )
+                                    )
+                                }
+                        ) {
+                            ReferenceVariableCard()
                         }
                     }
                 }
@@ -252,20 +314,11 @@ fun CreateNewProject(
                 val offset = remember { mutableStateOf(Offset.Zero) }
                 val scale = remember { mutableFloatStateOf(1f) }
 
-                Image(
-
-                    painter = painterResource(id = R.drawable.holst_net),
-                    "someInfo",
-                    modifier = Modifier.fillMaxSize().padding(paddingValues),
-                    contentScale = ContentScale.FillBounds
-
-                )
-
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(paddingValues)
-                        .background(Color.Transparent)
+                        .background(Color.LightGray)
 
                         .transformable(
                             state = rememberTransformableState { zoomChange, offsetChange, _ ->
@@ -279,14 +332,53 @@ fun CreateNewProject(
                             translationX = offset.value.x,
                             translationY = offset.value.y
                         )
+                        .dragAndDropTarget(
+                            { event ->
+                                event.mimeTypes().contains(ClipDescription.MIMETYPE_TEXT_PLAIN)
+                            },
+                            target = object : DragAndDropTarget {
+                                override fun onDrop(event: DragAndDropEvent): Boolean {
+
+                                    val rawX = event.toAndroidDragEvent().x
+                                    val rawY = event.toAndroidDragEvent().y
+
+                                    val canvasPosition = Offset(
+                                        x = (rawX - offset.value.x) / scale.value,
+                                        y = (rawY - offset.value.y) / scale.value
+                                    )
+
+                                    val clipData = event.toAndroidDragEvent().clipData ?: return false
+                                    if (clipData.itemCount == 0) return false
+
+                                    val blockType = clipData.getItemAt(0).text?.toString() ?: return false
+
+                                    val newBlock = when (blockType) {
+                                        "IntLiteralBlock" -> IntLiteralBlock()
+                                        "SetValueVariableBlock" -> SetValueVariableBlock()
+                                        "VariableDeclarationBlock" -> VariableDeclarationBlock()
+                                        "VariableReferenceBlock" -> VariableReferenceBlock()
+                                        else -> {IntLiteralBlock()}
+                                    }
+
+                                    viewModel.addBlock(
+                                        DraggableBlock(
+                                            newBlock.id.toString(),
+                                            newBlock,
+                                            canvasPosition.x,
+                                            canvasPosition.y,
+                                            width = if (blockType == "IntLiteralBlock") 100 else 200
+                                        )
+                                    )
+                                    scope.launch { drawerState.close() }
+                                    return true
+                                }
+                            }
+                        )
                 ) {
                     blocks.forEach {
                         DraggableBase(
                             content = {
-                                componentMap.get(it.block.blockType)?.invoke(ComponentConfig.ChangeConfig({ newValue ->
-                                    viewModel.updateValue(it.id, newValue)
-                                }))
-
+                                IfItIsThisBlock(it, viewModel)
                                 Box(
                                     modifier = Modifier
                                         .size(15.dp, 15.dp)
@@ -302,9 +394,9 @@ fun CreateNewProject(
                                             .background(Color.Red)
                                     )
                                 }
-                                //Здесь будет отрисовка connector-ов
+
                             },
-                            it,
+                                    it,
                             onPositionChanged = { newX, newY ->
                                 viewModel.updateBlockPosition(it.id, newX, newY)
                             },
@@ -317,7 +409,6 @@ fun CreateNewProject(
             }
         )
     }
-
 }
 
 
@@ -390,5 +481,36 @@ fun toHomeBtn(navController: NavHostController){
         shape = RectangleShape,
     ) {
         Text("Домой")
+    }
+}
+
+@Composable
+fun IfItIsThisBlock(block: DraggableBlock, viewModel: DraggableViewModel = viewModel()){
+    val blockType = block.block.blockType
+    when(blockType){
+        BlockType.OPERAND -> TODO()
+        BlockType.SET_VARIABLE_VALUE -> SetValueVariableView({ newValue ->
+            viewModel.updateValue(block.id, newValue)
+        })
+        BlockType.START -> TODO()
+        BlockType.VARIABLE_DECLARATION -> DeclarationVariableView(
+            { newValue ->
+                viewModel.updateValue(block.id, newValue)
+            }
+        )
+        BlockType.INT_LITERAL -> IntLiteralView({ newValue ->
+            viewModel.updateValue(block.id, newValue)
+        })
+        BlockType.STRING_LITERAL -> TODO()
+        BlockType.BOOLEAN_LITERAL -> TODO()
+        BlockType.VARIABLE_REFERENCE -> VariableReferenceView(
+            { newValue ->
+                viewModel.updateValue(block.id, newValue)
+            }
+        )
+        BlockType.STRING_CONCAT -> TODO()
+        BlockType.STRING_APPEND -> TODO()
+        BlockType.VOID_BLOCK -> TODO()
+        BlockType.PRINT_BLOCK -> TODO()
     }
 }

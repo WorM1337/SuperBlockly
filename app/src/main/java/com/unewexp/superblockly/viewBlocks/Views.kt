@@ -133,3 +133,97 @@ fun SetValueVariableViewForCard(){
         )
     }
 }
+
+@Composable
+fun VariableReferenceView(
+    onNameChanged: (String) -> Unit
+){
+    var name by remember { mutableStateOf(TextFieldValue("")) }
+
+    TextField(
+        value = name,
+        onValueChange = {
+            if(it.text.isEmpty()){
+                name = TextFieldValue("")
+            }else{
+                name = it
+            }
+            onNameChanged(name.text)
+        },
+        placeholder = { Text("Var") },
+        singleLine = true,
+        modifier = Modifier
+            .padding(horizontal = 4.dp),
+        textStyle = MaterialTheme.typography.bodySmall
+    )
+}
+
+@Composable
+fun VariableReferenceViewForCard(){
+    var name by remember { mutableStateOf(TextFieldValue("")) }
+
+    TextField(
+        enabled = false,
+        value = name,
+        onValueChange = {},
+        placeholder = { Text("Var") },
+        singleLine = true,
+        modifier = Modifier
+            .padding(horizontal = 4.dp),
+        textStyle = MaterialTheme.typography.bodySmall
+    )
+}
+
+@Composable
+fun DeclarationVariableView(
+    onNameChanged: (String) -> Unit
+){
+
+    var name by remember { mutableStateOf(TextFieldValue("")) }
+
+    Row(verticalAlignment = Alignment.CenterVertically){
+        Text(
+            "Init",
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.padding(end = 4.dp)
+        )
+        TextField(
+            value = name,
+            onValueChange = {
+                name = it
+                onNameChanged(name.text)
+            },
+            placeholder = { Text("Var") },
+            singleLine = true,
+            modifier = Modifier
+                .weight(1f)
+                .padding(horizontal = 4.dp),
+            textStyle = MaterialTheme.typography.bodySmall
+        )
+    }
+}
+
+@Composable
+fun DeclarationVariableViewForCard(){
+
+    var name by remember { mutableStateOf(TextFieldValue("")) }
+
+    Row(verticalAlignment = Alignment.CenterVertically){
+        Text(
+            "Init",
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.padding(end = 4.dp)
+        )
+        TextField(
+            enabled = false,
+            value = name,
+            onValueChange = {},
+            placeholder = { Text("Var") },
+            singleLine = true,
+            modifier = Modifier
+                .weight(1f)
+                .padding(horizontal = 4.dp),
+            textStyle = MaterialTheme.typography.bodySmall
+        )
+    }
+}
