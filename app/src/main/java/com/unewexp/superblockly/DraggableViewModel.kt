@@ -45,9 +45,7 @@ class DraggableViewModel: ViewModel() {
             Log.i("${currentBlock.block.blockType}", "(${currentBlock.x} : ${currentBlock.y})")
         }
         _blocks.update {
-            _blocks.value.map { block ->
-                if (block.id == id) block else block
-            }.toMutableList()
+            (_blocks.value.filter { 1 != 0 }).toMutableList()
         }
     }
 
@@ -73,9 +71,17 @@ class DraggableViewModel: ViewModel() {
         if(block == null){
             return
         }
+
+        // Удаляем все соединения
+        block.outputConnectionView?.connector?.connectedTo = null
+        block.inputConnectionViews.forEach { it.connector.connectedTo = null }
+
         block.scope.forEach {
             removeBlock(it.id)
         }
+
+        Log.i("Delete", "${block.block.blockType}")
+        block.scope.clear()
         _blocks.update {
             (_blocks.value.filter { it != block }).toMutableList()
         }

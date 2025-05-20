@@ -1,5 +1,6 @@
 package com.unewexp.superblockly.model
 
+import android.util.Log
 import androidx.compose.ui.unit.dp
 import com.example.myfirstapplicatioin.blocks.Block
 import com.example.myfirstapplicatioin.blocks.literals.IntLiteralBlock
@@ -28,7 +29,7 @@ import kotlin.math.min
 import kotlin.math.sqrt
 
 object ConnectorManager {
-    val connetionLength = 200.0
+    val connetionLength = 50.0
 
 
     fun tryConnectDrag(sourceDragBlock: DraggableBlock, viewModel: DraggableViewModel){
@@ -48,6 +49,8 @@ object ConnectorManager {
                 nearestBlock.y + nearestConnection.positionY.value - sourceDragBlock.y
             )
             nearestBlock.scope.add(sourceDragBlock)
+            Log.i("Connect", "${sourceDragBlock.block.blockType}")
+
         }
     }
 

@@ -5,6 +5,7 @@ package com.unewexp.superblockly
 import android.content.ClipData
 import android.content.ClipDescription
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -19,6 +20,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -55,6 +57,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
@@ -316,15 +319,22 @@ fun CreateNewProject(
                 val offset = remember { mutableStateOf(Offset.Zero) }
                 val scale = remember { mutableFloatStateOf(1f) }
 
+                val startW = LocalConfiguration.current.screenWidthDp
+                val startH = LocalConfiguration.current.screenHeightDp
+                var currentScale = remember{ mutableStateOf(1f) }
+
                 Box(
                     modifier = Modifier
-                        .fillMaxSize()
+                        .width(4000.dp)
+                        .height(2000.dp)
                         .padding(paddingValues)
                         .background(Color.LightGray)
 
                         .transformable(
                             state = rememberTransformableState { zoomChange, offsetChange, _ ->
+                                Log.i("ZOOM", zoomChange.toString())
                                 scale.value *= 1f + (zoomChange - 1f) * zoomFactor
+                                currentScale.value += scale.floatValue - 1
                                 offset.value += offsetChange
                             }
                         )
@@ -344,10 +354,15 @@ fun CreateNewProject(
                                     val rawX = event.toAndroidDragEvent().x
                                     val rawY = event.toAndroidDragEvent().y
 
+                                    Log.i("RawX = ", "$rawX")
+                                    Log.i("RawY = ", "$rawY")
                                     val canvasPosition = Offset(
-                                        x = (rawX - offset.value.x) / scale.value,
-                                        y = (rawY - offset.value.y) / scale.value
+                                        x = (rawX + offset.value.x) / currentScale.value,
+                                        y = (rawY + offset.value.y) / currentScale.value
                                     )
+                                    Log.i("scale", currentScale.value.toString())
+                                    Log.i("canvasPosition.x = ", "${canvasPosition.x}")
+                                    Log.i("canvasPosition.y = ", "${canvasPosition.y}")
 
                                     val clipData = event.toAndroidDragEvent().clipData ?: return false
                                     if (clipData.itemCount == 0) return false
@@ -401,8 +416,9 @@ fun CreateNewProject(
                                     it,
                             onPositionChanged = { offsetX, offsetY ->
                                 viewModel.updateBlockPosition(it.id, offsetX, offsetY)
+                                blocks
                             },
-                            onDoubleTap = { id ->
+                            onDoubleTap = {
                                 viewModel.removeBlock(it.id)
                             },
                             onDragEnd = {

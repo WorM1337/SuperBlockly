@@ -8,7 +8,7 @@ import java.util.UUID
 
 
 open class VoidBlock(
-    id: UUID = UUID.randomUUID(),
+    id: UUID,
     blockType: BlockType
 ) : Block(id, blockType) {
     val topConnector = Connector(

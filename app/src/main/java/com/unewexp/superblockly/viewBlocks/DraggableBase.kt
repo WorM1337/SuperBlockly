@@ -1,5 +1,6 @@
 package com.unewexp.superblockly.viewBlocks
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,12 +29,18 @@ fun DraggableBase(
     content: @Composable () -> Unit,
     draggableBlock: DraggableBlock,
     onPositionChanged: (Float, Float) -> Unit,
-    onDoubleTap: (String) -> Unit,
+    onDoubleTap: () -> Unit,
     onDragEnd: () -> Unit
 ){
 
+
     var offsetX by remember { mutableStateOf(draggableBlock.x) }
     var offsetY by remember { mutableStateOf(draggableBlock.y) }
+
+//    LaunchedEffect(draggableBlock) {
+//        offsetX = draggableBlock.x
+//        offsetY = draggableBlock.y
+//    }
 
     Box(
         modifier = Modifier
@@ -48,13 +56,14 @@ fun DraggableBase(
                     change.consume()
                     offsetX += dragAmount.x
                     offsetY += dragAmount.y
+                    Log.i("IdBlock", draggableBlock.id)
                     onPositionChanged(dragAmount.x, dragAmount.y)
                 }
             }
             .pointerInput(Unit){
                 detectTapGestures(
                     onDoubleTap = {
-                        onDoubleTap(draggableBlock.id)
+                        onDoubleTap()
                     }
                 )
             }
