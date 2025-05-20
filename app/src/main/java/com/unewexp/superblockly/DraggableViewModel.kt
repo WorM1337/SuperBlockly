@@ -13,25 +13,27 @@ import com.unewexp.superblockly.enums.BlockType
 import com.unewexp.superblockly.viewBlocks.DraggableBlock
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import java.util.UUID
 import kotlin.math.abs
 
 class DraggableViewModel: ViewModel() {
-    private val _blocks = MutableStateFlow<MutableList<DraggableBlock>>(mutableListOf())
-    val blocks = _blocks.asStateFlow()
 
     private val _inputConnectors = MutableStateFlow<MutableMap<UUID, ConnectionView>>(mutableMapOf())
     private val _outputConnectors = MutableStateFlow<MutableMap<UUID, ConnectionView>>(mutableMapOf())
     private val _topConnectors = MutableStateFlow<MutableMap<UUID, ConnectionView>>(mutableMapOf())
     private val _bottomConnectors = MutableStateFlow<MutableMap<UUID, ConnectionView>>(mutableMapOf())
 
+    private val _blocks = MutableStateFlow<MutableList<DraggableBlock>>(mutableListOf())
+    val blocks = _blocks.asStateFlow()
+
     fun addBlock(dragBlock: DraggableBlock) {
-        _blocks.value.add(dragBlock)
+        _blocks.update {
+            (_blocks.value.toList() + dragBlock).toMutableList()
+        }
     }
 
     fun updateBlockPosition(id: String, offsetX: Float, offsetY: Float) {
-
-
         val currentBlock = findBlockById(id)
         currentBlock?.let {
             currentBlock.x = currentBlock.x + offsetX
@@ -42,10 +44,12 @@ class DraggableViewModel: ViewModel() {
                 updateBlockPosition(it.id, offsetX, offsetY)
             }
         }
+
         _blocks.value = _blocks.value.map { block ->
             if (block.id == id) block.copy() else block
         }.toMutableList()
     }
+
     fun updateBlockPositionByXY(id: String, newX: Float, newY: Float) {
 
         val currentBlock = findBlockById(id)
@@ -68,7 +72,9 @@ class DraggableViewModel: ViewModel() {
         if(block == null){
             return
         }
-        _blocks.value.remove(block)
+        _blocks.update {
+            (_blocks.value.filter { it != block }).toMutableList()
+        }
     }
 
     fun findBlockById(id: String): DraggableBlock?{
