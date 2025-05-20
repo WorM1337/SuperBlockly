@@ -61,6 +61,8 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.pointerInteropFilter
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
@@ -182,7 +184,10 @@ fun CreateNewProject(
     val canBeDraggable = remember { mutableStateOf(false) }
 
     var currentDragPosition by remember { mutableStateOf(Offset.Zero) }
-    var dragStartPosition by remember { mutableStateOf(Offset.Zero) }
+    var dragStartPosition1 by remember { mutableStateOf(Offset.Zero) }
+    var dragStartPosition2 by remember { mutableStateOf(Offset.Zero) }
+    var dragStartPosition3 by remember { mutableStateOf(Offset.Zero) }
+    var dragStartPosition4 by remember { mutableStateOf(Offset.Zero) }
 
     var ghostVisible by remember { mutableStateOf(false) }
     var ghostPosition by remember { mutableStateOf(Offset.Zero) }
@@ -211,6 +216,9 @@ fun CreateNewProject(
                         Text("Математика", color = Color.White)
                         Box(
                             modifier = Modifier
+                                .onGloballyPositioned{ coordinates ->
+                                    dragStartPosition1 = coordinates.positionInRoot()
+                                }
                                 .pointerInput(Unit){
                                     detectTapGestures(
                                         onLongPress = {
@@ -229,10 +237,10 @@ fun CreateNewProject(
                                     detectDragGestures(
                                         onDragStart = { offset ->
                                             ghostContent = { IntLiteralBlockCard() }
-                                            ghostPosition = offset
+                                            ghostPosition = dragStartPosition1
+                                            currentDragPosition = dragStartPosition1
                                             ghostVisible = true
                                             canBeDraggable.value = true
-                                            dragStartPosition = offset
                                         },
                                         onDrag = { change, dragAmount ->
                                             change.consume()
@@ -267,6 +275,9 @@ fun CreateNewProject(
                         Text("Переменные", color = Color.White)
                         Box(
                             modifier = Modifier
+                                .onGloballyPositioned{ coordinates ->
+                                    dragStartPosition2 = coordinates.positionInRoot()
+                                }
                                 .pointerInput(Unit){
                                     detectTapGestures(
                                         onLongPress = {
@@ -285,10 +296,10 @@ fun CreateNewProject(
                                     detectDragGestures(
                                         onDragStart = { offset ->
                                             ghostContent = { SetValueVariableCard() }
-                                            ghostPosition = offset
+                                            ghostPosition = dragStartPosition2
+                                            currentDragPosition = dragStartPosition2
                                             ghostVisible = true
                                             canBeDraggable.value = true
-                                            dragStartPosition = offset
                                         },
                                         onDrag = { change, dragAmount ->
                                             change.consume()
@@ -322,6 +333,9 @@ fun CreateNewProject(
                         }
                         Box(
                             modifier = Modifier
+                                .onGloballyPositioned{ coordinates ->
+                                    dragStartPosition3 = coordinates.positionInRoot()
+                                }
                                 .pointerInput(Unit){
                                     detectTapGestures(
                                         onLongPress = {
@@ -340,10 +354,10 @@ fun CreateNewProject(
                                     detectDragGestures(
                                         onDragStart = { offset ->
                                             ghostContent = { DeclarationVariableCard() }
-                                            ghostPosition = offset
+                                            ghostPosition = dragStartPosition3
+                                            currentDragPosition = dragStartPosition3
                                             ghostVisible = true
                                             canBeDraggable.value = true
-                                            dragStartPosition = offset
                                         },
                                         onDrag = { change, dragAmount ->
                                             change.consume()
@@ -377,6 +391,9 @@ fun CreateNewProject(
                         }
                         Box(
                             modifier = Modifier
+                                .onGloballyPositioned{ coordinates ->
+                                    dragStartPosition4 = coordinates.positionInRoot()
+                                }
                                 .pointerInput(Unit){
                                     detectTapGestures(
                                         onLongPress = {
@@ -395,10 +412,10 @@ fun CreateNewProject(
                                     detectDragGestures(
                                         onDragStart = { offset ->
                                             ghostContent = { ReferenceVariableCard() }
-                                            ghostPosition = offset
+                                            ghostPosition = dragStartPosition4
+                                            currentDragPosition = dragStartPosition4
                                             ghostVisible = true
                                             canBeDraggable.value = true
-                                            dragStartPosition = offset
                                         },
                                         onDrag = { change, dragAmount ->
                                             change.consume()
