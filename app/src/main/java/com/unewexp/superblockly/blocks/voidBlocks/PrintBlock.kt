@@ -7,10 +7,7 @@ import com.unewexp.superblockly.enums.ConnectorType
 import java.lang.IllegalStateException
 import java.util.UUID
 
-class PrintBlock(
-    id: UUID = UUID.randomUUID(),
-    blockType: BlockType = BlockType.PRINT_BLOCK
-) : VoidBlock(id, blockType) {
+class PrintBlock() : VoidBlock(UUID.randomUUID(), BlockType.PRINT_BLOCK) {
 
     val inputConnector = Connector(
         connectionType = ConnectorType.INPUT,
