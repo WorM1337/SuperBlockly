@@ -35,19 +35,19 @@ class DraggableViewModel: ViewModel() {
 
     fun updateBlockPosition(id: String, offsetX: Float, offsetY: Float) {
         val currentBlock = findBlockById(id)
+        currentBlock?.scope?.forEach {
+            //if (abs(offsetX) < 1.0 && abs(offsetY) < 1.0) return
+            updateBlockPosition(it.id, offsetX, offsetY)
+        }
         currentBlock?.let {
             currentBlock.x = currentBlock.x + offsetX
             currentBlock.y = currentBlock.y + offsetY
             Log.i("${currentBlock.block.blockType}", "(${currentBlock.x} : ${currentBlock.y})")
-            _blocks.update {
-                _blocks.value.map { block ->
-                    if (block.id == id) block else block
-                }.toMutableList()
-            }
-            currentBlock.scope.forEach {
-                if (abs(offsetX) < 1.0 && abs(offsetY) < 1.0) return
-                updateBlockPosition(it.id, offsetX, offsetY)
-            }
+        }
+        _blocks.update {
+            _blocks.value.map { block ->
+                if (block.id == id) block else block
+            }.toMutableList()
         }
     }
 
