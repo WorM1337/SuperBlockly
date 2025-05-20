@@ -13,14 +13,9 @@ class BooleanLiteralBlock(var initialValue: Boolean = false) : Block(UUID.random
     val outputConnector = Connector(
         connectionType = ConnectorType.OUTPUT,
         sourceBlock = this,
-        allowedBlockTypes = setOf(
-            BlockType.VARIABLE_DECLARATION
-        ),
-        allowedDataTypes = setOf(Boolean::class.java)
     )
 
     var value by mutableStateOf(initialValue)
-
 
     override fun evaluate(): Boolean = value
 }

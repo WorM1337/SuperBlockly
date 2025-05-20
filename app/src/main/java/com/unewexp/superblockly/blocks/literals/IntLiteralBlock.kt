@@ -15,13 +15,6 @@ class IntLiteralBlock(var initialValue: Int = 123 ) : Block(UUID.randomUUID(), B
     val outputConnector = Connector(
         connectionType = ConnectorType.OUTPUT,
         sourceBlock = this,
-        allowedBlockTypes = setOf(
-            BlockType.OPERAND,
-            BlockType.VARIABLE_DECLARATION,
-            BlockType.SET_VARIABLE_VALUE
-        ),
-        allowedDataTypes = setOf(Int::class.java)
-        // Int::class.java - означает, что тут можно использовать только тип данных int
     )
 
     var value by mutableIntStateOf(initialValue)

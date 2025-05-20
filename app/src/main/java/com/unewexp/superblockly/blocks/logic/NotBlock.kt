@@ -17,12 +17,7 @@ class NotBlock : Block(UUID.randomUUID(), BlockType.NOT_BLOCK) {
     val inputConnector = Connector(
         connectionType = ConnectorType.INPUT,
         sourceBlock = this,
-        allowedBlockTypes = setOf(
-            BlockType.BOOLEAN_LOGIC_BLOCK,
-            BlockType.BOOLEAN_LITERAL,
-            BlockType.COMPARE_NUMBERS_BLOCK,
-            BlockType.VARIABLE_REFERENCE
-        )
+        allowedDataTypes = setOf(Boolean::class.java)
     )
 
     override fun evaluate(): Boolean {

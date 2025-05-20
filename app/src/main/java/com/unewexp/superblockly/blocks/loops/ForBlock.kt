@@ -19,33 +19,18 @@ class ForBlock(var initialName: String = "i") : LoopBlock(UUID.randomUUID(), Blo
     val initialValueBlock = Connector(
         connectionType = ConnectorType.INPUT,
         sourceBlock = this,
-        allowedBlockTypes = setOf(
-            BlockType.INT_LITERAL,
-            BlockType.OPERAND,
-            BlockType.VARIABLE_REFERENCE,
-        ),
         allowedDataTypes = setOf(Int::class.java)
     )
 
     val maxValueBlock = Connector(
         connectionType = ConnectorType.INPUT,
         sourceBlock = this,
-        allowedBlockTypes = setOf(
-            BlockType.INT_LITERAL,
-            BlockType.OPERAND,
-            BlockType.VARIABLE_REFERENCE,
-        ),
         allowedDataTypes = setOf(Int::class.java)
     )
 
     val stepBlock = Connector(
         connectionType = ConnectorType.INPUT,
         sourceBlock = this,
-        allowedBlockTypes = setOf(
-            BlockType.INT_LITERAL,
-            BlockType.OPERAND,
-            BlockType.VARIABLE_REFERENCE,
-        ),
         allowedDataTypes = setOf(Int::class.java)
     )
 

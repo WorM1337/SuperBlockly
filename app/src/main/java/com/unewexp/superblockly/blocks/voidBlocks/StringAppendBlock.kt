@@ -11,38 +11,6 @@ import com.unewexp.superblockly.enums.ConnectorType
 import java.util.UUID
 
 class StringAppendBlock : VoidBlock(UUID.randomUUID(), BlockType.STRING_APPEND) {
-//    val variableInputConnector = Connector(
-//        connectionType = ConnectorType.INPUT,
-//        sourceBlock = this,
-//        allowedBlockTypes = setOf(BlockType.VARIABLE_REFERENCE),
-//        allowedDataTypes = setOf(String::class.java)
-//    )
-//
-//    val stringToAppendConnector = Connector(
-//        connectionType = ConnectorType.INPUT,
-//        sourceBlock = this,
-//        allowedBlockTypes = setOf(
-//            BlockType.STRING_LITERAL,
-//            BlockType.VARIABLE_REFERENCE,
-//            BlockType.STRING_CONCAT,
-//            BlockType.INT_LITERAL
-//        ),
-//        allowedDataTypes = setOf(String::class.java, Int::class.java)
-//    )
-//
-//    override fun execute() {
-//        val variableName = (variableInputConnector.connectedTo as? VariableReferenceBlock)?.selectedVariableName
-//            ?: throw IllegalStateException("Не указана переменная")
-//
-//        val currentValue = ExecutionContext.getVariable(variableName) as? String
-//            ?: throw IllegalStateException("Переменная '$variableName' не является строкой")
-//
-//        val stringToAppend = stringToAppendConnector.connectedTo?.evaluate()?.toString()
-//            ?: throw IllegalStateException("Не указана строка для добавления")
-//
-//        ExecutionContext.setVariable(variableName, currentValue + stringToAppend)
-//    }
-
 
     var variableName by mutableStateOf("Undefined")
 
@@ -53,7 +21,14 @@ class StringAppendBlock : VoidBlock(UUID.randomUUID(), BlockType.STRING_APPEND) 
             BlockType.STRING_LITERAL,
             BlockType.VARIABLE_REFERENCE,
             BlockType.STRING_CONCAT,
-            BlockType.INT_LITERAL
+            BlockType.INT_LITERAL,
+            BlockType.NOT_BLOCK,
+            BlockType.BOOLEAN_LOGIC_BLOCK,
+            BlockType.COMPARE_NUMBERS_BLOCK,
+            BlockType.BOOLEAN_LITERAL,
+            BlockType.GET_VALUE_BY_INDEX,
+            BlockType.GET_LIST_SIZE,
+            BlockType.OPERAND
         ),
         allowedDataTypes = setOf(
             String::class.java,

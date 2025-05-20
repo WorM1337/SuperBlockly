@@ -14,33 +14,21 @@ class OperandBlock : Block(UUID.randomUUID(), BlockType.OPERAND) {
     val outputConnector = Connector(
         connectionType = ConnectorType.OUTPUT,
         sourceBlock = this,
-        allowedDataTypes = setOf(Int::class.java)
     )
 
     val leftInputConnector = Connector(
         connectionType = ConnectorType.INPUT,
         sourceBlock = this,
-        allowedBlockTypes = setOf(
-            BlockType.OPERAND,
-            BlockType.INT_LITERAL,
-            BlockType.VARIABLE_REFERENCE
-        ),
         allowedDataTypes = setOf(Int::class.java)
     )
 
     val rightInputConnector = Connector(
         connectionType = ConnectorType.INPUT,
         sourceBlock = this,
-        allowedBlockTypes = setOf(
-            BlockType.OPERAND,
-            BlockType.INT_LITERAL,
-            BlockType.VARIABLE_REFERENCE
-        ),
         allowedDataTypes = setOf(Int::class.java)
     )
 
     var operand by mutableStateOf(OperandType.PLUS)
-
 
     override fun evaluate(): Int {
         val left = leftInputConnector.connectedTo?.evaluate() as? Int
@@ -49,7 +37,6 @@ class OperandBlock : Block(UUID.randomUUID(), BlockType.OPERAND) {
             ?: throw IllegalArgumentException("Ожидается числовое значение")
         return performOperation(left, right)
     }
-
 
 
     private fun performOperation(left: Int, right: Int): Int {

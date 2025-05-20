@@ -22,11 +22,6 @@ class ShorthandArithmeticOperatorBlock(var initialVariableName: String = "Undefi
     val inputConnector = Connector(
         connectionType = ConnectorType.INPUT,
         sourceBlock = this,
-        allowedBlockTypes = setOf(
-            BlockType.OPERAND,
-            BlockType.VARIABLE_REFERENCE,
-            BlockType.INT_LITERAL,
-        ),
         allowedDataTypes = setOf(Int::class.java)
     )
 

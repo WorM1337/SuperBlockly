@@ -16,29 +16,19 @@ class BooleanLogicBlock : Block(UUID.randomUUID(), BlockType.BOOLEAN_LOGIC_BLOCK
     val outputConnector = Connector(
         connectionType = ConnectorType.OUTPUT,
         sourceBlock = this,
-//        allowedDataTypes = setOf(Boolean::class.java)
+
     )
 
     val leftInputConnector = Connector(
         connectionType = ConnectorType.INPUT,
         sourceBlock = this,
-        allowedBlockTypes = setOf(
-            BlockType.BOOLEAN_LOGIC_BLOCK,
-            BlockType.COMPARE_NUMBERS_BLOCK,
-            BlockType.VARIABLE_REFERENCE, // если Boolean
-            BlockType.BOOLEAN_LITERAL
-        )
+        allowedDataTypes = setOf(Boolean::class.java)
     )
 
     val rightInputConnector = Connector(
         connectionType = ConnectorType.INPUT,
         sourceBlock = this,
-        allowedBlockTypes = setOf(
-            BlockType.BOOLEAN_LOGIC_BLOCK,
-            BlockType.COMPARE_NUMBERS_BLOCK,
-            BlockType.VARIABLE_REFERENCE, // если Boolean
-            BlockType.BOOLEAN_LITERAL
-        )
+        allowedDataTypes = setOf(Boolean::class.java)
     )
 
     var logicOperand by mutableStateOf(BooleanLogicType.AND)

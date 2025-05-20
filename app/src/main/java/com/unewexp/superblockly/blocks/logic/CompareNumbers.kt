@@ -14,27 +14,18 @@ class CompareNumbers : Block(UUID.randomUUID(), BlockType.COMPARE_NUMBERS_BLOCK)
     val outputConnector = Connector(
         connectionType = ConnectorType.OUTPUT,
         sourceBlock = this,
-//        allowedDataTypes = setOf(Boolean::class.java)
     )
-    // нужно сделать проверку типов у коннекторов, то есть тип левого коннектора равен типу правого
+
     val leftInputConnector = Connector(
         connectionType = ConnectorType.INPUT,
         sourceBlock = this,
-        allowedBlockTypes = setOf(
-            BlockType.OPERAND,
-            BlockType.INT_LITERAL,
-            BlockType.VARIABLE_REFERENCE
-        )
+        allowedDataTypes = setOf(Int::class.java)
     )
 
     val rightInputConnector = Connector(
         connectionType = ConnectorType.INPUT,
         sourceBlock = this,
-        allowedBlockTypes = setOf(
-            BlockType.OPERAND,
-            BlockType.INT_LITERAL,
-            BlockType.VARIABLE_REFERENCE
-        )
+        allowedDataTypes = setOf(Int::class.java)
     )
 
     var compareType by mutableStateOf(CompareType.GREATER)

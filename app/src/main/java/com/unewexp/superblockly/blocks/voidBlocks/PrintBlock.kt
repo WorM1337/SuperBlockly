@@ -15,14 +15,7 @@ class PrintBlock(
     val inputConnector = Connector(
         connectionType = ConnectorType.INPUT,
         sourceBlock = this,
-        allowedBlockTypes = setOf(
-            BlockType.VARIABLE_REFERENCE,
-            BlockType.STRING_CONCAT,
-            BlockType.INT_LITERAL,
-            BlockType.OPERAND,
-            BlockType.BOOLEAN_LITERAL,
-            BlockType.STRING_LITERAL,
-        )
+        allowedDataTypes = setOf(Int::class.java, String::class.java, Boolean::class.java)
     )
 
     override fun execute() {
