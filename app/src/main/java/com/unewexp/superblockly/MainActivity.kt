@@ -65,6 +65,7 @@ import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
@@ -93,6 +94,9 @@ import com.unewexp.superblockly.viewBlocks.VariableReferenceView
 import com.unewexp.superblockly.viewBlocks.ViewSetValueVariableBlock
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
+
+
+
 
 sealed class Routes(val route: String) {
 
@@ -178,6 +182,14 @@ fun CreateNewProject(
     navController: NavHostController,
     viewModel: DraggableViewModel = viewModel()
 ){
+    val density = LocalDensity.current
+
+    fun dpToPx(dp: Dp): Float {
+        val pxValue = with(density) {dp.toPx()}  // Упрощённый расчёт
+
+        return pxValue.toFloat()
+    }
+
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
@@ -256,7 +268,7 @@ fun CreateNewProject(
                                                     newBlock,
                                                     mutableStateOf(currentDragPosition.x - globalOffset.value.x),
                                                     mutableStateOf(currentDragPosition.y - globalOffset.value.y),
-                                                    width = 100
+                                                    width = 100.dp
                                                 )
                                             )
                                             ghostVisible = false
@@ -315,7 +327,7 @@ fun CreateNewProject(
                                                     newBlock,
                                                     mutableStateOf(currentDragPosition.x - globalOffset.value.x),
                                                         mutableStateOf(currentDragPosition.y - globalOffset.value.y),
-                                                    width = 100
+                                                    width = 100.dp
                                                 )
                                             )
                                             ghostVisible = false
@@ -373,7 +385,7 @@ fun CreateNewProject(
                                                     newBlock,
                                                     mutableStateOf(currentDragPosition.x - globalOffset.value.x),
                                                     mutableStateOf(currentDragPosition.y - globalOffset.value.y),
-                                                    width = 100
+                                                    width = 100.dp
                                                 )
                                             )
                                             ghostVisible = false
@@ -431,7 +443,7 @@ fun CreateNewProject(
                                                     newBlock,
                                                     mutableStateOf((currentDragPosition.x - globalOffset.value.x).dp.value),
                                                     mutableStateOf((currentDragPosition.y - globalOffset.value.y).dp.value),
-                                                    width = 100
+                                                    width = 100.dp
                                                 )
                                             )
                                             ghostVisible = false
@@ -513,16 +525,16 @@ fun CreateNewProject(
                                 IfItIsThisBlock(it, viewModel)
                                 Box(
                                     modifier = Modifier
-                                        .size(15.dp, 15.dp)
-                                        .offset(it.outputConnectionView!!.positionX - 7.dp, it.outputConnectionView!!.positionY - 7.dp)
+                                        .size(15.dp)
+                                        .offset(it.outputConnectionView!!.positionX, it.outputConnectionView!!.positionY)
                                         .background(Color.Red)
                                 )
 
                                 it.inputConnectionViews.forEach{
                                     Box(
                                         modifier = Modifier
-                                            .size(15.dp, 15.dp)
-                                            .offset(it.positionX - 7.dp, it.positionY - 7.dp)
+                                            .size(15.dp)
+                                            .offset(it.positionX, it.positionY)
                                             .background(Color.Red)
                                     )
                                 }
@@ -536,18 +548,33 @@ fun CreateNewProject(
                                 viewModel.removeBlock(it.id)
                             },
                             onDragEnd = {
-                                ConnectorManager.tryConnectDrag(it, viewModel)
+                                ConnectorManager.tryConnectDrag(it, viewModel, density)
                             }
                         )
+
                         Box(modifier = Modifier
+                            .size(15.dp)
                             .offset {
                                 IntOffset(
-                                    (it.x.value + it.outputConnectionView!!.positionX.value).roundToInt(),
-                                    (it.y.value + it.outputConnectionView!!.positionY.value).roundToInt()
+                                    (it.x.value + dpToPx(it.outputConnectionView!!.positionX)).roundToInt(),
+                                    (it.y.value + dpToPx(it.outputConnectionView!!.positionY)).roundToInt()
                                 )
                             }
                             .background(Color.Green)
-                            .size(15.dp))
+
+                        )
+                        it.inputConnectionViews.forEach { connectionView ->
+                            Box(modifier = Modifier
+                                .size(15.dp)
+                                .offset {
+                                    IntOffset(
+                                        (it.x.value + dpToPx(connectionView.positionX)).roundToInt(),
+                                        (it.y.value + dpToPx(connectionView.positionY)).roundToInt()
+                                    )
+                                }
+                                .background(Color.Magenta)
+                            )
+                        }
                     }
                 }
             }

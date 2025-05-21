@@ -1,6 +1,7 @@
 package com.unewexp.superblockly.viewBlocks
 
 import androidx.compose.runtime.MutableState
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.myfirstapplicatioin.blocks.Block
 import com.example.myfirstapplicatioin.model.ConnectionView
@@ -15,15 +16,15 @@ data class DraggableBlock(
     var outputConnectionView: ConnectionView? = null,
     var inputConnectionViews: MutableList<ConnectionView> = mutableListOf(),
     val scope: MutableList<DraggableBlock> = mutableListOf(),
-    var width: Int = 100,
-    var height: Int = 60,
+    var width: Dp = 100.dp,
+    var height: Dp = 60.dp,
 ){
     init {
 
         if(!ViewInitialSize.sizeDictionary.containsKey(block.blockType)) throw IllegalArgumentException("Ошибка инициализации блока")
 
-        width = ViewInitialSize.sizeDictionary[block.blockType]!!.x.value.toInt()
-        height = ViewInitialSize.sizeDictionary[block.blockType]!!.y.value.toInt()
+        width = ViewInitialSize.sizeDictionary[block.blockType]!!.x
+        height = ViewInitialSize.sizeDictionary[block.blockType]!!.y
 
         val connectionViews = ConnectorManager.initConnectionsFromBlock(block)
 

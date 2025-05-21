@@ -41,7 +41,7 @@ fun DraggableBase(
     Box(
         modifier = Modifier
             .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
-            .size(draggableBlock.width.dp, draggableBlock.height.dp)
+            .size(draggableBlock.width, draggableBlock.height)
             .background(Color(0xFFE0E0E0), shape = MaterialTheme.shapes.small)
             .pointerInput(Unit) {
                 detectDragGestures(
