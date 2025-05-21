@@ -54,8 +54,8 @@ fun DraggableBase(
                     }
                 ) { change, dragAmount ->
                     change.consume()
-                    offsetX += dragAmount.x
-                    offsetY += dragAmount.y
+                    offsetX = draggableBlock.x
+                    offsetY = draggableBlock.y
                     Log.i("IdBlock", draggableBlock.id)
                     onPositionChanged(dragAmount.x, dragAmount.y)
                 }

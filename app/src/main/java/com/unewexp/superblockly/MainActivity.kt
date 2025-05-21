@@ -492,7 +492,6 @@ fun CreateNewProject(
 
                         .transformable(
                             state = rememberTransformableState { zoomChange, offsetChange, _ ->
-                                Log.i("ZOOM", zoomChange.toString())
                                 scale.value *= 1f + (zoomChange - 1f) * zoomFactor
                                 currentScale.value += scale.floatValue - 1
                                 globalOffset.value += offsetChange
