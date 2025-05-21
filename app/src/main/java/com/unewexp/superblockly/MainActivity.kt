@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -465,7 +466,9 @@ fun CreateNewProject(
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {
-                Row {
+                Row(
+                    modifier = Modifier.fillMaxWidth().background(Color.White)
+                ) {
                     Box(contentAlignment = Alignment.TopStart) {
                         IconButton(onClick = { scope.launch { drawerState.open() } }) {
                             Icon(Icons.Filled.List, null)
