@@ -1,6 +1,7 @@
 package com.unewexp.superblockly.model
 
 import android.util.Log
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.example.myfirstapplicatioin.blocks.Block
 import com.example.myfirstapplicatioin.blocks.literals.IntLiteralBlock
@@ -26,6 +27,8 @@ import com.unewexp.superblockly.viewBlocks.ViewInitialSize
 import java.lang.Math.pow
 import kotlin.coroutines.coroutineContext
 import kotlin.math.min
+import kotlin.math.pow
+import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
 object ConnectorManager {
@@ -34,7 +37,7 @@ object ConnectorManager {
 
     fun tryConnectDrag(sourceDragBlock: DraggableBlock, viewModel: DraggableViewModel){
 
-        val listDragBlocks = viewModel.blocks.value.filter { !(it in sourceDragBlock.scope) && (it != sourceDragBlock) }.toMutableList()
+        val listDragBlocks = viewModel.blocks.value.filter { it !in sourceDragBlock.scope && (it != sourceDragBlock) }.toMutableList()
 
         val nearestBlock = getBlockWithNearestConnection(sourceDragBlock, listDragBlocks)
         val nearestConnection = getNearestConnection(sourceDragBlock, listDragBlocks)
@@ -61,12 +64,14 @@ object ConnectorManager {
         connection1: ConnectionView,
         connection2: ConnectionView,
     ): Double {
-        val x1 = dragBlock1.x.value.toDouble() + connection1.positionX.value.toDouble()
-        val y1 = dragBlock1.y.value.toDouble() + connection1.positionY.value.toDouble()
-        val x2 = dragBlock2.x.value.toDouble() + connection2.positionX.value.toDouble()
-        val y2 = dragBlock2.y.value.toDouble() + connection2.positionY.value.toDouble()
+        val x1 = (dragBlock1.x.value + connection1.positionX.value).roundToInt()
+        val y1 = (dragBlock1.y.value + connection1.positionY.value).roundToInt()
+        val o1 = IntOffset(x1, y1)
+        val x2 = (dragBlock2.x.value + connection2.positionX.value).roundToInt()
+        val y2 = (dragBlock2.y.value + connection2.positionY.value).roundToInt()
+        val o2 = IntOffset(x2, y2)
 
-        return sqrt(pow(x1-x2,2.0) + pow(y1-y2, 2.0))
+        return sqrt((o1.x - o2.x).toDouble().pow(2) + (o1.y - o2.y).toDouble().pow(2))
     }
     fun getBlockWithNearestConnection(dragBlock: DraggableBlock, listBlocks: MutableList<DraggableBlock>): DraggableBlock? {
 

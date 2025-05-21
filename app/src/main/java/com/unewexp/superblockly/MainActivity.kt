@@ -429,8 +429,8 @@ fun CreateNewProject(
                                                 DraggableBlock(
                                                     newBlock.id.toString(),
                                                     newBlock,
-                                                    mutableStateOf(currentDragPosition.x - globalOffset.value.x),
-                                                    mutableStateOf(currentDragPosition.y - globalOffset.value.y),
+                                                    mutableStateOf((currentDragPosition.x - globalOffset.value.x).dp.value),
+                                                    mutableStateOf((currentDragPosition.y - globalOffset.value.y).dp.value),
                                                     width = 100
                                                 )
                                             )
@@ -539,6 +539,15 @@ fun CreateNewProject(
                                 ConnectorManager.tryConnectDrag(it, viewModel)
                             }
                         )
+                        Box(modifier = Modifier
+                            .offset {
+                                IntOffset(
+                                    (it.x.value + it.outputConnectionView!!.positionX.value).roundToInt(),
+                                    (it.y.value + it.outputConnectionView!!.positionY.value).roundToInt()
+                                )
+                            }
+                            .background(Color.Green)
+                            .size(15.dp))
                     }
                 }
             }
