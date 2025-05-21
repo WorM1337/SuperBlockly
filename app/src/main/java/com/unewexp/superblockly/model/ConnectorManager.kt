@@ -45,8 +45,8 @@ object ConnectorManager {
             safeConnect(sourceDragBlock.outputConnectionView!!.connector, nearestConnection.connector)
             viewModel.updateBlockPosition(
                 nearestBlock.id,
-                nearestBlock.x + nearestConnection.positionX.value - sourceDragBlock.x,
-                nearestBlock.y + nearestConnection.positionY.value - sourceDragBlock.y
+                nearestBlock.x.value + nearestConnection.positionX.value - sourceDragBlock.x.value,
+                nearestBlock.y.value + nearestConnection.positionY.value - sourceDragBlock.y.value
             )
             nearestBlock.scope.add(sourceDragBlock)
             Log.i("Connect", "${sourceDragBlock.block.blockType}")
@@ -61,10 +61,10 @@ object ConnectorManager {
         connection1: ConnectionView,
         connection2: ConnectionView,
     ): Double {
-        val x1 = dragBlock1.x.toDouble() + connection1.positionX.value.toDouble()
-        val y1 = dragBlock1.y.toDouble() + connection1.positionY.value.toDouble()
-        val x2 = dragBlock2.x.toDouble() + connection2.positionX.value.toDouble()
-        val y2 = dragBlock2.y.toDouble() + connection2.positionY.value.toDouble()
+        val x1 = dragBlock1.x.value.toDouble() + connection1.positionX.value.toDouble()
+        val y1 = dragBlock1.y.value.toDouble() + connection1.positionY.value.toDouble()
+        val x2 = dragBlock2.x.value.toDouble() + connection2.positionX.value.toDouble()
+        val y2 = dragBlock2.y.value.toDouble() + connection2.positionY.value.toDouble()
 
         return sqrt(pow(x1-x2,2.0) + pow(y1-y2, 2.0))
     }

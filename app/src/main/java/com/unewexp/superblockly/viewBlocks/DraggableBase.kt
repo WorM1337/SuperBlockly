@@ -34,13 +34,9 @@ fun DraggableBase(
 ){
 
 
-    var offsetX by remember { mutableStateOf(draggableBlock.x) }
-    var offsetY by remember { mutableStateOf(draggableBlock.y) }
+    var offsetX by remember { draggableBlock.x }
+    var offsetY by remember { draggableBlock.y }
 
-//    LaunchedEffect(draggableBlock) {
-//        offsetX = draggableBlock.x
-//        offsetY = draggableBlock.y
-//    }
 
     Box(
         modifier = Modifier
@@ -54,8 +50,6 @@ fun DraggableBase(
                     }
                 ) { change, dragAmount ->
                     change.consume()
-                    offsetX = draggableBlock.x
-                    offsetY = draggableBlock.y
                     Log.i("IdBlock", draggableBlock.id)
                     onPositionChanged(dragAmount.x, dragAmount.y)
                 }

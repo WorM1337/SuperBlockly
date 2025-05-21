@@ -1,5 +1,6 @@
 package com.unewexp.superblockly.viewBlocks
 
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.unit.dp
 import com.example.myfirstapplicatioin.blocks.Block
 import com.example.myfirstapplicatioin.model.ConnectionView
@@ -9,8 +10,8 @@ import com.unewexp.superblockly.model.ConnectorManager
 data class DraggableBlock(
     val id: String,
     val block: Block,
-    var x: Float,
-    var y: Float,
+    var x: MutableState<Float>,
+    var y: MutableState<Float>,
     var outputConnectionView: ConnectionView? = null,
     var inputConnectionViews: MutableList<ConnectionView> = mutableListOf(),
     val scope: MutableList<DraggableBlock> = mutableListOf(),

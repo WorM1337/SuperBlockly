@@ -254,8 +254,8 @@ fun CreateNewProject(
                                                 DraggableBlock(
                                                     newBlock.id.toString(),
                                                     newBlock,
-                                                    currentDragPosition.x - globalOffset.value.x,
-                                                    currentDragPosition.y - globalOffset.value.y,
+                                                    mutableStateOf(currentDragPosition.x - globalOffset.value.x),
+                                                    mutableStateOf(currentDragPosition.y - globalOffset.value.y),
                                                     width = 100
                                                 )
                                             )
@@ -313,8 +313,8 @@ fun CreateNewProject(
                                                 DraggableBlock(
                                                     newBlock.id.toString(),
                                                     newBlock,
-                                                    currentDragPosition.x - globalOffset.value.x,
-                                                    currentDragPosition.y - globalOffset.value.y,
+                                                    mutableStateOf(currentDragPosition.x - globalOffset.value.x),
+                                                        mutableStateOf(currentDragPosition.y - globalOffset.value.y),
                                                     width = 100
                                                 )
                                             )
@@ -371,8 +371,8 @@ fun CreateNewProject(
                                                 DraggableBlock(
                                                     newBlock.id.toString(),
                                                     newBlock,
-                                                    currentDragPosition.x - globalOffset.value.x,
-                                                    currentDragPosition.y - globalOffset.value.y,
+                                                    mutableStateOf(currentDragPosition.x - globalOffset.value.x),
+                                                    mutableStateOf(currentDragPosition.y - globalOffset.value.y),
                                                     width = 100
                                                 )
                                             )
@@ -429,8 +429,8 @@ fun CreateNewProject(
                                                 DraggableBlock(
                                                     newBlock.id.toString(),
                                                     newBlock,
-                                                    currentDragPosition.x - globalOffset.value.x,
-                                                    currentDragPosition.y - globalOffset.value.y,
+                                                    mutableStateOf(currentDragPosition.x - globalOffset.value.x),
+                                                    mutableStateOf(currentDragPosition.y - globalOffset.value.y),
                                                     width = 100
                                                 )
                                             )
@@ -531,7 +531,6 @@ fun CreateNewProject(
                             it,
                             onPositionChanged = { offsetX, offsetY ->
                                 viewModel.updateBlockPosition(it.id, offsetX, offsetY)
-                                blocks
                             },
                             onDoubleTap = {
                                 viewModel.removeBlock(it.id)
