@@ -18,6 +18,8 @@ data class DraggableBlock(
     val scope: MutableList<DraggableBlock> = mutableListOf(),
     var width: Dp = 100.dp,
     var height: Dp = 60.dp,
+    var connectedParent: DraggableBlock? = null,
+    var connectedParentConnectionView: ConnectionView? = null
 ){
     init {
 

@@ -9,6 +9,7 @@ import com.example.myfirstapplicatioin.blocks.literals.IntLiteralBlock
 import com.example.myfirstapplicatioin.model.ConnectionView
 import com.example.myfirstapplicatioin.model.Connector
 import com.example.myfirstapplicatioin.utils.canConnect
+import com.example.myfirstapplicatioin.utils.disconnect
 import com.example.myfirstapplicatioin.utils.safeConnect
 import com.unewexp.superblockly.DraggableViewModel
 import com.unewexp.superblockly.blocks.literals.BooleanLiteralBlock
@@ -38,6 +39,27 @@ object ConnectorManager {
 
     fun tryConnectDrag(sourceDragBlock: DraggableBlock, viewModel: DraggableViewModel, density: Density){
 
+
+        sourceDragBlock.connectedParent?.let {
+            if(sourceDragBlock.connectedParentConnectionView == null) {
+                sourceDragBlock.connectedParent = null
+                Log.i("Disconnect", "ConnectionView оказался null")
+            }
+            else if(getLengthFromConnections(sourceDragBlock, sourceDragBlock.connectedParent!!, sourceDragBlock.outputConnectionView!!, sourceDragBlock.connectedParentConnectionView!!, density) > connetionLength){
+                disconnect(sourceDragBlock.outputConnectionView!!.connector, sourceDragBlock.connectedParentConnectionView!!.connector)
+
+                sourceDragBlock.connectedParent!!.scope.remove(sourceDragBlock)
+
+                sourceDragBlock.connectedParent = null
+                sourceDragBlock.connectedParentConnectionView = null
+                Log.i("Connect", "${sourceDragBlock.block.blockType}")
+            }
+            else{}
+        }
+
+
+        if(sourceDragBlock.connectedParent!= null && sourceDragBlock.connectedParentConnectionView != null) return;
+
         val listDragBlocks = viewModel.blocks.value.filter { it !in sourceDragBlock.scope && (it != sourceDragBlock) }.toMutableList()
 
         val nearestBlock = getBlockWithNearestConnection(sourceDragBlock, listDragBlocks, density)
@@ -59,6 +81,8 @@ object ConnectorManager {
                 nearestBlock.x.value + nearestConX - (sourceDragBlock.x.value + sourceConX),
                 nearestBlock.y.value + nearestConY - (sourceDragBlock.y.value + sourceConY)
             )
+            sourceDragBlock.connectedParent = nearestBlock
+            sourceDragBlock.connectedParentConnectionView = nearestConnection
             nearestBlock.scope.add(sourceDragBlock)
             Log.i("Connect", "${sourceDragBlock.block.blockType}")
 
