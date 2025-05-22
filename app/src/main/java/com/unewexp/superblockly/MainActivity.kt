@@ -520,6 +520,7 @@ fun CreateNewProject(
                         )
                 ) {
                     blocks.forEach {
+                        Log.i("render", "${it.block.blockType} with id: " + it.id)
                         DraggableBase(
                             content = {
                                 IfItIsThisBlock(it, viewModel)
