@@ -52,9 +52,22 @@ object ConnectorManager {
 
                 sourceDragBlock.connectedParent = null
                 sourceDragBlock.connectedParentConnectionView = null
-                Log.i("Connect", "${sourceDragBlock.block.blockType}")
+                Log.i("Disconnect", "${sourceDragBlock.block.blockType}")
             }
-            else{}
+            else{
+
+                val sourceConX = with(density) {sourceDragBlock.outputConnectionView!!.positionX.toPx()}
+                val sourceConY = with(density) {sourceDragBlock.outputConnectionView!!.positionY.toPx()}
+                val nearestConX = with(density) {sourceDragBlock.connectedParentConnectionView!!.positionX.toPx()}
+                val nearestConY = with(density) {sourceDragBlock.connectedParentConnectionView!!.positionY.toPx()}
+
+                viewModel.updateBlockPosition(
+                    sourceDragBlock.id,
+                    sourceDragBlock.connectedParent!!.x.value + nearestConX - (sourceDragBlock.x.value + sourceConX),
+                    sourceDragBlock.connectedParent!!.y.value + nearestConY - (sourceDragBlock.y.value + sourceConY)
+                )
+                return
+            }
         }
 
 

@@ -24,12 +24,12 @@ class DraggableViewModel: ViewModel() {
     private val _topConnectors = MutableStateFlow<MutableMap<UUID, ConnectionView>>(mutableMapOf())
     private val _bottomConnectors = MutableStateFlow<MutableMap<UUID, ConnectionView>>(mutableMapOf())
 
-    private val _blocks = MutableStateFlow<MutableList<DraggableBlock>>(mutableListOf())
+    private val _blocks = MutableStateFlow<List<DraggableBlock>>(listOf())
     val blocks = _blocks.asStateFlow()
 
     fun addBlock(dragBlock: DraggableBlock) {
         _blocks.update {
-            (_blocks.value.toList() + dragBlock).toMutableList()
+            (_blocks.value + dragBlock)
         }
     }
 
@@ -45,10 +45,12 @@ class DraggableViewModel: ViewModel() {
             Log.i("${currentBlock.block.blockType}", "(${currentBlock.x.value} : ${currentBlock.y.value})")
         }
         val newBlocks = mutableListOf<DraggableBlock>()
-        _blocks.value.forEach {
-            newBlocks.add(it.copy())
-        }
-        _blocks.value = newBlocks
+        _blocks.update { it }
+//        _blocks.value.forEach {
+//            newBlocks.add(it.copy())
+//        }
+//        _blocks.value.clear()
+//        _blocks.value = newBlocks
     }
 
     fun updateBlockPositionByXY(id: String, newX: Float, newY: Float) {
@@ -85,7 +87,7 @@ class DraggableViewModel: ViewModel() {
         Log.i("Delete", "${block.block.blockType}")
         block.scope.clear()
         _blocks.update {
-            (_blocks.value.filter { it != block }).toMutableList()
+            (_blocks.value.filter { it != block })
         }
     }
 
