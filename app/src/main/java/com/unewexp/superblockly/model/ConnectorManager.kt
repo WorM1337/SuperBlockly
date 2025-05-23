@@ -2,13 +2,10 @@ package com.unewexp.superblockly.model
 
 import android.util.Log
 import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.example.myfirstapplicatioin.blocks.Block
 import com.example.myfirstapplicatioin.blocks.literals.IntLiteralBlock
 import com.example.myfirstapplicatioin.model.ConnectionView
-import com.example.myfirstapplicatioin.model.Connector
-import com.example.myfirstapplicatioin.utils.canConnect
 import com.example.myfirstapplicatioin.utils.disconnect
 import com.example.myfirstapplicatioin.utils.safeConnect
 import com.unewexp.superblockly.DraggableViewModel
@@ -22,16 +19,10 @@ import com.unewexp.superblockly.blocks.voidBlocks.PrintBlock
 import com.unewexp.superblockly.blocks.voidBlocks.SetValueVariableBlock
 import com.unewexp.superblockly.blocks.voidBlocks.StringAppendBlock
 import com.unewexp.superblockly.blocks.voidBlocks.VariableDeclarationBlock
-import com.unewexp.superblockly.blocks.voidBlocks.VoidBlock
 import com.unewexp.superblockly.enums.BlockType
-import com.unewexp.superblockly.enums.ConnectorType
 import com.unewexp.superblockly.viewBlocks.DraggableBlock
 import com.unewexp.superblockly.viewBlocks.ViewInitialSize
-import java.lang.Math.pow
-import kotlin.coroutines.coroutineContext
-import kotlin.math.min
 import kotlin.math.pow
-import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
 object ConnectorManager {
@@ -170,13 +161,16 @@ object ConnectorManager {
 
         val cornerOffset = ViewInitialSize.cornerOffset
 
+        val sizeOfBlock = ViewInitialSize.getInitialSizeByBlockType(block.blockType)
+            ?: throw IllegalArgumentException("Для блока типа ${block.blockType} не заданы размеры")
+
+        val width = sizeOfBlock.width
+        val height = sizeOfBlock.height
+
         when(block.blockType) {
             BlockType.START -> {}
             BlockType.OPERAND -> {
                 val castedBlock = (block as OperandBlock)
-
-                val width = ViewInitialSize.sizeDictionary[BlockType.OPERAND]!!.x
-                val height = ViewInitialSize.sizeDictionary[BlockType.OPERAND]!!.y
 
                 ans += mutableListOf(
                     ConnectionView(castedBlock.outputConnector, 0.dp, height/2),
@@ -187,9 +181,6 @@ object ConnectorManager {
             BlockType.SET_VARIABLE_VALUE -> {
                 val castedBlock = (block as SetValueVariableBlock)
 
-                val width = ViewInitialSize.sizeDictionary[BlockType.SET_VARIABLE_VALUE]!!.x
-                val height = ViewInitialSize.sizeDictionary[BlockType.SET_VARIABLE_VALUE]!!.y
-
                 ans += mutableListOf(
                     ConnectionView(castedBlock.valueConnector, width, height/2),
                     ConnectionView(castedBlock.topConnector, cornerOffset, 0.dp),
@@ -198,9 +189,6 @@ object ConnectorManager {
             }
             BlockType.VARIABLE_DECLARATION -> {
                 val castedBlock = (block as VariableDeclarationBlock)
-
-                val width = ViewInitialSize.sizeDictionary[BlockType.VARIABLE_DECLARATION]!!.x
-                val height = ViewInitialSize.sizeDictionary[BlockType.VARIABLE_DECLARATION]!!.y
 
                 ans += mutableListOf(
                     ConnectionView(castedBlock.valueInputConnector, width, height/2),
@@ -211,18 +199,12 @@ object ConnectorManager {
             BlockType.INT_LITERAL -> {
                 val castedBlock = (block as IntLiteralBlock)
 
-                val width = ViewInitialSize.sizeDictionary[BlockType.INT_LITERAL]!!.x
-                val height = ViewInitialSize.sizeDictionary[BlockType.INT_LITERAL]!!.y
-
                 ans += mutableListOf(
                     ConnectionView(castedBlock.outputConnector, 0.dp, height/2),
                 )
             }
             BlockType.STRING_LITERAL -> {
                 val castedBlock = (block as StringLiteralBlock)
-
-                val width = ViewInitialSize.sizeDictionary[BlockType.INT_LITERAL]!!.x
-                val height = ViewInitialSize.sizeDictionary[BlockType.INT_LITERAL]!!.y
 
                 ans += mutableListOf(
                     ConnectionView(castedBlock.outputConnector, 0.dp, height/2),
@@ -231,18 +213,12 @@ object ConnectorManager {
             BlockType.BOOLEAN_LITERAL -> {
                 val castedBlock = (block as BooleanLiteralBlock)
 
-                val width = ViewInitialSize.sizeDictionary[BlockType.BOOLEAN_LITERAL]!!.x
-                val height = ViewInitialSize.sizeDictionary[BlockType.BOOLEAN_LITERAL]!!.y
-
                 ans += mutableListOf(
                     ConnectionView(castedBlock.outputConnector, 0.dp, height/2),
                 )
             }
             BlockType.VARIABLE_REFERENCE -> {
                 val castedBlock = (block as VariableReferenceBlock)
-
-                val width = ViewInitialSize.sizeDictionary[BlockType.VARIABLE_REFERENCE]!!.x
-                val height = ViewInitialSize.sizeDictionary[BlockType.VARIABLE_REFERENCE]!!.y
 
                 ans += mutableListOf(
                     ConnectionView(castedBlock.outputConnector, 0.dp, height/2),
@@ -251,9 +227,6 @@ object ConnectorManager {
             BlockType.STRING_CONCAT -> {
                 val castedBlock = (block as StringConcatenationBlock)
 
-                val width = ViewInitialSize.sizeDictionary[BlockType.STRING_CONCAT]!!.x
-                val height = ViewInitialSize.sizeDictionary[BlockType.STRING_CONCAT]!!.y
-
                 ans += mutableListOf(
                     ConnectionView(castedBlock.outputConnector, 0.dp, height/2),
                     ConnectionView(castedBlock.leftInputConnector, width/4, height/2),
@@ -261,17 +234,16 @@ object ConnectorManager {
                 )
             }
             BlockType.STRING_APPEND -> { // Пока что неактуальная версия - Кирилл уже переписал. Нужно будет залить и дописать
-//                val castedBlock = (block as StringAppendBlock)
-//                ans += mutableListOf(
-//                    castedBlock.stringToAppendConnector,
-//                    castedBlock.variableInputConnector
-//                )
+                val castedBlock = (block as StringAppendBlock)
+
+                ans += mutableListOf(
+                    ConnectionView(castedBlock.inputConnector, width, height/2),
+                    ConnectionView(castedBlock.topConnector, cornerOffset, 0.dp),
+                    ConnectionView(castedBlock.bottomConnector, cornerOffset, height),
+                )
             }
             BlockType.PRINT_BLOCK -> {
                 val castedBlock = (block as PrintBlock)
-
-                val width = ViewInitialSize.sizeDictionary[BlockType.SET_VARIABLE_VALUE]!!.x
-                val height = ViewInitialSize.sizeDictionary[BlockType.SET_VARIABLE_VALUE]!!.y
 
                 ans += mutableListOf(
                     ConnectionView(castedBlock.inputConnector, width, height/2),
@@ -281,9 +253,6 @@ object ConnectorManager {
             }
             BlockType.IF_BLOCK -> {
                 val castedBlock = (block as IfBlock)
-
-                val width = ViewInitialSize.sizeDictionary[castedBlock.blockType]!!.x
-                val height = ViewInitialSize.sizeDictionary[castedBlock.blockType]!!.y
 
                 ans += mutableListOf(
                     ConnectionView(castedBlock.topConnector, 0.dp, 0.dp),
