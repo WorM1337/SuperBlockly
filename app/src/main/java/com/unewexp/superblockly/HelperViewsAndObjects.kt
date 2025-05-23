@@ -5,7 +5,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -37,3 +42,30 @@ fun toHomeBtn(navController: NavHostController){
         Text("Домой")
     }
 }
+
+
+class DragState {
+    var isGhostVisible by mutableStateOf(false)
+    var ghostPosition by mutableStateOf(Offset.Zero)
+    var globalOffset by mutableStateOf(Offset.Zero)
+
+    fun onDragStart(dragStartPosition: Offset) {
+        ghostPosition = dragStartPosition
+        isGhostVisible = true
+    }
+
+    fun onDrag(dragAmount: Offset) {
+        ghostPosition += dragAmount
+    }
+
+    fun onDragEnd() {
+        isGhostVisible = false
+    }
+
+    fun onDragCancel() {
+        isGhostVisible = false
+    }
+}
+
+@Composable
+fun rememberDragState() = remember { DragState() }

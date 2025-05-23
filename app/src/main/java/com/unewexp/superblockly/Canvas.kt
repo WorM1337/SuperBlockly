@@ -51,7 +51,7 @@ import kotlin.math.roundToInt
 @Composable
 fun Canvas(
     openDrawer: () -> Unit,
-    toHomeBtn: @Composable () -> Unit,
+    onHomeClick: @Composable () -> Unit,
     updateOffset: (newOffset: Offset) -> Unit,
     viewModel: DraggableViewModel = viewModel()
 ){
@@ -80,7 +80,7 @@ fun Canvas(
                     }
                 }
                 Box {
-                    toHomeBtn()
+                    onHomeClick()
                 }
             }
             Box(

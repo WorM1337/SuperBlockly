@@ -39,14 +39,18 @@ import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.myfirstapplicatioin.blocks.Block
 import com.example.myfirstapplicatioin.blocks.literals.IntLiteralBlock
 import com.unewexp.superblockly.blocks.logic.IfBlock
 import com.unewexp.superblockly.blocks.returnBlocks.VariableReferenceBlock
@@ -366,11 +370,10 @@ fun CreateNewProject(
         Canvas(
             { scope.launch { drawerState.open() } },
             { toHomeBtn(navController) },
-            {newOffset -> globalOffset.value = newOffset}
+            {newOffset -> globalOffset.value = newOffset }
         )
     }
 }
-
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -480,3 +483,108 @@ fun About(navController: NavHostController){
         }
     }
 }
+
+/*
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+fun DraggableListItem(
+    viewModel: DraggableViewModel,
+    createBlock: () -> Block,
+    defaultWidth: Dp,
+    ghostContent: @Composable () -> Unit,
+    content: @Composable () -> Unit
+) {
+
+    val dragState = rememberDragState()
+    var dragStartPosition by remember { mutableStateOf(Offset.Zero) }
+
+    Box(
+        modifier = Modifier
+            .onGloballyPositioned { coordinates ->
+                dragStartPosition = coordinates.positionInRoot()
+            }
+            .pointerInput(Unit) {
+                detectDragGestures(
+                    onDragStart = { offset ->
+                        dragState.onDragStart(dragStartPosition)
+                    },
+                    onDrag = { change, dragAmount ->
+                        change.consume()
+                        dragState.onDrag(dragAmount)
+                    },
+                    onDragEnd = {
+                        val newBlock = createBlock()
+                        viewModel.addBlock(
+                            DraggableBlock(
+                                newBlock.id.toString(),
+                                newBlock,
+                                x = mutableStateOf(dragState.ghostPosition.x - dragState.globalOffset.x),
+                                y = mutableStateOf(dragState.ghostPosition.y - dragState.globalOffset.y),
+                                width = mutableStateOf(defaultWidth)
+                            )
+                        )
+                        dragState.onDragEnd()
+                    },
+                    onDragCancel = { dragState.onDragCancel() }
+                )
+            }
+    ) {
+        content()
+    }
+
+    if (dragState.isGhostVisible) {
+        Box(
+            modifier = Modifier
+                .offset { dragState.ghostPosition.round() }
+                .pointerInput(Unit) { }
+                .zIndex(1f) // Поверх других элементов
+        ) {
+            ghostContent()
+        }
+    }
+}
+
+ */
+
+/*
+@Composable
+fun CreateNewProject(
+    navController: NavHostController,
+    viewModel: DraggableViewModel = viewModel()
+) {
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
+    val dragState = rememberDragState()
+
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            Box(Modifier.background(DrawerColor)) {
+                LazyColumn(Modifier.padding(5.dp)) {
+                    item { Button(onClick = { scope.launch { drawerState.close() } }) { Text("Закрыть") } }
+
+                    // Пример элемента
+                    item {
+                        DraggableListItem(
+                            viewModel = viewModel,
+                            createBlock = { IntLiteralBlock() },
+                            defaultWidth = 100.dp,
+                            ghostContent = { IntLiteralBlockCard(Modifier.alpha(0.7f)) }
+                        ) {
+                            IntLiteralBlockCard()
+                        }
+                    }
+
+                    // Другие элементы...
+                }
+            }
+        }
+    ) {
+        Canvas(
+            onOpenDrawer = { scope.launch { drawerState.open() } },
+            onHomeClick = { toHomeBtn(navController) },
+            onGlobalOffsetChange = { dragState.globalOffset = it }
+        )
+    }
+}
+ */

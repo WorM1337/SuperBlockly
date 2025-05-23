@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import com.unewexp.superblockly.viewBlocks.DeclarationVariableViewForCard
@@ -28,11 +29,12 @@ fun BlockCard(content: @Composable () -> Unit, onClick: () -> Unit){
 }
 
 @Composable
-fun IntLiteralBlockCard(){
+fun IntLiteralBlockCard(alpha: Float = 1f){
     Card(
         modifier = Modifier
             .width(200.dp)
             .padding(2.dp)
+            .alpha(alpha)
     ){
         IntLiteralViewForCard()
     }
