@@ -1,5 +1,6 @@
 package com.unewexp.superblockly.viewBlocks
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -10,9 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
@@ -25,28 +24,39 @@ fun DraggableBase(
     content: @Composable () -> Unit,
     draggableBlock: DraggableBlock,
     onPositionChanged: (Float, Float) -> Unit,
-    onLongPress: (String) -> Unit
+    onDoubleTap: () -> Unit,
+    onDragEnd: () -> Unit
 ){
 
-    var offsetX by remember { mutableStateOf(draggableBlock.x) }
-    var offsetY by remember { mutableStateOf(draggableBlock.y) }
+    val currentBlock by rememberUpdatedState(draggableBlock)
+    val latestOnPositionChanged by rememberUpdatedState(onPositionChanged)
+    val latestOnDoubleTap by rememberUpdatedState(onDoubleTap)
+    val latestOnDragEnd by rememberUpdatedState(onDragEnd)
+    var offsetX = currentBlock.x.value
+    var offsetY = currentBlock.y.value
 
     Box(
         modifier = Modifier
             .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
-            .size(draggableBlock.width.dp, draggableBlock.height.dp)
+            .size(currentBlock.width, currentBlock.height)
             .background(Color(0xFFE0E0E0), shape = MaterialTheme.shapes.small)
             .pointerInput(Unit) {
                 detectDragGestures(
                     onDragEnd = {
-                        //ConnectorManager.tryConnect(listConnectors)
+                        latestOnDragEnd()
                     }
                 ) { change, dragAmount ->
                     change.consume()
-                    offsetX += dragAmount.x
-                    offsetY += dragAmount.y
-                    onPositionChanged(offsetX, offsetY)
+                    Log.i("IdBlock", currentBlock.id)
+                    latestOnPositionChanged(dragAmount.x, dragAmount.y)
                 }
+            }
+            .pointerInput(Unit){
+                detectTapGestures(
+                    onDoubleTap = {
+                        latestOnDoubleTap()
+                    }
+                )
             }
             .padding(horizontal = 8.dp, vertical = 4.dp)
     ) {

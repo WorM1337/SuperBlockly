@@ -2,26 +2,35 @@
 
 package com.unewexp.superblockly
 
+import android.content.ClipData
+import android.content.ClipDescription
 import android.os.Bundle
+import android.util.Log
+import android.view.MotionEvent
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.draganddrop.dragAndDropSource
+import androidx.compose.foundation.draganddrop.dragAndDropTarget
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.rememberTransformableState
 import androidx.compose.foundation.gestures.transformable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material3.Button
 import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -29,23 +38,34 @@ import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draganddrop.DragAndDropEvent
+import androidx.compose.ui.draganddrop.DragAndDropTarget
+import androidx.compose.ui.draganddrop.DragAndDropTransferData
+import androidx.compose.ui.draganddrop.mimeTypes
+import androidx.compose.ui.draganddrop.toAndroidDragEvent
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.pointer.pointerInteropFilter
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
@@ -57,17 +77,26 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.myfirstapplicatioin.blocks.literals.IntLiteralBlock
-import com.example.myfirstapplicatioin.viewBlocks.ViewBlock
 import com.example.myfirstapplicatioin.viewBlocks.ViewIntLiteralBlock
+import com.unewexp.superblockly.blocks.returnBlocks.VariableReferenceBlock
+import com.unewexp.superblockly.blocks.voidBlocks.SetValueVariableBlock
+import com.unewexp.superblockly.blocks.voidBlocks.VariableDeclarationBlock
+import com.unewexp.superblockly.enums.BlockType
+import com.unewexp.superblockly.model.ConnectorManager
 import com.unewexp.superblockly.ui.theme.DrawerColor
 import com.unewexp.superblockly.ui.theme.SuperBlocklyTheme
+import com.unewexp.superblockly.viewBlocks.DeclarationVariableView
 import com.unewexp.superblockly.viewBlocks.DraggableBase
 import com.unewexp.superblockly.viewBlocks.DraggableBlock
-import com.unewexp.superblockly.viewBlocks.TestView
-import com.unewexp.superblockly.viewBlocks.TestViewForCard
+import com.unewexp.superblockly.viewBlocks.IntLiteralView
+import com.unewexp.superblockly.viewBlocks.SetValueVariableView
+import com.unewexp.superblockly.viewBlocks.VariableReferenceView
 import com.unewexp.superblockly.viewBlocks.ViewSetValueVariableBlock
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
+
+
+
 
 sealed class Routes(val route: String) {
 
@@ -87,19 +116,6 @@ object BlockFactory {
     }
 }
 
-object CanvasState {
-    private val _blocks = mutableStateListOf<ViewBlock>()
-    val blocks: List<ViewBlock> get() = _blocks
-
-    fun addBlock(block: ViewBlock) {
-        _blocks.add(block)
-    }
-
-    fun removeBlock(block: ViewBlock) {
-        _blocks.remove(block)
-    }
-
-}
 
 object Modifiers{
     val homeBtnModifier: Modifier = Modifier
@@ -160,25 +176,44 @@ fun Home(navController: NavHostController) {
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun CreateNewProject(
     navController: NavHostController,
     viewModel: DraggableViewModel = viewModel()
 ){
+    val density = LocalDensity.current
+
+    fun dpToPx(dp: Dp): Float {
+        val pxValue = with(density) {dp.toPx()}  // Упрощённый расчёт
+
+        return pxValue.toFloat()
+    }
+
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
-    val blocks by viewModel.blocks.collectAsState()
+    val globalOffset = remember { mutableStateOf(Offset.Zero) }
+    val canBeDraggable = remember { mutableStateOf(false) }
 
-    val transferAction = "action"
-    val blockTypeTransferData = "block_type"
-    val blockViewTransferData = "block_view"
+    var currentDragPosition by remember { mutableStateOf(Offset.Zero) }
+    var dragStartPosition1 by remember { mutableStateOf(Offset.Zero) }
+    var dragStartPosition2 by remember { mutableStateOf(Offset.Zero) }
+    var dragStartPosition3 by remember { mutableStateOf(Offset.Zero) }
+    var dragStartPosition4 by remember { mutableStateOf(Offset.Zero) }
+
+    var ghostVisible by remember { mutableStateOf(false) }
+    var ghostPosition by remember { mutableStateOf(Offset.Zero) }
+    var ghostContent by remember { mutableStateOf<@Composable () -> Unit>({ }) }
+
+    val blocks by viewModel.blocks.collectAsState()
 
     ModalNavigationDrawer(
         drawerState = drawerState,
+        gesturesEnabled = false,
         drawerContent = {
             Box(modifier = Modifier
-                    .background(DrawerColor)
+                .background(DrawerColor)
             ){
                 Column(
                     modifier = Modifier
@@ -190,31 +225,250 @@ fun CreateNewProject(
                     Column(
                         modifier = Modifier
                             .padding(10.dp, 0.dp)
-                            /*
-                            .dragAndDropSource(drawDragDecoration = {
-                                // UI перетаскиваемого элемента
-                            }){
-                                startTransfer(
-                                    DragAndDropTransferData(
-                                        clipData = ClipData.newIntent(
-                                            "block_type",
-                                            Intent(transferAction).apply {
-                                                putExtra(
-                                                    blockTypeTransferData,
-
-                                                )
-                                            }
-                                        )
-                                    )
-                                )
-                            }
-                        */
                     ) {
                         Text("Математика", color = Color.White)
-                        BlockCard({ TestViewForCard() }, {
-                            val newBlock = IntLiteralBlock()
-                            viewModel.addBlock(DraggableBlock(newBlock.id.toString(), newBlock, 500f, 300f))
-                        } )
+                        Box(
+                            modifier = Modifier
+                                .onGloballyPositioned{ coordinates ->
+                                    dragStartPosition1 = coordinates.positionInRoot()
+                                }
+                                .pointerInput(Unit){
+                                    detectTapGestures(
+                                        onLongPress = {
+                                            canBeDraggable.value = true
+                                        }
+                                    )
+                                }
+                                .pointerInteropFilter{
+                                    if (it.action == MotionEvent.ACTION_UP) {
+                                        canBeDraggable.value = false
+                                    }
+
+                                    true
+                                }
+                                .pointerInput(Unit){
+                                    detectDragGestures(
+                                        onDragStart = { offset ->
+                                            ghostContent = { IntLiteralBlockCard() }
+                                            ghostPosition = dragStartPosition1
+                                            currentDragPosition = dragStartPosition1
+                                            ghostVisible = true
+                                            canBeDraggable.value = true
+                                        },
+                                        onDrag = { change, dragAmount ->
+                                            change.consume()
+                                            ghostPosition += dragAmount
+                                            currentDragPosition += dragAmount
+                                        },
+                                        onDragEnd = {
+                                            val newBlock = IntLiteralBlock()
+                                            viewModel.addBlock(
+                                                DraggableBlock(
+                                                    newBlock.id.toString(),
+                                                    newBlock,
+                                                    mutableStateOf(currentDragPosition.x - globalOffset.value.x),
+                                                    mutableStateOf(currentDragPosition.y - globalOffset.value.y),
+                                                    width = 100.dp
+                                                )
+                                            )
+                                            ghostVisible = false
+                                            canBeDraggable.value = false
+                                            currentDragPosition = Offset.Zero
+                                        },
+                                        onDragCancel = {
+                                            ghostVisible = false
+                                            canBeDraggable.value = false
+                                            currentDragPosition = Offset.Zero
+                                        }
+                                    )
+                                }
+                        ) {
+                            IntLiteralBlockCard()
+                        }
+                        Text("Переменные", color = Color.White)
+                        Box(
+                            modifier = Modifier
+                                .onGloballyPositioned{ coordinates ->
+                                    dragStartPosition2 = coordinates.positionInRoot()
+                                }
+                                .pointerInput(Unit){
+                                    detectTapGestures(
+                                        onLongPress = {
+                                            canBeDraggable.value = true
+                                        }
+                                    )
+                                }
+                                .pointerInteropFilter{
+                                    if (it.action == MotionEvent.ACTION_UP) {
+                                        canBeDraggable.value = false
+                                    }
+
+                                    true
+                                }
+                                .pointerInput(Unit){
+                                    detectDragGestures(
+                                        onDragStart = { offset ->
+                                            ghostContent = { SetValueVariableCard() }
+                                            ghostPosition = dragStartPosition2
+                                            currentDragPosition = dragStartPosition2
+                                            ghostVisible = true
+                                            canBeDraggable.value = true
+                                        },
+                                        onDrag = { change, dragAmount ->
+                                            change.consume()
+                                            ghostPosition += dragAmount
+                                            currentDragPosition += dragAmount
+                                        },
+                                        onDragEnd = {
+                                            val newBlock = SetValueVariableBlock()
+                                            viewModel.addBlock(
+                                                DraggableBlock(
+                                                    newBlock.id.toString(),
+                                                    newBlock,
+                                                    mutableStateOf(currentDragPosition.x - globalOffset.value.x),
+                                                        mutableStateOf(currentDragPosition.y - globalOffset.value.y),
+                                                    width = 100.dp
+                                                )
+                                            )
+                                            ghostVisible = false
+                                            canBeDraggable.value = false
+                                            currentDragPosition = Offset.Zero
+                                        },
+                                        onDragCancel = {
+                                            ghostVisible = false
+                                            canBeDraggable.value = false
+                                            currentDragPosition = Offset.Zero
+                                        }
+                                    )
+                                }
+                        ) {
+                            SetValueVariableCard()
+                        }
+                        Box(
+                            modifier = Modifier
+                                .onGloballyPositioned{ coordinates ->
+                                    dragStartPosition3 = coordinates.positionInRoot()
+                                }
+                                .pointerInput(Unit){
+                                    detectTapGestures(
+                                        onLongPress = {
+                                            canBeDraggable.value = true
+                                        }
+                                    )
+                                }
+                                .pointerInteropFilter{
+                                    if (it.action == MotionEvent.ACTION_UP) {
+                                        canBeDraggable.value = false
+                                    }
+
+                                    true
+                                }
+                                .pointerInput(Unit){
+                                    detectDragGestures(
+                                        onDragStart = { offset ->
+                                            ghostContent = { DeclarationVariableCard() }
+                                            ghostPosition = dragStartPosition3
+                                            currentDragPosition = dragStartPosition3
+                                            ghostVisible = true
+                                            canBeDraggable.value = true
+                                        },
+                                        onDrag = { change, dragAmount ->
+                                            change.consume()
+                                            ghostPosition += dragAmount
+                                            currentDragPosition += dragAmount
+                                        },
+                                        onDragEnd = {
+                                            val newBlock = VariableDeclarationBlock()
+                                            viewModel.addBlock(
+                                                DraggableBlock(
+                                                    newBlock.id.toString(),
+                                                    newBlock,
+                                                    mutableStateOf(currentDragPosition.x - globalOffset.value.x),
+                                                    mutableStateOf(currentDragPosition.y - globalOffset.value.y),
+                                                    width = 100.dp
+                                                )
+                                            )
+                                            ghostVisible = false
+                                            canBeDraggable.value = false
+                                            currentDragPosition = Offset.Zero
+                                        },
+                                        onDragCancel = {
+                                            ghostVisible = false
+                                            canBeDraggable.value = false
+                                            currentDragPosition = Offset.Zero
+                                        }
+                                    )
+                                }
+                        ) {
+                            DeclarationVariableCard()
+                        }
+                        Box(
+                            modifier = Modifier
+                                .onGloballyPositioned{ coordinates ->
+                                    dragStartPosition4 = coordinates.positionInRoot()
+                                }
+                                .pointerInput(Unit){
+                                    detectTapGestures(
+                                        onLongPress = {
+                                            canBeDraggable.value = true
+                                        }
+                                    )
+                                }
+                                .pointerInteropFilter{
+                                    if (it.action == MotionEvent.ACTION_UP) {
+                                        canBeDraggable.value = false
+                                    }
+
+                                    true
+                                }
+                                .pointerInput(Unit){
+                                    detectDragGestures(
+                                        onDragStart = { offset ->
+                                            ghostContent = { ReferenceVariableCard() }
+                                            ghostPosition = dragStartPosition4
+                                            currentDragPosition = dragStartPosition4
+                                            ghostVisible = true
+                                            canBeDraggable.value = true
+                                        },
+                                        onDrag = { change, dragAmount ->
+                                            change.consume()
+                                            ghostPosition += dragAmount
+                                            currentDragPosition += dragAmount
+                                        },
+                                        onDragEnd = {
+                                            val newBlock = VariableReferenceBlock()
+                                            viewModel.addBlock(
+                                                DraggableBlock(
+                                                    newBlock.id.toString(),
+                                                    newBlock,
+                                                    mutableStateOf((currentDragPosition.x - globalOffset.value.x).dp.value),
+                                                    mutableStateOf((currentDragPosition.y - globalOffset.value.y).dp.value),
+                                                    width = 100.dp
+                                                )
+                                            )
+                                            ghostVisible = false
+                                            canBeDraggable.value = false
+                                            currentDragPosition = Offset.Zero
+                                        },
+                                        onDragCancel = {
+                                            ghostVisible = false
+                                            canBeDraggable.value = false
+                                            currentDragPosition = Offset.Zero
+                                        }
+                                    )
+                                }
+                        ) {
+                            ReferenceVariableCard()
+                        }
+                    }
+                }
+                if (ghostVisible) {
+                    Box(
+                        modifier = Modifier
+                            .offset { IntOffset(ghostPosition.x.roundToInt(), ghostPosition.y.roundToInt()) }
+                            .pointerInput(Unit) { }
+                    ) {
+                        ghostContent()
                     }
                 }
             }
@@ -224,7 +478,9 @@ fun CreateNewProject(
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {
-                Row {
+                Row(
+                    modifier = Modifier.fillMaxWidth().background(Color.White)
+                ) {
                     Box(contentAlignment = Alignment.TopStart) {
                         IconButton(onClick = { scope.launch { drawerState.open() } }) {
                             Icon(Icons.Filled.List, null)
@@ -236,47 +492,90 @@ fun CreateNewProject(
                 }
             },
             content = { paddingValues ->
-                val offset = remember { mutableStateOf(Offset.Zero) }
                 val scale = remember { mutableFloatStateOf(1f) }
+
+                val startW = LocalConfiguration.current.screenWidthDp
+                val startH = LocalConfiguration.current.screenHeightDp
+                var currentScale = remember{ mutableStateOf(1f) }
 
                 Box(
                     modifier = Modifier
-                        .fillMaxSize()
+                        .width(4000.dp)
+                        .height(2000.dp)
                         .padding(paddingValues)
                         .background(Color.LightGray)
 
                         .transformable(
                             state = rememberTransformableState { zoomChange, offsetChange, _ ->
                                 scale.value *= 1f + (zoomChange - 1f) * zoomFactor
-                                offset.value += offsetChange
+                                currentScale.value += scale.floatValue - 1
+                                globalOffset.value += offsetChange
                             }
                         )
                         .graphicsLayer(
                             scaleX = scale.value,
                             scaleY = scale.value,
-                            translationX = offset.value.x,
-                            translationY = offset.value.y
+                            translationX = globalOffset.value.x,
+                            translationY = globalOffset.value.y
                         )
                 ) {
-//                    CanvasState.addBlock(BlockFactory.createIntBlock(400.dp, 100.dp))
-//                    CanvasState.blocks.last().render()
-//                    CanvasState.addBlock(BlockFactory.createVariableBlock(100.dp, 100.dp))
-//                    CanvasState.blocks.last().render()
                     blocks.forEach {
+                        Log.i("render", "${it.block.blockType} with id: " + it.id)
                         DraggableBase(
                             content = {
-                                TestView({ newValue ->
-                                    viewModel.updateValue(it.id, newValue)
-                                })
+                                IfItIsThisBlock(it, viewModel)
+                                Box(
+                                    modifier = Modifier
+                                        .size(15.dp)
+                                        .offset(it.outputConnectionView!!.positionX, it.outputConnectionView!!.positionY)
+                                        .background(Color.Red)
+                                )
+
+                                it.inputConnectionViews.forEach{
+                                    Box(
+                                        modifier = Modifier
+                                            .size(15.dp)
+                                            .offset(it.positionX, it.positionY)
+                                            .background(Color.Red)
+                                    )
+                                }
+
                             },
-                                    it,
-                            onPositionChanged = { newX, newY ->
-                                viewModel.updateBlockPosition(it.id, newX, newY)
+                            it,
+                            onPositionChanged = { offsetX, offsetY ->
+                                viewModel.updateBlockPosition(it.id, offsetX, offsetY)
                             },
-                            onLongPress = { id ->
+                            onDoubleTap = {
                                 viewModel.removeBlock(it.id)
+                            },
+                            onDragEnd = {
+                                ConnectorManager.tryConnectDrag(it, viewModel, density)
                             }
                         )
+
+                        Box(modifier = Modifier
+                            .size(15.dp)
+                            .offset {
+                                IntOffset(
+                                    (it.x.value + dpToPx(it.outputConnectionView!!.positionX)).roundToInt(),
+                                    (it.y.value + dpToPx(it.outputConnectionView!!.positionY)).roundToInt()
+                                )
+                            }
+                            .background(Color.Green)
+
+                        )
+                        it.inputConnectionViews.forEach { connectionView ->
+                            Box(modifier = Modifier
+                                .size(15.dp)
+                                .offset {
+                                    IntOffset(
+                                        (it.x.value + dpToPx(connectionView.positionX)).roundToInt(),
+                                        (it.y.value + dpToPx(connectionView.positionY)).roundToInt()
+                                    )
+                                }
+                                .background(Color.Magenta)
+                            )
+                        }
                     }
                 }
             }
@@ -354,5 +653,36 @@ fun toHomeBtn(navController: NavHostController){
         shape = RectangleShape,
     ) {
         Text("Домой")
+    }
+}
+
+@Composable
+fun IfItIsThisBlock(block: DraggableBlock, viewModel: DraggableViewModel = viewModel()){
+    val blockType = block.block.blockType
+    when(blockType){
+        BlockType.OPERAND -> TODO()
+        BlockType.SET_VARIABLE_VALUE -> SetValueVariableView({ newValue ->
+            viewModel.updateValue(block.id, newValue)
+        })
+        BlockType.START -> TODO()
+        BlockType.VARIABLE_DECLARATION -> DeclarationVariableView(
+            { newValue ->
+                viewModel.updateValue(block.id, newValue)
+            }
+        )
+        BlockType.INT_LITERAL -> IntLiteralView({ newValue ->
+            viewModel.updateValue(block.id, newValue)
+        })
+        BlockType.STRING_LITERAL -> TODO()
+        BlockType.BOOLEAN_LITERAL -> TODO()
+        BlockType.VARIABLE_REFERENCE -> VariableReferenceView(
+            { newValue ->
+                viewModel.updateValue(block.id, newValue)
+            }
+        )
+        BlockType.STRING_CONCAT -> TODO()
+        BlockType.STRING_APPEND -> TODO()
+        BlockType.VOID_BLOCK -> TODO()
+        BlockType.PRINT_BLOCK -> TODO()
     }
 }
