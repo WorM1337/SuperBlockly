@@ -7,28 +7,18 @@ import com.unewexp.superblockly.enums.ConnectorType
 import java.lang.IllegalStateException
 import java.util.UUID
 
-class PrintBlock(
-    id: UUID = UUID.randomUUID(),
-    blockType: BlockType = BlockType.PRINT_BLOCK
-) : VoidBlock(id, blockType) {
+class PrintBlock() : VoidBlock(UUID.randomUUID(), BlockType.PRINT_BLOCK) {
 
     val inputConnector = Connector(
         connectionType = ConnectorType.INPUT,
         sourceBlock = this,
-        allowedBlockTypes = setOf(
-            BlockType.VARIABLE_REFERENCE,
-            BlockType.STRING_CONCAT,
-            BlockType.INT_LITERAL,
-            BlockType.OPERAND,
-            BlockType.BOOLEAN_LITERAL,
-            BlockType.STRING_LITERAL,
-        )
+        allowedDataTypes = setOf(Int::class.java, String::class.java, Boolean::class.java)
     )
 
     override fun execute() {
         val value = inputConnector.connectedTo?.evaluate()
             ?: throw IllegalStateException("В PrintBlock не добавлено значение вывода")
-
+        ExecutionContext.appendLog(value.toString())
     }
 
 }

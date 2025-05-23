@@ -23,7 +23,12 @@ class SetValueVariableBlock : VoidBlock(UUID.randomUUID(), BlockType.SET_VARIABL
             BlockType.BOOLEAN_LITERAL,
             BlockType.OPERAND,
             BlockType.STRING_CONCAT,
-            BlockType.VARIABLE_REFERENCE
+            BlockType.VARIABLE_REFERENCE,
+            BlockType.BOOLEAN_LOGIC_BLOCK,
+            BlockType.COMPARE_NUMBERS_BLOCK,
+            BlockType.GET_VALUE_BY_INDEX,
+            BlockType.FIXED_VALUE_AND_SIZE_LIST,
+            BlockType.GET_LIST_SIZE,
         )
     )
 
@@ -35,12 +40,16 @@ class SetValueVariableBlock : VoidBlock(UUID.randomUUID(), BlockType.SET_VARIABL
         val value = valueConnector.connectedTo?.evaluate()
             ?: throw IllegalStateException("Не указано значение для переменной '$selectedVariableName'")
 
+        if (!ExecutionContext.hasVariable(selectedVariableName)){
+            throw IllegalStateException("Указанная переменная не объявлена")
+        }
+
         val currentValue = ExecutionContext.getVariable(selectedVariableName)
         if (currentValue != null && currentValue.javaClass != value.javaClass) {
             throw IllegalStateException("Нельзя изменить тип переменной '$selectedVariableName'")
         }
 
-        ExecutionContext.setVariable(selectedVariableName, value)
+        ExecutionContext.changeVariableValue(selectedVariableName, value)
     }
 
 }

@@ -9,26 +9,28 @@ import java.lang.IllegalStateException
 import java.util.UUID
 
 class StartBlock : VoidBlock(UUID.randomUUID(), BlockType.START) {
-    val nextBlockConnector = Connector(
-        connectionType = ConnectorType.OUTPUT,
-        sourceBlock = this,
-        allowedBlockTypes = setOf(BlockType.VOID_BLOCK)
-    )
 
     override fun execute() {
         ErrorHandler.clearAllErrors()
+        ExecutionContext.clearLogs()
+        ExecutionContext.clearVariables()
 
-        var nextBlock = nextBlockConnector.connectedTo
-        while (nextBlock != null){
-            try{
-                nextBlock.execute()
-            } catch (e: Exception){
-                ErrorHandler.setError(nextBlock.id, e.message ?: "Неизвестная ошибка")
-                break
+        getNextBlock()?.let { firstBlock ->
+            ExecutionContext.enterNewScope(firstBlock)
+            try {
+                var current: Block? = firstBlock
+                while (current != null) {
+                    try {
+                        current.execute()
+                    } catch (e: Exception) {
+                        ErrorHandler.setError(current.id, e.message ?: "Неизвестная ошибка")
+                        break
+                    }
+                    current = ExecutionContext.getNextBlockInScope()
+                }
+            } finally {
+                ExecutionContext.exitCurrentScope()
             }
-
-            nextBlock = (nextBlock as? VoidBlock)?.getNextBlock()
-                ?: throw IllegalStateException("Не корректное соединение")
         }
     }
 }

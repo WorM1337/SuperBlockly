@@ -11,30 +11,19 @@ class StringConcatenationBlock : Block(UUID.randomUUID(), BlockType.STRING_CONCA
     val leftInputConnector = Connector(
         connectionType = ConnectorType.INPUT,
         sourceBlock = this,
-        allowedBlockTypes = setOf(
-            BlockType.STRING_LITERAL,
-            BlockType.VARIABLE_REFERENCE,
-            BlockType.STRING_CONCAT
-        ),
-        allowedDataTypes = setOf(String::class.java)
+        allowedDataTypes = setOf(String::class.java, Int::class.java, Boolean::class.java)
     )
 
     val rightInputConnector = Connector(
         connectionType = ConnectorType.INPUT,
         sourceBlock = this,
-        allowedBlockTypes = setOf(
-            BlockType.STRING_LITERAL,
-            BlockType.VARIABLE_REFERENCE,
-            BlockType.STRING_CONCAT,
-            BlockType.INT_LITERAL
-        ),
-        allowedDataTypes = setOf(String::class.java, Int::class.java)
+        allowedDataTypes = setOf(String::class.java, Int::class.java, Boolean::class.java)
     )
 
     val outputConnector = Connector(
         connectionType = ConnectorType.OUTPUT,
         sourceBlock = this,
-        allowedDataTypes = setOf(String::class.java)
+//        allowedDataTypes = setOf(String::class.java)
     )
 
     override fun evaluate(): String {
