@@ -10,6 +10,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import com.unewexp.superblockly.viewBlocks.DeclarationVariableViewForCard
+import com.unewexp.superblockly.viewBlocks.IfBlockView
+import com.unewexp.superblockly.viewBlocks.IfBlockViewForCard
 import com.unewexp.superblockly.viewBlocks.IntLiteralViewForCard
 import com.unewexp.superblockly.viewBlocks.SetValueVariableViewForCard
 import com.unewexp.superblockly.viewBlocks.VariableReferenceViewForCard
@@ -69,3 +71,13 @@ fun ReferenceVariableCard(){
     }
 }
 
+@Composable
+fun IfBlockCard(){
+    Card(
+        modifier = Modifier
+            .width(100.dp)
+            .padding(2.dp)
+    ){
+        IfBlockViewForCard()
+    }
+}

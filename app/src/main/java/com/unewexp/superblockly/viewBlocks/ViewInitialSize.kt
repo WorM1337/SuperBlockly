@@ -36,5 +36,7 @@ object ViewInitialSize {
                 to PairDp(x = 240.dp, y = 60.dp),
         BlockType.PRINT_BLOCK
                 to PairDp(x = 150.dp, y = 60.dp),
+        BlockType.IF_BLOCK
+                to PairDp(x = 100.dp, y = 60.dp)
     )
 }

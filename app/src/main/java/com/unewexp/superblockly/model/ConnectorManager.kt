@@ -12,9 +12,10 @@ import com.example.myfirstapplicatioin.utils.canConnect
 import com.example.myfirstapplicatioin.utils.disconnect
 import com.example.myfirstapplicatioin.utils.safeConnect
 import com.unewexp.superblockly.DraggableViewModel
+import com.unewexp.superblockly.blocks.arithmetic.OperandBlock
 import com.unewexp.superblockly.blocks.literals.BooleanLiteralBlock
 import com.unewexp.superblockly.blocks.literals.StringLiteralBlock
-import com.unewexp.superblockly.blocks.returnBlocks.OperandBlock
+import com.unewexp.superblockly.blocks.logic.IfBlock
 import com.unewexp.superblockly.blocks.returnBlocks.StringConcatenationBlock
 import com.unewexp.superblockly.blocks.returnBlocks.VariableReferenceBlock
 import com.unewexp.superblockly.blocks.voidBlocks.PrintBlock
@@ -276,6 +277,19 @@ object ConnectorManager {
                     ConnectionView(castedBlock.inputConnector, width, height/2),
                     ConnectionView(castedBlock.topConnector, cornerOffset, 0.dp),
                     ConnectionView(castedBlock.bottomConnector, cornerOffset, height),
+                )
+            }
+            BlockType.IF_BLOCK -> {
+                val castedBlock = (block as IfBlock)
+
+                val width = ViewInitialSize.sizeDictionary[castedBlock.blockType]!!.x
+                val height = ViewInitialSize.sizeDictionary[castedBlock.blockType]!!.y
+
+                ans += mutableListOf(
+                    ConnectionView(castedBlock.topConnector, 0.dp, 0.dp),
+                    ConnectionView(castedBlock.bottomConnector, 0.dp, height),
+                    ConnectionView(castedBlock.innerConnector, width/2, height),
+                    ConnectionView(castedBlock.conditionConnector, width, height/2)
                 )
             }
             else -> {}
