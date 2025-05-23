@@ -48,21 +48,17 @@ class DraggableViewModel: ViewModel() {
             return
         }
 
-        block.scope.forEach {
-            removeBlock(it.id)
+        for(i in block.scope.indices.reversed()){
+            removeBlock(block.scope[i].id)
         }
 
-        // Удаляем все соединения
-        block.outputConnectionView?.connector?.connectedTo = null
-        block.inputConnectionViews.forEach { it.connector.connectedTo = null }
-
-        if(block.connectedParent != null){
-            disconnect(block.connectedParentConnectionView!!.connector, block.outputConnectionView!!.connector)
+        if(block.connectedParent != null && block.connectedParentConnectionView != null){
+            disconnect(block.outputConnectionView!!.connector, block.connectedParentConnectionView!!.connector)
             block.connectedParent!!.scope.remove(block)
-            block.connectedParent!!.inputConnectionViews.remove(block.outputConnectionView)
+            block.connectedParent = null
+            block.connectedParentConnectionView = null
         }
 
-        block.scope.clear()
         _blocks.update {
             _blocks.value.filter {
                 Log.i(it.block.blockType.name, it.id)
