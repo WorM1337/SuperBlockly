@@ -9,6 +9,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.rememberTransformableState
@@ -24,8 +25,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Button
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
@@ -53,10 +56,8 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.pointerInteropFilter
-import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
@@ -481,22 +482,37 @@ fun Canvas(
     fun dpToPx(dp: Dp): Float {
         val pxValue = with(density) {dp.toPx()}  // Упрощённый расчёт
 
-        return pxValue.toFloat()
+        return pxValue
     }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            Row(
+            Box(
                 modifier = Modifier.fillMaxWidth().background(Color.White)
-            ) {
-                Box(contentAlignment = Alignment.TopStart) {
+            )
+            Row{
+                Box {
                     IconButton(onClick = openDrawer) {
                         Icon(Icons.Filled.List, null)
                     }
                 }
-                Box(contentAlignment = Alignment.TopEnd) {
+                Box {
                     toHomeBtn()
+                }
+            }
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(0.dp, 0.dp, 5.dp, 0.dp),
+                contentAlignment = Alignment.CenterEnd
+            ){
+                IconButton(
+                    onClick = {TODO("Запуск программы")},
+                    modifier =
+                        Modifier
+                            .border(3.dp, Color.Green, CircleShape)){
+                    Icon(Icons.Filled.PlayArrow, null)
                 }
             }
         },
@@ -526,7 +542,7 @@ fun Canvas(
                         translationY = globalOffset.value.y
                     )
             ) {
-                blocks.forEach {
+                blocks.forEach { it ->
                     Log.i("render", "${it.block.blockType} with id: " + it.id)
                     DraggableBase(
                         content = {
@@ -665,25 +681,25 @@ fun IfItIsThisBlock(block: DraggableBlock, viewModel: DraggableViewModel = viewM
     val blockType = block.block.blockType
     when(blockType){
         BlockType.OPERAND -> TODO()
-        BlockType.SET_VARIABLE_VALUE -> SetValueVariableView({ newValue ->
+        BlockType.SET_VARIABLE_VALUE -> SetValueVariableView { newValue ->
             viewModel.updateValue(block.id, newValue)
-        })
+        }
+
         BlockType.START -> TODO()
-        BlockType.VARIABLE_DECLARATION -> DeclarationVariableView(
-            { newValue ->
-                viewModel.updateValue(block.id, newValue)
-            }
-        )
-        BlockType.INT_LITERAL -> IntLiteralView({ newValue ->
+        BlockType.VARIABLE_DECLARATION -> DeclarationVariableView { newValue ->
             viewModel.updateValue(block.id, newValue)
-        })
+        }
+
+        BlockType.INT_LITERAL -> IntLiteralView { newValue ->
+            viewModel.updateValue(block.id, newValue)
+        }
+
         BlockType.STRING_LITERAL -> TODO()
         BlockType.BOOLEAN_LITERAL -> TODO()
-        BlockType.VARIABLE_REFERENCE -> VariableReferenceView(
-            { newValue ->
-                viewModel.updateValue(block.id, newValue)
-            }
-        )
+        BlockType.VARIABLE_REFERENCE -> VariableReferenceView { newValue ->
+            viewModel.updateValue(block.id, newValue)
+        }
+
         BlockType.STRING_CONCAT -> TODO()
         BlockType.STRING_APPEND -> TODO()
         BlockType.PRINT_BLOCK -> TODO()
