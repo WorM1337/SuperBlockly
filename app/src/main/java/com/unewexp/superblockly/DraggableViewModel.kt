@@ -5,6 +5,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import com.example.myfirstapplicatioin.blocks.literals.IntLiteralBlock
 import com.example.myfirstapplicatioin.model.ConnectionView
+import com.example.myfirstapplicatioin.utils.disconnect
 import com.unewexp.superblockly.blocks.returnBlocks.VariableReferenceBlock
 import com.unewexp.superblockly.blocks.voidBlocks.SetValueVariableBlock
 import com.unewexp.superblockly.blocks.voidBlocks.VariableDeclarationBlock
@@ -19,72 +20,56 @@ import kotlin.math.abs
 
 class DraggableViewModel: ViewModel() {
 
-    private val _inputConnectors = MutableStateFlow<MutableMap<UUID, ConnectionView>>(mutableMapOf())
-    private val _outputConnectors = MutableStateFlow<MutableMap<UUID, ConnectionView>>(mutableMapOf())
-    private val _topConnectors = MutableStateFlow<MutableMap<UUID, ConnectionView>>(mutableMapOf())
-    private val _bottomConnectors = MutableStateFlow<MutableMap<UUID, ConnectionView>>(mutableMapOf())
-
-    private val _blocks = MutableStateFlow<MutableList<DraggableBlock>>(mutableListOf())
+    private val _blocks = MutableStateFlow<List<DraggableBlock>>(listOf())
     val blocks = _blocks.asStateFlow()
 
     fun addBlock(dragBlock: DraggableBlock) {
         _blocks.update {
-            (_blocks.value.toList() + dragBlock).toMutableList()
+            (_blocks.value + dragBlock)
         }
     }
 
     fun updateBlockPosition(id: String, offsetX: Float, offsetY: Float) {
         val currentBlock = findBlockById(id)
         currentBlock?.scope?.forEach {
-            //if (abs(offsetX) < 1.0 && abs(offsetY) < 1.0) return
             updateBlockPosition(it.id, offsetX, offsetY)
         }
         currentBlock?.let {
-            currentBlock.x = currentBlock.x + offsetX
-            currentBlock.y = currentBlock.y + offsetY
-            Log.i("${currentBlock.block.blockType}", "(${currentBlock.x} : ${currentBlock.y})")
+            currentBlock.x.value = currentBlock.x.value + offsetX
+            currentBlock.y.value = currentBlock.y.value + offsetY
+            Log.i("${currentBlock.block.blockType}", "(${currentBlock.x.value} : ${currentBlock.y.value})")
         }
-        _blocks.update {
-            (_blocks.value.filter { 1 != 0 }).toMutableList()
-        }
-    }
-
-    fun updateBlockPositionByXY(id: String, newX: Float, newY: Float) {
-
-        val currentBlock = findBlockById(id)
-        currentBlock?.let{
-            val offsetX = newX - currentBlock.x
-            val offsetY = newY - currentBlock.y
-            currentBlock.x = newX
-            currentBlock.y = newY
-            Log.i("${currentBlock.block.blockType}", "(${currentBlock.x} : ${currentBlock.y})")
-            currentBlock.scope.forEach {
-                if(abs(offsetX) < 1.0 && abs(offsetY) < 1.0) return
-                updateBlockPosition(it.id, offsetX, offsetY)
-            }
-        }
-
     }
 
     fun removeBlock(id: String) {
         val block = findBlockById(id)
+
         if(block == null){
             return
+        }
+
+        block.scope.forEach {
+            removeBlock(it.id)
         }
 
         // Удаляем все соединения
         block.outputConnectionView?.connector?.connectedTo = null
         block.inputConnectionViews.forEach { it.connector.connectedTo = null }
 
-        block.scope.forEach {
-            removeBlock(it.id)
+        if(block.connectedParent != null){
+            disconnect(block.connectedParentConnectionView!!.connector, block.outputConnectionView!!.connector)
+            block.connectedParent!!.scope.remove(block)
+            block.connectedParent!!.inputConnectionViews.remove(block.outputConnectionView)
         }
 
-        Log.i("Delete", "${block.block.blockType}")
         block.scope.clear()
         _blocks.update {
-            (_blocks.value.filter { it != block }).toMutableList()
+            _blocks.value.filter {
+                Log.i(it.block.blockType.name, it.id)
+                it != block
+            }
         }
+        Log.i("Delete", "${block.block.blockType} with id: " + block.id)
     }
 
     fun findBlockById(id: String): DraggableBlock?{

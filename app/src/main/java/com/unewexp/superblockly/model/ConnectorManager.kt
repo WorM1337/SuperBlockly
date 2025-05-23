@@ -1,12 +1,15 @@
 package com.unewexp.superblockly.model
 
 import android.util.Log
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.example.myfirstapplicatioin.blocks.Block
 import com.example.myfirstapplicatioin.blocks.literals.IntLiteralBlock
 import com.example.myfirstapplicatioin.model.ConnectionView
 import com.example.myfirstapplicatioin.model.Connector
 import com.example.myfirstapplicatioin.utils.canConnect
+import com.example.myfirstapplicatioin.utils.disconnect
 import com.example.myfirstapplicatioin.utils.safeConnect
 import com.unewexp.superblockly.DraggableViewModel
 import com.unewexp.superblockly.blocks.literals.BooleanLiteralBlock
@@ -26,28 +29,73 @@ import com.unewexp.superblockly.viewBlocks.ViewInitialSize
 import java.lang.Math.pow
 import kotlin.coroutines.coroutineContext
 import kotlin.math.min
+import kotlin.math.pow
+import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
 object ConnectorManager {
     val connetionLength = 50.0
 
 
-    fun tryConnectDrag(sourceDragBlock: DraggableBlock, viewModel: DraggableViewModel){
+    fun tryConnectDrag(sourceDragBlock: DraggableBlock, viewModel: DraggableViewModel, density: Density){
 
-        val listDragBlocks = viewModel.blocks.value.filter { !(it in sourceDragBlock.scope) && (it != sourceDragBlock) }.toMutableList()
 
-        val nearestBlock = getBlockWithNearestConnection(sourceDragBlock, listDragBlocks)
-        val nearestConnection = getNearestConnection(sourceDragBlock, listDragBlocks)
+        sourceDragBlock.connectedParent?.let {
+            if(sourceDragBlock.connectedParentConnectionView == null) {
+                sourceDragBlock.connectedParent = null
+                Log.i("Disconnect", "ConnectionView оказался null")
+            }
+            else if(getLengthFromConnections(sourceDragBlock, sourceDragBlock.connectedParent!!, sourceDragBlock.outputConnectionView!!, sourceDragBlock.connectedParentConnectionView!!, density) > connetionLength){
+                disconnect(sourceDragBlock.outputConnectionView!!.connector, sourceDragBlock.connectedParentConnectionView!!.connector)
+
+                sourceDragBlock.connectedParent!!.scope.remove(sourceDragBlock)
+
+                sourceDragBlock.connectedParent = null
+                sourceDragBlock.connectedParentConnectionView = null
+                Log.i("Disconnect", "${sourceDragBlock.block.blockType}")
+            }
+            else{
+
+                val sourceConX = with(density) {sourceDragBlock.outputConnectionView!!.positionX.toPx()}
+                val sourceConY = with(density) {sourceDragBlock.outputConnectionView!!.positionY.toPx()}
+                val nearestConX = with(density) {sourceDragBlock.connectedParentConnectionView!!.positionX.toPx()}
+                val nearestConY = with(density) {sourceDragBlock.connectedParentConnectionView!!.positionY.toPx()}
+
+                viewModel.updateBlockPosition(
+                    sourceDragBlock.id,
+                    sourceDragBlock.connectedParent!!.x.value + nearestConX - (sourceDragBlock.x.value + sourceConX),
+                    sourceDragBlock.connectedParent!!.y.value + nearestConY - (sourceDragBlock.y.value + sourceConY)
+                )
+                return
+            }
+        }
+
+
+        if(sourceDragBlock.connectedParent!= null && sourceDragBlock.connectedParentConnectionView != null) return;
+
+        val listDragBlocks = viewModel.blocks.value.filter { it !in sourceDragBlock.scope && (it != sourceDragBlock) }.toMutableList()
+
+        val nearestBlock = getBlockWithNearestConnection(sourceDragBlock, listDragBlocks, density)
+        val nearestConnection = getNearestConnection(sourceDragBlock, listDragBlocks, density)
 
         if(nearestBlock == null || sourceDragBlock.outputConnectionView == null || nearestConnection == null) return
 
-        if(getLengthFromConnections(sourceDragBlock, nearestBlock, sourceDragBlock.outputConnectionView!!, nearestConnection) <= connetionLength){
+        if(getLengthFromConnections(sourceDragBlock, nearestBlock, sourceDragBlock.outputConnectionView!!, nearestConnection, density) <= connetionLength){
             safeConnect(sourceDragBlock.outputConnectionView!!.connector, nearestConnection.connector)
+
+
+            val sourceConX = with(density) {sourceDragBlock.outputConnectionView!!.positionX.toPx()}
+            val sourceConY = with(density) {sourceDragBlock.outputConnectionView!!.positionY.toPx()}
+            val nearestConX = with(density) {nearestConnection.positionX.toPx()}
+            val nearestConY = with(density) {nearestConnection.positionY.toPx()}
+
             viewModel.updateBlockPosition(
-                nearestBlock.id,
-                nearestBlock.x + nearestConnection.positionX.value - sourceDragBlock.x,
-                nearestBlock.y + nearestConnection.positionY.value - sourceDragBlock.y
+                sourceDragBlock.id,
+                nearestBlock.x.value + nearestConX - (sourceDragBlock.x.value + sourceConX),
+                nearestBlock.y.value + nearestConY - (sourceDragBlock.y.value + sourceConY)
             )
+            sourceDragBlock.connectedParent = nearestBlock
+            sourceDragBlock.connectedParentConnectionView = nearestConnection
             nearestBlock.scope.add(sourceDragBlock)
             Log.i("Connect", "${sourceDragBlock.block.blockType}")
 
@@ -60,15 +108,22 @@ object ConnectorManager {
         dragBlock2: DraggableBlock,
         connection1: ConnectionView,
         connection2: ConnectionView,
+        density: Density
     ): Double {
-        val x1 = dragBlock1.x.toDouble() + connection1.positionX.value.toDouble()
-        val y1 = dragBlock1.y.toDouble() + connection1.positionY.value.toDouble()
-        val x2 = dragBlock2.x.toDouble() + connection2.positionX.value.toDouble()
-        val y2 = dragBlock2.y.toDouble() + connection2.positionY.value.toDouble()
 
-        return sqrt(pow(x1-x2,2.0) + pow(y1-y2, 2.0))
+        val con1x = with(density) {connection1.positionX.toPx()}
+        val con1y = with(density) {connection1.positionY.toPx()}
+        val con2x = with(density) {connection2.positionX.toPx()}
+        val con2y = with(density) {connection2.positionY.toPx()}
+
+        val x1 = (dragBlock1.x.value + con1x)
+        val y1 = (dragBlock1.y.value + con1y)
+        val x2 = (dragBlock2.x.value + con2x)
+        val y2 = (dragBlock2.y.value + con2y)
+
+        return sqrt((x1 - x2).toDouble().pow(2) + (y1 - y2).toDouble().pow(2))
     }
-    fun getBlockWithNearestConnection(dragBlock: DraggableBlock, listBlocks: MutableList<DraggableBlock>): DraggableBlock? {
+    fun getBlockWithNearestConnection(dragBlock: DraggableBlock, listBlocks: MutableList<DraggableBlock>, density: Density): DraggableBlock? {
 
         var ans: DraggableBlock? = null
 
@@ -77,7 +132,7 @@ object ConnectorManager {
         for(block in listBlocks) {
 
             for(connection in block.inputConnectionViews){
-                val length = getLengthFromConnections(dragBlock, block, dragBlock.outputConnectionView!!, connection)
+                val length = getLengthFromConnections(dragBlock, block, dragBlock.outputConnectionView!!, connection, density)
                 if( length < r){
                     r = length
                     ans = block
@@ -86,7 +141,7 @@ object ConnectorManager {
         }
         return ans
     }
-    fun getNearestConnection(dragBlock: DraggableBlock,listBlocks: MutableList<DraggableBlock>): ConnectionView? {
+    fun getNearestConnection(dragBlock: DraggableBlock,listBlocks: MutableList<DraggableBlock>, density: Density): ConnectionView? {
 
         var ans: ConnectionView? = null
 
@@ -95,7 +150,7 @@ object ConnectorManager {
         for(block in listBlocks) {
 
             for(connection in block.inputConnectionViews){
-                val length = getLengthFromConnections(dragBlock, block, dragBlock.outputConnectionView!!, connection)
+                val length = getLengthFromConnections(dragBlock, block, dragBlock.outputConnectionView!!, connection, density)
                 if( length < r){
                     r = length
                     ans = connection
@@ -123,7 +178,7 @@ object ConnectorManager {
                 val height = ViewInitialSize.sizeDictionary[BlockType.OPERAND]!!.y
 
                 ans += mutableListOf(
-                    ConnectionView(castedBlock.outputConnector, 0.dp, height/3),
+                    ConnectionView(castedBlock.outputConnector, 0.dp, height/2),
                     ConnectionView(castedBlock.leftInputConnector, width/4, height/2),
                     ConnectionView(castedBlock.rightInputConnector, width*3/4, height/2),
                 )
@@ -159,7 +214,7 @@ object ConnectorManager {
                 val height = ViewInitialSize.sizeDictionary[BlockType.INT_LITERAL]!!.y
 
                 ans += mutableListOf(
-                    ConnectionView(castedBlock.outputConnector, 0.dp, height/3),
+                    ConnectionView(castedBlock.outputConnector, 0.dp, height/2),
                 )
             }
             BlockType.STRING_LITERAL -> {
@@ -169,7 +224,7 @@ object ConnectorManager {
                 val height = ViewInitialSize.sizeDictionary[BlockType.INT_LITERAL]!!.y
 
                 ans += mutableListOf(
-                    ConnectionView(castedBlock.outputConnector, 0.dp, height/3),
+                    ConnectionView(castedBlock.outputConnector, 0.dp, height/2),
                 )
             }
             BlockType.BOOLEAN_LITERAL -> {
@@ -179,7 +234,7 @@ object ConnectorManager {
                 val height = ViewInitialSize.sizeDictionary[BlockType.BOOLEAN_LITERAL]!!.y
 
                 ans += mutableListOf(
-                    ConnectionView(castedBlock.outputConnector, 0.dp, height/3),
+                    ConnectionView(castedBlock.outputConnector, 0.dp, height/2),
                 )
             }
             BlockType.VARIABLE_REFERENCE -> {
@@ -189,7 +244,7 @@ object ConnectorManager {
                 val height = ViewInitialSize.sizeDictionary[BlockType.VARIABLE_REFERENCE]!!.y
 
                 ans += mutableListOf(
-                    ConnectionView(castedBlock.outputConnector, 0.dp, height/3),
+                    ConnectionView(castedBlock.outputConnector, 0.dp, height/2),
                 )
             }
             BlockType.STRING_CONCAT -> {
@@ -199,7 +254,7 @@ object ConnectorManager {
                 val height = ViewInitialSize.sizeDictionary[BlockType.STRING_CONCAT]!!.y
 
                 ans += mutableListOf(
-                    ConnectionView(castedBlock.outputConnector, 0.dp, height/3),
+                    ConnectionView(castedBlock.outputConnector, 0.dp, height/2),
                     ConnectionView(castedBlock.leftInputConnector, width/4, height/2),
                     ConnectionView(castedBlock.rightInputConnector, width*3/4, height/2),
                 )

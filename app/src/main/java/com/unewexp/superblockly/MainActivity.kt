@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -61,9 +62,13 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.pointerInteropFilter
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -88,6 +93,10 @@ import com.unewexp.superblockly.viewBlocks.SetValueVariableView
 import com.unewexp.superblockly.viewBlocks.VariableReferenceView
 import com.unewexp.superblockly.viewBlocks.ViewSetValueVariableBlock
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
+
+
+
 
 sealed class Routes(val route: String) {
 
@@ -173,6 +182,14 @@ fun CreateNewProject(
     navController: NavHostController,
     viewModel: DraggableViewModel = viewModel()
 ){
+    val density = LocalDensity.current
+
+    fun dpToPx(dp: Dp): Float {
+        val pxValue = with(density) {dp.toPx()}  // Упрощённый расчёт
+
+        return pxValue.toFloat()
+    }
+
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
@@ -180,7 +197,14 @@ fun CreateNewProject(
     val canBeDraggable = remember { mutableStateOf(false) }
 
     var currentDragPosition by remember { mutableStateOf(Offset.Zero) }
-    var dragStartPosition by remember { mutableStateOf(Offset.Zero) }
+    var dragStartPosition1 by remember { mutableStateOf(Offset.Zero) }
+    var dragStartPosition2 by remember { mutableStateOf(Offset.Zero) }
+    var dragStartPosition3 by remember { mutableStateOf(Offset.Zero) }
+    var dragStartPosition4 by remember { mutableStateOf(Offset.Zero) }
+
+    var ghostVisible by remember { mutableStateOf(false) }
+    var ghostPosition by remember { mutableStateOf(Offset.Zero) }
+    var ghostContent by remember { mutableStateOf<@Composable () -> Unit>({ }) }
 
     val blocks by viewModel.blocks.collectAsState()
 
@@ -205,6 +229,9 @@ fun CreateNewProject(
                         Text("Математика", color = Color.White)
                         Box(
                             modifier = Modifier
+                                .onGloballyPositioned{ coordinates ->
+                                    dragStartPosition1 = coordinates.positionInRoot()
+                                }
                                 .pointerInput(Unit){
                                     detectTapGestures(
                                         onLongPress = {
@@ -222,12 +249,15 @@ fun CreateNewProject(
                                 .pointerInput(Unit){
                                     detectDragGestures(
                                         onDragStart = { offset ->
-                                            // Здесь можно создать "призрачный" элемент для перетаскивания
-                                            dragStartPosition = offset
+                                            ghostContent = { IntLiteralBlockCard() }
+                                            ghostPosition = dragStartPosition1
+                                            currentDragPosition = dragStartPosition1
+                                            ghostVisible = true
+                                            canBeDraggable.value = true
                                         },
                                         onDrag = { change, dragAmount ->
                                             change.consume()
-                                            // Обновляем позицию перетаскиваемого элемента
+                                            ghostPosition += dragAmount
                                             currentDragPosition += dragAmount
                                         },
                                         onDragEnd = {
@@ -236,15 +266,17 @@ fun CreateNewProject(
                                                 DraggableBlock(
                                                     newBlock.id.toString(),
                                                     newBlock,
-                                                    currentDragPosition.x - globalOffset.value.x,
-                                                    currentDragPosition.y - globalOffset.value.y,
-                                                    width = 100
+                                                    mutableStateOf(currentDragPosition.x - globalOffset.value.x),
+                                                    mutableStateOf(currentDragPosition.y - globalOffset.value.y),
+                                                    width = 100.dp
                                                 )
                                             )
+                                            ghostVisible = false
                                             canBeDraggable.value = false
                                             currentDragPosition = Offset.Zero
                                         },
                                         onDragCancel = {
+                                            ghostVisible = false
                                             canBeDraggable.value = false
                                             currentDragPosition = Offset.Zero
                                         }
@@ -256,6 +288,9 @@ fun CreateNewProject(
                         Text("Переменные", color = Color.White)
                         Box(
                             modifier = Modifier
+                                .onGloballyPositioned{ coordinates ->
+                                    dragStartPosition2 = coordinates.positionInRoot()
+                                }
                                 .pointerInput(Unit){
                                     detectTapGestures(
                                         onLongPress = {
@@ -273,12 +308,15 @@ fun CreateNewProject(
                                 .pointerInput(Unit){
                                     detectDragGestures(
                                         onDragStart = { offset ->
-                                            // Здесь можно создать "призрачный" элемент для перетаскивания
-                                            dragStartPosition = offset
+                                            ghostContent = { SetValueVariableCard() }
+                                            ghostPosition = dragStartPosition2
+                                            currentDragPosition = dragStartPosition2
+                                            ghostVisible = true
+                                            canBeDraggable.value = true
                                         },
                                         onDrag = { change, dragAmount ->
                                             change.consume()
-                                            // Обновляем позицию перетаскиваемого элемента
+                                            ghostPosition += dragAmount
                                             currentDragPosition += dragAmount
                                         },
                                         onDragEnd = {
@@ -287,15 +325,17 @@ fun CreateNewProject(
                                                 DraggableBlock(
                                                     newBlock.id.toString(),
                                                     newBlock,
-                                                    currentDragPosition.x - globalOffset.value.x,
-                                                    currentDragPosition.y - globalOffset.value.y,
-                                                    width = 200
+                                                    mutableStateOf(currentDragPosition.x - globalOffset.value.x),
+                                                        mutableStateOf(currentDragPosition.y - globalOffset.value.y),
+                                                    width = 100.dp
                                                 )
                                             )
+                                            ghostVisible = false
                                             canBeDraggable.value = false
                                             currentDragPosition = Offset.Zero
                                         },
                                         onDragCancel = {
+                                            ghostVisible = false
                                             canBeDraggable.value = false
                                             currentDragPosition = Offset.Zero
                                         }
@@ -306,6 +346,9 @@ fun CreateNewProject(
                         }
                         Box(
                             modifier = Modifier
+                                .onGloballyPositioned{ coordinates ->
+                                    dragStartPosition3 = coordinates.positionInRoot()
+                                }
                                 .pointerInput(Unit){
                                     detectTapGestures(
                                         onLongPress = {
@@ -323,12 +366,15 @@ fun CreateNewProject(
                                 .pointerInput(Unit){
                                     detectDragGestures(
                                         onDragStart = { offset ->
-                                            // Здесь можно создать "призрачный" элемент для перетаскивания
-                                            dragStartPosition = offset
+                                            ghostContent = { DeclarationVariableCard() }
+                                            ghostPosition = dragStartPosition3
+                                            currentDragPosition = dragStartPosition3
+                                            ghostVisible = true
+                                            canBeDraggable.value = true
                                         },
                                         onDrag = { change, dragAmount ->
                                             change.consume()
-                                            // Обновляем позицию перетаскиваемого элемента
+                                            ghostPosition += dragAmount
                                             currentDragPosition += dragAmount
                                         },
                                         onDragEnd = {
@@ -337,15 +383,17 @@ fun CreateNewProject(
                                                 DraggableBlock(
                                                     newBlock.id.toString(),
                                                     newBlock,
-                                                    currentDragPosition.x - globalOffset.value.x,
-                                                    currentDragPosition.y - globalOffset.value.y,
-                                                    width = 200
+                                                    mutableStateOf(currentDragPosition.x - globalOffset.value.x),
+                                                    mutableStateOf(currentDragPosition.y - globalOffset.value.y),
+                                                    width = 100.dp
                                                 )
                                             )
+                                            ghostVisible = false
                                             canBeDraggable.value = false
                                             currentDragPosition = Offset.Zero
                                         },
                                         onDragCancel = {
+                                            ghostVisible = false
                                             canBeDraggable.value = false
                                             currentDragPosition = Offset.Zero
                                         }
@@ -356,6 +404,9 @@ fun CreateNewProject(
                         }
                         Box(
                             modifier = Modifier
+                                .onGloballyPositioned{ coordinates ->
+                                    dragStartPosition4 = coordinates.positionInRoot()
+                                }
                                 .pointerInput(Unit){
                                     detectTapGestures(
                                         onLongPress = {
@@ -373,12 +424,15 @@ fun CreateNewProject(
                                 .pointerInput(Unit){
                                     detectDragGestures(
                                         onDragStart = { offset ->
-                                            // Здесь можно создать "призрачный" элемент для перетаскивания
-                                            dragStartPosition = offset
+                                            ghostContent = { ReferenceVariableCard() }
+                                            ghostPosition = dragStartPosition4
+                                            currentDragPosition = dragStartPosition4
+                                            ghostVisible = true
+                                            canBeDraggable.value = true
                                         },
                                         onDrag = { change, dragAmount ->
                                             change.consume()
-                                            // Обновляем позицию перетаскиваемого элемента
+                                            ghostPosition += dragAmount
                                             currentDragPosition += dragAmount
                                         },
                                         onDragEnd = {
@@ -387,15 +441,17 @@ fun CreateNewProject(
                                                 DraggableBlock(
                                                     newBlock.id.toString(),
                                                     newBlock,
-                                                    currentDragPosition.x - globalOffset.value.x,
-                                                    currentDragPosition.y - globalOffset.value.y,
-                                                    width = 200
+                                                    mutableStateOf((currentDragPosition.x - globalOffset.value.x).dp.value),
+                                                    mutableStateOf((currentDragPosition.y - globalOffset.value.y).dp.value),
+                                                    width = 100.dp
                                                 )
                                             )
+                                            ghostVisible = false
                                             canBeDraggable.value = false
                                             currentDragPosition = Offset.Zero
                                         },
                                         onDragCancel = {
+                                            ghostVisible = false
                                             canBeDraggable.value = false
                                             currentDragPosition = Offset.Zero
                                         }
@@ -406,6 +462,15 @@ fun CreateNewProject(
                         }
                     }
                 }
+                if (ghostVisible) {
+                    Box(
+                        modifier = Modifier
+                            .offset { IntOffset(ghostPosition.x.roundToInt(), ghostPosition.y.roundToInt()) }
+                            .pointerInput(Unit) { }
+                    ) {
+                        ghostContent()
+                    }
+                }
             }
         }
     ) {
@@ -413,7 +478,9 @@ fun CreateNewProject(
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {
-                Row {
+                Row(
+                    modifier = Modifier.fillMaxWidth().background(Color.White)
+                ) {
                     Box(contentAlignment = Alignment.TopStart) {
                         IconButton(onClick = { scope.launch { drawerState.open() } }) {
                             Icon(Icons.Filled.List, null)
@@ -440,7 +507,6 @@ fun CreateNewProject(
 
                         .transformable(
                             state = rememberTransformableState { zoomChange, offsetChange, _ ->
-                                Log.i("ZOOM", zoomChange.toString())
                                 scale.value *= 1f + (zoomChange - 1f) * zoomFactor
                                 currentScale.value += scale.floatValue - 1
                                 globalOffset.value += offsetChange
@@ -454,21 +520,22 @@ fun CreateNewProject(
                         )
                 ) {
                     blocks.forEach {
+                        Log.i("render", "${it.block.blockType} with id: " + it.id)
                         DraggableBase(
                             content = {
                                 IfItIsThisBlock(it, viewModel)
                                 Box(
                                     modifier = Modifier
-                                        .size(15.dp, 15.dp)
-                                        .offset(it.outputConnectionView!!.positionX - 7.dp, it.outputConnectionView!!.positionY - 7.dp)
+                                        .size(15.dp)
+                                        .offset(it.outputConnectionView!!.positionX, it.outputConnectionView!!.positionY)
                                         .background(Color.Red)
                                 )
 
                                 it.inputConnectionViews.forEach{
                                     Box(
                                         modifier = Modifier
-                                            .size(15.dp, 15.dp)
-                                            .offset(it.positionX - 7.dp, it.positionY - 7.dp)
+                                            .size(15.dp)
+                                            .offset(it.positionX, it.positionY)
                                             .background(Color.Red)
                                     )
                                 }
@@ -477,271 +544,43 @@ fun CreateNewProject(
                             it,
                             onPositionChanged = { offsetX, offsetY ->
                                 viewModel.updateBlockPosition(it.id, offsetX, offsetY)
-                                blocks
                             },
                             onDoubleTap = {
                                 viewModel.removeBlock(it.id)
                             },
                             onDragEnd = {
-                                ConnectorManager.tryConnectDrag(it, viewModel)
+                                ConnectorManager.tryConnectDrag(it, viewModel, density)
                             }
                         )
-                    }
-                }
-            }
-        )
-    }
 
-/*
-    ModalNavigationDrawer(
-        drawerState = drawerState,
-        gesturesEnabled = false,
-        drawerContent = {
-            Box(modifier = Modifier
-                    .background(DrawerColor)
-            ){
-                Column(
-                    modifier = Modifier
-                        .padding(5.dp, 5.dp)
-                ) {
-                    Button(onClick = { scope.launch { drawerState.close() } }) {
-                        Text("Закрыть")
-                    }
-                    Column(
-                        modifier = Modifier
-                            .padding(10.dp, 0.dp)
-                    ) {
-                        Text("Математика", color = Color.White)
-                        Box(
-                            modifier = Modifier
-                                .dragAndDropSource(
-                                    drawDragDecoration = {
-                                        // Потом тут будет просто картинка, и в остальных перетаскиваемых блоках тоже
-                                        drawRect(
-                                            color = Color.Gray.copy(alpha = 0.7f),
-                                            size = Size(200f, 40f)
-                                        )
-                                    }
-                                ) {
-                                    startTransfer(
-                                        DragAndDropTransferData(
-                                            clipData = ClipData.newPlainText(
-                                                "block_type",
-                                                "IntLiteralBlock"
-                                            )
-                                        )
-                                    )
-                                }
-                        ) {
-                            IntLiteralBlockCard()
-                        }
-                        Text("Переменные", color = Color.White)
-                        Box(
-                            modifier = Modifier
-                                .dragAndDropSource(
-                                    drawDragDecoration = {
-                                        // Потом тут будет просто картинка, и в остальных перетаскиваемых блоках тоже
-                                        drawRect(
-                                            color = Color.Gray.copy(alpha = 0.7f),
-                                            size = Size(20f, 40f)
-                                        )
-                                    }
-                                ) {
-                                    startTransfer(
-                                        DragAndDropTransferData(
-                                            clipData = ClipData.newPlainText(
-                                                "block_type",
-                                                "SetValueVariableBlock"
-                                            )
-                                        )
-                                    )
-                                }
-                        ) {
-                            SetValueVariableCard()
-                        }
-                        Box(
-                            modifier = Modifier
-                                .dragAndDropSource(
-                                    drawDragDecoration = {
-                                        // Потом тут будет просто картинка, и в остальных перетаскиваемых блоках тоже
-                                        drawRect(
-                                            color = Color.Gray.copy(alpha = 0.7f),
-                                            size = Size(20f, 40f)
-                                        )
-                                    }
-                                ) {
-                                    startTransfer(
-                                        DragAndDropTransferData(
-                                            clipData = ClipData.newPlainText(
-                                                "block_type",
-                                                "VariableDeclarationBlock"
-                                            )
-                                        )
-                                    )
-                                }
-                        ) {
-                            DeclarationVariableCard()
-                        }
-                        Box(
-                            modifier = Modifier
-                                .dragAndDropSource(
-                                    drawDragDecoration = {
-                                        // Потом тут будет просто картинка, и в остальных перетаскиваемых блоках тоже
-                                        drawRect(
-                                            color = Color.Gray.copy(alpha = 0.7f),
-                                            size = Size(20f, 40f)
-                                        )
-                                    }
-                                ) {
-                                    startTransfer(
-                                        DragAndDropTransferData(
-                                            clipData = ClipData.newPlainText(
-                                                "block_type",
-                                                "VariableReferenceBlock"
-                                            )
-                                        )
-                                    )
-                                }
-                        ) {
-                            ReferenceVariableCard()
-                        }
-                    }
-                }
-            }
-        }
-    ) {
-        val zoomFactor = 0.7f
-        Scaffold(
-            modifier = Modifier.fillMaxSize(),
-            topBar = {
-                Row {
-                    Box(contentAlignment = Alignment.TopStart) {
-                        IconButton(onClick = { scope.launch { drawerState.open() } }) {
-                            Icon(Icons.Filled.List, null)
-                        }
-                    }
-                    Box(contentAlignment = Alignment.TopEnd) {
-                        toHomeBtn(navController)
-                    }
-                }
-            },
-            content = { paddingValues ->
-                val offset = remember { mutableStateOf(Offset.Zero) }
-                val scale = remember { mutableFloatStateOf(1f) }
-
-                val startW = LocalConfiguration.current.screenWidthDp
-                val startH = LocalConfiguration.current.screenHeightDp
-                var currentScale = remember{ mutableStateOf(1f) }
-
-                Box(
-                    modifier = Modifier
-                        .width(4000.dp)
-                        .height(2000.dp)
-                        .padding(paddingValues)
-                        .background(Color.LightGray)
-
-                        .transformable(
-                            state = rememberTransformableState { zoomChange, offsetChange, _ ->
-                                Log.i("ZOOM", zoomChange.toString())
-                                scale.value *= 1f + (zoomChange - 1f) * zoomFactor
-                                currentScale.value += scale.floatValue - 1
-                                offset.value += offsetChange
-                            }
-                        )
-                        .graphicsLayer(
-                            scaleX = scale.value,
-                            scaleY = scale.value,
-                            translationX = offset.value.x,
-                            translationY = offset.value.y
-                        )
-                        .dragAndDropTarget(
-                            { event ->
-                                event.mimeTypes().contains(ClipDescription.MIMETYPE_TEXT_PLAIN)
-                            },
-                            target = object : DragAndDropTarget {
-                                override fun onDrop(event: DragAndDropEvent): Boolean {
-
-                                    val rawX = event.toAndroidDragEvent().x
-                                    val rawY = event.toAndroidDragEvent().y
-
-                                    Log.i("RawX = ", "$rawX")
-                                    Log.i("RawY = ", "$rawY")
-                                    val canvasPosition = Offset(
-                                        x = (rawX + offset.value.x) / currentScale.value,
-                                        y = (rawY + offset.value.y) / currentScale.value
-                                    )
-                                    Log.i("scale", currentScale.value.toString())
-                                    Log.i("canvasPosition.x = ", "${canvasPosition.x}")
-                                    Log.i("canvasPosition.y = ", "${canvasPosition.y}")
-
-                                    val clipData = event.toAndroidDragEvent().clipData ?: return false
-                                    if (clipData.itemCount == 0) return false
-
-                                    val blockType = clipData.getItemAt(0).text?.toString() ?: return false
-
-                                    val newBlock = when (blockType) {
-                                        "IntLiteralBlock" -> IntLiteralBlock()
-                                        "SetValueVariableBlock" -> SetValueVariableBlock()
-                                        "VariableDeclarationBlock" -> VariableDeclarationBlock()
-                                        "VariableReferenceBlock" -> VariableReferenceBlock()
-                                        else -> {IntLiteralBlock()}
-                                    }
-
-                                    viewModel.addBlock(
-                                        DraggableBlock(
-                                            newBlock.id.toString(),
-                                            newBlock,
-                                            canvasPosition.x,
-                                            canvasPosition.y,
-                                            width = if (blockType == "IntLiteralBlock") 100 else 200
-                                        )
-                                    )
-                                    scope.launch { drawerState.close() }
-                                    return true
-                                }
-                            }
-                        )
-                ) {
-                    blocks.forEach {
-                        DraggableBase(
-                            content = {
-                                IfItIsThisBlock(it, viewModel)
-                                Box(
-                                    modifier = Modifier
-                                        .size(15.dp, 15.dp)
-                                        .offset(it.outputConnectionView!!.positionX - 7.dp, it.outputConnectionView!!.positionY - 7.dp)
-                                        .background(Color.Red)
+                        Box(modifier = Modifier
+                            .size(15.dp)
+                            .offset {
+                                IntOffset(
+                                    (it.x.value + dpToPx(it.outputConnectionView!!.positionX)).roundToInt(),
+                                    (it.y.value + dpToPx(it.outputConnectionView!!.positionY)).roundToInt()
                                 )
+                            }
+                            .background(Color.Green)
 
-                                it.inputConnectionViews.forEach{
-                                    Box(
-                                        modifier = Modifier
-                                            .size(15.dp, 15.dp)
-                                            .offset(it.positionX - 7.dp, it.positionY - 7.dp)
-                                            .background(Color.Red)
+                        )
+                        it.inputConnectionViews.forEach { connectionView ->
+                            Box(modifier = Modifier
+                                .size(15.dp)
+                                .offset {
+                                    IntOffset(
+                                        (it.x.value + dpToPx(connectionView.positionX)).roundToInt(),
+                                        (it.y.value + dpToPx(connectionView.positionY)).roundToInt()
                                     )
                                 }
-
-                            },
-                                    it,
-                            onPositionChanged = { offsetX, offsetY ->
-                                viewModel.updateBlockPosition(it.id, offsetX, offsetY)
-                                blocks
-                            },
-                            onDoubleTap = {
-                                viewModel.removeBlock(it.id)
-                            },
-                            onDragEnd = {
-                                ConnectorManager.tryConnectDrag(it, viewModel)
-                            }
-                        )
+                                .background(Color.Magenta)
+                            )
+                        }
                     }
                 }
             }
         )
     }
-
- */
 }
 
 
