@@ -28,7 +28,8 @@ open class ConditionBlock(
             BlockType.NOT_BLOCK,
             BlockType.BOOLEAN_LOGIC_BLOCK,
             BlockType.BOOLEAN_LITERAL
-        )
+        ),
+        allowedDataTypes = setOf(Boolean::class.java)
     )
 
     val innerConnector = Connector( // соединение для внутреннего блока в условии
@@ -37,9 +38,16 @@ open class ConditionBlock(
         allowedBlockTypes = setOf(
             BlockType.IF_BLOCK,
             BlockType.STRING_APPEND,
+            BlockType.SET_VARIABLE_VALUE,
             BlockType.PRINT_BLOCK,
             BlockType.VARIABLE_DECLARATION,
-            BlockType.SET_VARIABLE_VALUE,
+            BlockType.REPEAT_N_TIMES,
+            BlockType.WHILE_BLOCK,
+            BlockType.SHORTHAND_ARITHMETIC_BLOCK,
+            BlockType.FOR_BLOCK,
+            BlockType.FOR_ELEMENT_IN_LIST,
+            BlockType.ADD_VALUE_BY_INDEX,
+            BlockType.REMOVE_VALUE_BY_INDEX,
         )
     )
 
@@ -47,13 +55,20 @@ open class ConditionBlock(
         connectionType = ConnectorType.OUTPUT,
         sourceBlock = this,
         allowedBlockTypes = setOf(
-            BlockType.IF_BLOCK,
             BlockType.STRING_APPEND,
             BlockType.SET_VARIABLE_VALUE,
-            BlockType.PRINT_BLOCK,
             BlockType.VARIABLE_DECLARATION,
-            BlockType.IF_ELSE_BLOCK,
+            BlockType.PRINT_BLOCK,
+            BlockType.IF_BLOCK,
             BlockType.ELSE_BLOCK,
+            BlockType.IF_ELSE_BLOCK,
+            BlockType.REPEAT_N_TIMES,
+            BlockType.WHILE_BLOCK,
+            BlockType.SHORTHAND_ARITHMETIC_BLOCK,
+            BlockType.FOR_BLOCK,
+            BlockType.FOR_ELEMENT_IN_LIST,
+            BlockType.ADD_VALUE_BY_INDEX,
+            BlockType.REMOVE_VALUE_BY_INDEX,
         )
     )
 

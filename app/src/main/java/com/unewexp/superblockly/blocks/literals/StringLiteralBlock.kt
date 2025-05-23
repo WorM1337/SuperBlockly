@@ -16,16 +16,8 @@ class StringLiteralBlock(var initialValue: String = "Empty String") : Block(UUID
 
     val outputConnector = Connector(
         connectionType = ConnectorType.OUTPUT,
-        sourceBlock = this,
-        allowedBlockTypes = setOf(
-            BlockType.STRING_CONCAT,
-            BlockType.STRING_APPEND,
-            BlockType.VARIABLE_DECLARATION
-        ),
-        allowedDataTypes = setOf(String::class.java)
+        sourceBlock = this
     )
-
-
 
     override fun evaluate(): String = value
 }

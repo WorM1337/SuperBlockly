@@ -19,7 +19,13 @@ class VariableDeclarationBlock(var initialName: String = "Undefined") : VoidBloc
             BlockType.BOOLEAN_LITERAL,
             BlockType.OPERAND,
             BlockType.STRING_CONCAT,
-            BlockType.VARIABLE_REFERENCE
+            BlockType.VARIABLE_REFERENCE,
+            BlockType.FIXED_VALUE_AND_SIZE_LIST,
+            BlockType.NOT_BLOCK,
+            BlockType.COMPARE_NUMBERS_BLOCK,
+            BlockType.BOOLEAN_LOGIC_BLOCK,
+            BlockType.GET_VALUE_BY_INDEX,
+            BlockType.GET_LIST_SIZE,
         )
     )
 
@@ -34,7 +40,7 @@ class VariableDeclarationBlock(var initialName: String = "Undefined") : VoidBloc
             ?: throw IllegalStateException("Не указано значение для переменной '$name'")
 
         checkTypeConsistency(value)
-        ExecutionContext.setVariable(name, value)
+        ExecutionContext.declareVariable(name, value)
         variableType = value.javaClass
     }
 

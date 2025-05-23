@@ -23,7 +23,12 @@ class SetValueVariableBlock : VoidBlock(UUID.randomUUID(), BlockType.SET_VARIABL
             BlockType.BOOLEAN_LITERAL,
             BlockType.OPERAND,
             BlockType.STRING_CONCAT,
-            BlockType.VARIABLE_REFERENCE
+            BlockType.VARIABLE_REFERENCE,
+            BlockType.BOOLEAN_LOGIC_BLOCK,
+            BlockType.COMPARE_NUMBERS_BLOCK,
+            BlockType.GET_VALUE_BY_INDEX,
+            BlockType.FIXED_VALUE_AND_SIZE_LIST,
+            BlockType.GET_LIST_SIZE,
         )
     )
 
@@ -44,7 +49,7 @@ class SetValueVariableBlock : VoidBlock(UUID.randomUUID(), BlockType.SET_VARIABL
             throw IllegalStateException("Нельзя изменить тип переменной '$selectedVariableName'")
         }
 
-        ExecutionContext.setVariable(selectedVariableName, value)
+        ExecutionContext.changeVariableValue(selectedVariableName, value)
     }
 
 }
