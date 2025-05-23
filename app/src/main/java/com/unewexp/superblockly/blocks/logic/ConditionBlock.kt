@@ -33,7 +33,7 @@ open class ConditionBlock(
     )
 
     val innerConnector = Connector( // соединение для внутреннего блока в условии
-        connectionType = ConnectorType.OUTPUT,
+        connectionType = ConnectorType.INPUT,
         sourceBlock = this,
         allowedBlockTypes = setOf(
             BlockType.IF_BLOCK,
