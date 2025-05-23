@@ -9,6 +9,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.rememberTransformableState
@@ -24,8 +25,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Button
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
@@ -53,10 +56,8 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.pointerInteropFilter
-import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
@@ -86,8 +87,6 @@ import com.unewexp.superblockly.viewBlocks.SetValueVariableView
 import com.unewexp.superblockly.viewBlocks.VariableReferenceView
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
-
-
 
 
 sealed class Routes(val route: String) {
@@ -164,13 +163,6 @@ fun CreateNewProject(
     navController: NavHostController,
     viewModel: DraggableViewModel = viewModel()
 ){
-    val density = LocalDensity.current
-
-    fun dpToPx(dp: Dp): Float {
-        val pxValue = with(density) {dp.toPx()}  // Упрощённый расчёт
-
-        return pxValue.toFloat()
-    }
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -181,8 +173,6 @@ fun CreateNewProject(
     var ghostVisible by remember { mutableStateOf(false) }
     var ghostPosition by remember { mutableStateOf(Offset.Zero) }
     var ghostContent by remember { mutableStateOf<@Composable () -> Unit>({ }) }
-
-    val blocks by viewModel.blocks.collectAsState()
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -418,108 +408,10 @@ fun CreateNewProject(
             }
         }
     ) {
-        val zoomFactor = 0.7f
-        Scaffold(
-            modifier = Modifier.fillMaxSize(),
-            topBar = {
-                Row(
-                    modifier = Modifier.fillMaxWidth().background(Color.White)
-                ) {
-                    Box(contentAlignment = Alignment.TopStart) {
-                        IconButton(onClick = { scope.launch { drawerState.open() } }) {
-                            Icon(Icons.Filled.List, null)
-                        }
-                    }
-                    Box(contentAlignment = Alignment.TopEnd) {
-                        toHomeBtn(navController)
-                    }
-                }
-            },
-            content = { paddingValues ->
-                val scale = remember { mutableFloatStateOf(1f) }
-                val currentScale = remember{ mutableStateOf(1f) }
-
-                Box(
-                    modifier = Modifier
-                        .width(4000.dp)
-                        .height(2000.dp)
-                        .padding(paddingValues)
-                        .background(Color.LightGray)
-
-                        .transformable(
-                            state = rememberTransformableState { zoomChange, offsetChange, _ ->
-                                scale.value *= 1f + (zoomChange - 1f) * zoomFactor
-                                currentScale.value += scale.floatValue - 1
-                                globalOffset.value += offsetChange
-                            }
-                        )
-                        .graphicsLayer(
-                            scaleX = scale.value,
-                            scaleY = scale.value,
-                            translationX = globalOffset.value.x,
-                            translationY = globalOffset.value.y
-                        )
-                ) {
-                    blocks.forEach {
-                        Log.i("render", "${it.block.blockType} with id: " + it.id)
-                        DraggableBase(
-                            content = {
-                                IfItIsThisBlock(it, viewModel)
-                                Box(
-                                    modifier = Modifier
-                                        .size(15.dp)
-                                        .offset(it.outputConnectionView!!.positionX, it.outputConnectionView!!.positionY)
-                                        .background(Color.Red)
-                                )
-
-                                it.inputConnectionViews.forEach{
-                                    Box(
-                                        modifier = Modifier
-                                            .size(15.dp)
-                                            .offset(it.positionX, it.positionY)
-                                            .background(Color.Red)
-                                    )
-                                }
-
-                            },
-                            it,
-                            onPositionChanged = { offsetX, offsetY ->
-                                viewModel.updateBlockPosition(it.id, offsetX, offsetY)
-                            },
-                            onDoubleTap = {
-                                viewModel.removeBlock(it.id)
-                            },
-                            onDragEnd = {
-                                ConnectorManager.tryConnectDrag(it, viewModel, density)
-                            }
-                        )
-
-                        Box(modifier = Modifier
-                            .size(15.dp)
-                            .offset {
-                                IntOffset(
-                                    (it.x.value + dpToPx(it.outputConnectionView!!.positionX)).roundToInt(),
-                                    (it.y.value + dpToPx(it.outputConnectionView!!.positionY)).roundToInt()
-                                )
-                            }
-                            .background(Color.Green)
-
-                        )
-                        it.inputConnectionViews.forEach { connectionView ->
-                            Box(modifier = Modifier
-                                .size(15.dp)
-                                .offset {
-                                    IntOffset(
-                                        (it.x.value + dpToPx(connectionView.positionX)).roundToInt(),
-                                        (it.y.value + dpToPx(connectionView.positionY)).roundToInt()
-                                    )
-                                }
-                                .background(Color.Magenta)
-                            )
-                        }
-                    }
-                }
-            }
+        Canvas(
+            { scope.launch { drawerState.open() } },
+            { toHomeBtn(navController) },
+            {newOffset -> globalOffset.value = newOffset}
         )
     }
 }
@@ -572,6 +464,145 @@ fun ListItem(
     ) {
         content()
     }
+}
+
+@Composable
+fun Canvas(
+    openDrawer: () -> Unit,
+    toHomeBtn: @Composable () -> Unit,
+    updateOffset: (newOffset: Offset) -> Unit,
+    viewModel: DraggableViewModel = viewModel()
+){
+
+    val density = LocalDensity.current
+    val zoomFactor = 0.7f
+    val globalOffset = remember { mutableStateOf(Offset.Zero) }
+    val blocks by viewModel.blocks.collectAsState()
+
+    fun dpToPx(dp: Dp): Float {
+        val pxValue = with(density) {dp.toPx()}  // Упрощённый расчёт
+
+        return pxValue
+    }
+
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            Box(
+                modifier = Modifier.fillMaxWidth().background(Color.White)
+            )
+            Row{
+                Box {
+                    IconButton(onClick = openDrawer) {
+                        Icon(Icons.Filled.List, null)
+                    }
+                }
+                Box {
+                    toHomeBtn()
+                }
+            }
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(0.dp, 0.dp, 5.dp, 0.dp),
+                contentAlignment = Alignment.CenterEnd
+            ){
+                IconButton(
+                    onClick = {TODO("Запуск программы")},
+                    modifier =
+                        Modifier
+                            .border(3.dp, Color.Green, CircleShape)){
+                    Icon(Icons.Filled.PlayArrow, null)
+                }
+            }
+        },
+        content = { paddingValues ->
+            val scale = remember { mutableFloatStateOf(1f) }
+            val currentScale = remember{ mutableStateOf(1f) }
+
+            Box(
+                modifier = Modifier
+                    .width(4000.dp)
+                    .height(2000.dp)
+                    .padding(paddingValues)
+                    .background(Color.LightGray)
+
+                    .transformable(
+                        state = rememberTransformableState { zoomChange, offsetChange, _ ->
+                            scale.value *= 1f + (zoomChange - 1f) * zoomFactor
+                            currentScale.value += scale.floatValue - 1
+                            globalOffset.value += offsetChange
+                            updateOffset(globalOffset.value)
+                        }
+                    )
+                    .graphicsLayer(
+                        scaleX = scale.value,
+                        scaleY = scale.value,
+                        translationX = globalOffset.value.x,
+                        translationY = globalOffset.value.y
+                    )
+            ) {
+                blocks.forEach { it ->
+                    Log.i("render", "${it.block.blockType} with id: " + it.id)
+                    DraggableBase(
+                        content = {
+                            IfItIsThisBlock(it, viewModel)
+                            Box(
+                                modifier = Modifier
+                                    .size(15.dp)
+                                    .offset(it.outputConnectionView!!.positionX, it.outputConnectionView!!.positionY)
+                                    .background(Color.Red)
+                            )
+
+                            it.inputConnectionViews.forEach{
+                                Box(
+                                    modifier = Modifier
+                                        .size(15.dp)
+                                        .offset(it.positionX, it.positionY)
+                                        .background(Color.Red)
+                                )
+                            }
+
+                        },
+                        it,
+                        onPositionChanged = { offsetX, offsetY ->
+                            viewModel.updateBlockPosition(it.id, offsetX, offsetY)
+                        },
+                        onDoubleTap = {
+                            viewModel.removeBlock(it.id)
+                        },
+                        onDragEnd = {
+                            ConnectorManager.tryConnectDrag(it, viewModel, density)
+                        }
+                    )
+
+                    Box(modifier = Modifier
+                        .size(15.dp)
+                        .offset {
+                            IntOffset(
+                                (it.x.value + dpToPx(it.outputConnectionView!!.positionX)).roundToInt(),
+                                (it.y.value + dpToPx(it.outputConnectionView!!.positionY)).roundToInt()
+                            )
+                        }
+                        .background(Color.Green)
+
+                    )
+                    it.inputConnectionViews.forEach { connectionView ->
+                        Box(modifier = Modifier
+                            .size(15.dp)
+                            .offset {
+                                IntOffset(
+                                    (it.x.value + dpToPx(connectionView.positionX)).roundToInt(),
+                                    (it.y.value + dpToPx(connectionView.positionY)).roundToInt()
+                                )
+                            }
+                            .background(Color.Magenta)
+                        )
+                    }
+                }
+            }
+        }
+    )
 }
 
 @Composable
@@ -650,25 +681,25 @@ fun IfItIsThisBlock(block: DraggableBlock, viewModel: DraggableViewModel = viewM
     val blockType = block.block.blockType
     when(blockType){
         BlockType.OPERAND -> TODO()
-        BlockType.SET_VARIABLE_VALUE -> SetValueVariableView({ newValue ->
+        BlockType.SET_VARIABLE_VALUE -> SetValueVariableView { newValue ->
             viewModel.updateValue(block.id, newValue)
-        })
+        }
+
         BlockType.START -> TODO()
-        BlockType.VARIABLE_DECLARATION -> DeclarationVariableView(
-            { newValue ->
-                viewModel.updateValue(block.id, newValue)
-            }
-        )
-        BlockType.INT_LITERAL -> IntLiteralView({ newValue ->
+        BlockType.VARIABLE_DECLARATION -> DeclarationVariableView { newValue ->
             viewModel.updateValue(block.id, newValue)
-        })
+        }
+
+        BlockType.INT_LITERAL -> IntLiteralView { newValue ->
+            viewModel.updateValue(block.id, newValue)
+        }
+
         BlockType.STRING_LITERAL -> TODO()
         BlockType.BOOLEAN_LITERAL -> TODO()
-        BlockType.VARIABLE_REFERENCE -> VariableReferenceView(
-            { newValue ->
-                viewModel.updateValue(block.id, newValue)
-            }
-        )
+        BlockType.VARIABLE_REFERENCE -> VariableReferenceView { newValue ->
+            viewModel.updateValue(block.id, newValue)
+        }
+
         BlockType.STRING_CONCAT -> TODO()
         BlockType.STRING_APPEND -> TODO()
         BlockType.PRINT_BLOCK -> TODO()

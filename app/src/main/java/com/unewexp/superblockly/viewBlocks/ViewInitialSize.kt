@@ -8,35 +8,67 @@ import com.unewexp.superblockly.enums.BlockType
 
 
 object ViewInitialSize {
-    data class PairDp(var x: Dp, var y: Dp)
+    data class PairDp(var width: Dp, var height: Dp)
 
     val cornerOffset: Dp = 15.dp
 
-    val sizeDictionary: Map<BlockType, PairDp> = mapOf( // При передаче для input-string и output-string нужно указывать не
-    // проценты, а константу
-        BlockType.OPERAND
-                to PairDp(x = 200.dp, y = 60.dp),
-        BlockType.SET_VARIABLE_VALUE
-                to PairDp(x = 200.dp, y = 60.dp),
-        BlockType.START
-                to PairDp(x = 300.dp, y = 200.dp),
-        BlockType.VARIABLE_DECLARATION
-                to PairDp(x = 200.dp, y = 60.dp),
-        BlockType.INT_LITERAL
-                to PairDp(x = 100.dp, y = 60.dp),
-        BlockType.STRING_LITERAL
-                to PairDp(x = 100.dp, y = 60.dp),
-        BlockType.BOOLEAN_LITERAL
-                to PairDp(x = 100.dp, y = 60.dp),
-        BlockType.VARIABLE_REFERENCE
-                to PairDp(x = 100.dp, y = 60.dp),
-        BlockType.STRING_CONCAT
-                to PairDp(x = 240.dp, y = 60.dp),
-        BlockType.STRING_APPEND
-                to PairDp(x = 240.dp, y = 60.dp),
-        BlockType.PRINT_BLOCK
-                to PairDp(x = 150.dp, y = 60.dp),
-        BlockType.IF_BLOCK
-                to PairDp(x = 100.dp, y = 60.dp)
-    )
+    fun getInitialSizeByBlockType(blockType: BlockType) : PairDp?{
+        return when(blockType){
+            BlockType.SET_VARIABLE_VALUE ->
+                PairDp(width = 200.dp, height = 60.dp)
+            BlockType.START ->
+                PairDp(width = 300.dp, height = 200.dp)
+            BlockType.INT_LITERAL ->
+                PairDp(width = 100.dp, height = 60.dp)
+            BlockType.STRING_LITERAL ->
+                PairDp(width = 200.dp, height = 60.dp)
+            BlockType.BOOLEAN_LITERAL ->
+                PairDp(width = 100.dp, height = 60.dp)
+            BlockType.OPERAND ->
+                PairDp(width = 200.dp, height = 60.dp)
+            BlockType.SHORTHAND_ARITHMETIC_BLOCK ->
+                PairDp(width = 200.dp, height = 60.dp)
+            BlockType.VARIABLE_DECLARATION ->
+                PairDp(width = 200.dp, height = 60.dp)
+            BlockType.VARIABLE_REFERENCE ->
+                PairDp(width = 100.dp, height = 60.dp)
+            BlockType.STRING_CONCAT ->
+                PairDp(width = 240.dp, height = 60.dp)
+            BlockType.STRING_APPEND ->
+                PairDp(width = 200.dp, height = 60.dp)
+            BlockType.PRINT_BLOCK ->
+                PairDp(width = 200.dp, height = 60.dp)
+            BlockType.COMPARE_NUMBERS_BLOCK ->
+                PairDp(width = 200.dp, height = 60.dp)
+            BlockType.BOOLEAN_LOGIC_BLOCK ->
+                PairDp(width = 200.dp, height = 60.dp)
+            BlockType.NOT_BLOCK ->
+                PairDp(width = 100.dp, height = 60.dp)
+            BlockType.IF_BLOCK ->
+                PairDp(width = 200.dp, height = 60.dp)
+            BlockType.ELSE_BLOCK ->
+                PairDp(width = 200.dp, height = 60.dp)
+            BlockType.IF_ELSE_BLOCK ->
+                PairDp(width = 200.dp, height = 60.dp)
+            BlockType.REPEAT_N_TIMES ->
+                PairDp(width = 200.dp, height = 60.dp)
+            BlockType.WHILE_BLOCK ->
+                PairDp(width = 200.dp, height = 60.dp)
+            BlockType.FOR_BLOCK ->
+                PairDp(width = 200.dp, height = 60.dp)
+            BlockType.FOR_ELEMENT_IN_LIST ->
+                PairDp(width = 200.dp, height = 60.dp)
+            BlockType.FIXED_VALUE_AND_SIZE_LIST ->
+                PairDp(width = 200.dp, height = 60.dp)
+            BlockType.GET_VALUE_BY_INDEX ->
+                PairDp(width = 200.dp, height = 60.dp)
+            BlockType.REMOVE_VALUE_BY_INDEX ->
+                PairDp(width = 200.dp, height = 60.dp)
+            BlockType.ADD_VALUE_BY_INDEX ->
+                PairDp(width = 200.dp, height = 60.dp)
+            BlockType.GET_LIST_SIZE ->
+                PairDp(width = 200.dp, height = 60.dp)
+            else -> null
+        }
+    }
 }

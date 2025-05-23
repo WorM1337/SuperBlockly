@@ -24,10 +24,11 @@ data class DraggableBlock(
 ){
     init {
 
-        if(!ViewInitialSize.sizeDictionary.containsKey(block.blockType)) throw IllegalArgumentException("Ошибка инициализации блока")
+        val sizeOfBlock = ViewInitialSize.getInitialSizeByBlockType(block.blockType)
 
-        width.value = ViewInitialSize.sizeDictionary[block.blockType]!!.x
-        height.value = ViewInitialSize.sizeDictionary[block.blockType]!!.y
+        if(sizeOfBlock == null) throw IllegalArgumentException("Ошибка инициализации блока")
+        width.value = sizeOfBlock.width
+        height.value = sizeOfBlock.height
 
         val connectionViews = ConnectorManager.initConnectionsFromBlock(block)
 
