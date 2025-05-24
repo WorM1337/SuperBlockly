@@ -224,8 +224,8 @@ object ConnectorManager {
                 val castedBlock = (block as StartBlock)
 
                 ans += mutableListOf(
-                    ConnectionView(castedBlock.bottomConnector, width/2, height),
-                    ConnectionView(castedBlock.topConnector, width/2, 0.dp)
+                    ConnectionView(castedBlock.bottomConnector, 0.dp, height),
+                    ConnectionView(castedBlock.topConnector, width/10, 0.dp)
                 )
             }
             BlockType.OPERAND -> {

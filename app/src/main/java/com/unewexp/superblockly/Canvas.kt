@@ -40,6 +40,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.unewexp.superblockly.blocks.StartBlock
 import com.unewexp.superblockly.enums.BlockType
 import com.unewexp.superblockly.model.ConnectorManager
+import com.unewexp.superblockly.viewBlocks.BottomConnector
 import com.unewexp.superblockly.viewBlocks.DeclarationVariableView
 import com.unewexp.superblockly.viewBlocks.DraggableBase
 import com.unewexp.superblockly.viewBlocks.DraggableBlock
@@ -48,6 +49,7 @@ import com.unewexp.superblockly.viewBlocks.IntLiteralView
 import com.unewexp.superblockly.viewBlocks.PrintBlockView
 import com.unewexp.superblockly.viewBlocks.SetValueVariableView
 import com.unewexp.superblockly.viewBlocks.StartBlockView
+import com.unewexp.superblockly.viewBlocks.TopConnector
 import com.unewexp.superblockly.viewBlocks.VariableReferenceView
 import kotlin.math.roundToInt
 
@@ -64,10 +66,8 @@ fun Canvas(
     val globalOffset = remember { mutableStateOf(Offset.Zero) }
     val blocks by viewModel.blocks.collectAsState()
 
-    val coreBlock = StartBlock()
     val core = DraggableBlock(
-        coreBlock.id.toString(),
-        coreBlock,
+        StartBlock(),
         mutableStateOf(100f),
         mutableStateOf(100f))
 
@@ -104,7 +104,7 @@ fun Canvas(
                 contentAlignment = Alignment.CenterEnd
             ){
                 IconButton(
-                    onClick = {coreBlock.execute()},
+                    onClick = {core.block.execute()},
                     modifier =
                         Modifier
                             .border(3.dp, Color.Green, CircleShape)){
@@ -139,23 +139,24 @@ fun Canvas(
                     )
             ) {
                 blocks.forEach { it ->
-                    Log.i("render", "${it.block.blockType} with id: " + it.id)
+                    Log.i("render", "${it.block.blockType} with id: " + it.block.id)
                     DraggableBase(
                         content = {
+
                             TakeViewBlock(it, viewModel)
-                            Box(
+
+                            TopConnector(
                                 modifier = Modifier
-                                    .size(15.dp)
-                                    .offset(it.outputConnectionView!!.positionX, it.outputConnectionView!!.positionY)
-                                    .background(Color.Red)
+                                    .offset(it.outputConnectionView!!.positionX, it.outputConnectionView!!.positionY - 15.dp),
+                                color = if (it.connectedParent != null) Color(0xFF2069B8) else Color.Gray.copy(alpha = 0.5f)
                             )
 
                             it.inputConnectionViews.forEach{
-                                Box(
+                                BottomConnector(
                                     modifier = Modifier
-                                        .size(15.dp)
-                                        .offset(it.positionX, it.positionY)
-                                        .background(Color.Red)
+                                        .offset(it.positionX, it.positionY - 5.dp),
+                                    color = Color(0xFF2069B8),
+                                    true
                                 )
                             }
 
@@ -173,30 +174,6 @@ fun Canvas(
                             }
                         }
                     )
-
-                    Box(modifier = Modifier
-                        .size(15.dp)
-                        .offset {
-                            IntOffset(
-                                (it.x.value + dpToPx(it.outputConnectionView!!.positionX)).roundToInt(),
-                                (it.y.value + dpToPx(it.outputConnectionView!!.positionY)).roundToInt()
-                            )
-                        }
-                        .background(Color.Green)
-
-                    )
-                    it.inputConnectionViews.forEach { connectionView ->
-                        Box(modifier = Modifier
-                            .size(15.dp)
-                            .offset {
-                                IntOffset(
-                                    (it.x.value + dpToPx(connectionView.positionX)).roundToInt(),
-                                    (it.y.value + dpToPx(connectionView.positionY)).roundToInt()
-                                )
-                            }
-                            .background(Color.Magenta)
-                        )
-                    }
                 }
             }
         }
@@ -235,7 +212,7 @@ fun TakeViewBlock (block: DraggableBlock, viewModel: DraggableViewModel = viewMo
         BlockType.COMPARE_NUMBERS_BLOCK -> TODO()
         BlockType.BOOLEAN_LOGIC_BLOCK -> TODO()
         BlockType.NOT_BLOCK -> TODO()
-        BlockType.IF_BLOCK -> IfBlockView(block.height.value)
+        BlockType.IF_BLOCK -> IfBlockView()
         BlockType.ELSE_BLOCK -> TODO()
         BlockType.IF_ELSE_BLOCK -> TODO()
         BlockType.REPEAT_N_TIMES -> TODO()

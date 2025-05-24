@@ -65,7 +65,7 @@ class DraggableViewModel: ViewModel() {
                 it != block
             }
         }
-        Log.i("Delete", "${block.block.blockType} with id: " + block.id)
+        Log.i("Delete", "${block.block.blockType} with id: " + block.block.id)
     }
 
     fun updateValue(block: DraggableBlock, newValue: String){

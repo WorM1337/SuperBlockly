@@ -1,17 +1,160 @@
-package com.example.myfirstapplicatioin.viewBlocks
+package com.unewexp.superblockly.viewBlocks
 
-import com.example.myfirstapplicatioin.blocks.Block
-import com.example.myfirstapplicatioin.model.ConnectionView
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PaintingStyle.Companion.Stroke
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.PathOperation
+import androidx.compose.ui.graphics.drawscope.Fill
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.unewexp.superblockly.ui.theme.StartColor
 
-object DrawConnection {
+@Preview
+@Composable
+fun TopConnector(
+    modifier: Modifier = Modifier,
+    color: Color = Color(0xFF2069B8),
+    isConnected: Boolean = false
+) {
+    val connectorWidth = 48.dp
+    val connectorHeight = 24.dp
 
-    private val inputConnectors = mutableListOf<ConnectionView>()
-    private val outputConnectors = mutableListOf<ConnectionView>()
+    Box(
+        modifier = modifier
+            .size(width = connectorWidth, height = connectorHeight),
+        contentAlignment = Alignment.TopCenter
+    ) {
+        Canvas(
+            modifier = Modifier.size(connectorWidth, connectorHeight)
+        ) {
+            val width = size.width
+            val height = size.height
+            val cornerRadius = height / 2
 
-    fun onDrugElement(block: Block){
-        var num = 0;
+            val mainPath = Path().apply {
+                arcTo(
+                    rect = Rect(Offset(0f, -cornerRadius), Size(cornerRadius * 2, height)),
+                    startAngleDegrees = 0f,
+                    sweepAngleDegrees = 180f,
+                    forceMoveTo = false
+                )
+                arcTo(
+                    rect = Rect(Offset(2*cornerRadius, -cornerRadius), Size(cornerRadius * 2, height)),
+                    startAngleDegrees = 0f,
+                    sweepAngleDegrees = 180f,
+                    forceMoveTo = false
+                )
+                close()
+            }
 
-        num += 1;
+            val maskPath = Path().apply {
+                addRect(Rect(Offset.Zero, size))
+            }
+
+            var invertedPath = Path.combine(
+                operation = PathOperation.Difference,
+                path1 = maskPath,
+                path2 = mainPath
+            )
+
+            val path2 = Path().apply {
+                moveTo(0f, 0f)
+                lineTo(0f, height)
+                moveTo(width, 0f)
+                lineTo(width, height)
+            }
+
+            invertedPath = Path.combine(
+                operation = PathOperation.Difference,
+                path1 = invertedPath,
+                path2 = path2
+            )
+
+            drawPath(
+                path = invertedPath,
+                color = color,
+                style = Fill
+            )
+        }
     }
+}
 
+@Composable
+fun BottomConnector(
+    modifier: Modifier = Modifier,
+    color: Color = Color(0xFF2069B8),
+    isConnected: Boolean = false
+) {
+    val connectorWidth = 48.dp
+    val connectorHeight = 24.dp
+
+    Box(
+        modifier = modifier
+            .size(width = connectorWidth, height = connectorHeight),
+        contentAlignment = Alignment.BottomCenter
+    ) {
+        Canvas(
+            modifier = Modifier.size(connectorWidth, connectorHeight)
+        ) {
+            val width = size.width
+            val height = size.height
+            val cornerRadius = height / 2
+
+            val path = Path().apply {
+                arcTo(
+                    rect = Rect(Offset(0f, -cornerRadius), Size(cornerRadius * 2, height)),
+                    startAngleDegrees = 0f,
+                    sweepAngleDegrees = 180f,
+                    forceMoveTo = false
+                )
+                arcTo(
+                    rect = Rect(Offset(2*cornerRadius, -cornerRadius), Size(cornerRadius * 2, height)),
+                    startAngleDegrees = 0f,
+                    sweepAngleDegrees = 180f,
+                    forceMoveTo = false
+                )
+                close()
+            }
+
+            drawPath(
+                path = path,
+                color = color,
+                style = Fill
+            )
+
+            val path2 = Path().apply {
+                moveTo(0f, 0f)
+                lineTo(0f, height/2)
+                moveTo(width, 0f)
+                lineTo(width, height/2)
+                close()
+            }
+
+            drawPath(
+                path = path2,
+                color = color,
+                style = Stroke(width = 2f)
+            )
+        }
+    }
 }

@@ -168,11 +168,9 @@ fun CreateNewProject(
                                 ghostPosition += dragAmount
                             },
                             {
-                                val newBlock = PrintBlock()
                                 viewModel.addBlock(
                                     DraggableBlock(
-                                        newBlock.id.toString(),
-                                        newBlock,
+                                        PrintBlock(),
                                         mutableStateOf(ghostPosition.x - globalOffset.value.x),
                                         mutableStateOf(ghostPosition.y - globalOffset.value.y),
                                         width = mutableStateOf(100.dp)
@@ -210,11 +208,9 @@ fun CreateNewProject(
                                     ghostPosition += dragAmount
                                 },
                                 {
-                                    val newBlock = IntLiteralBlock()
                                     viewModel.addBlock(
                                         DraggableBlock(
-                                            newBlock.id.toString(),
-                                            newBlock,
+                                            IntLiteralBlock(),
                                             mutableStateOf(ghostPosition.x - globalOffset.value.x),
                                             mutableStateOf(ghostPosition.y - globalOffset.value.y),
                                             width = mutableStateOf(100.dp)
@@ -250,11 +246,9 @@ fun CreateNewProject(
                                 ghostPosition += dragAmount
                             },
                             {
-                                val newBlock = SetValueVariableBlock()
                                 viewModel.addBlock(
                                     DraggableBlock(
-                                        newBlock.id.toString(),
-                                        newBlock,
+                                        SetValueVariableBlock(),
                                         mutableStateOf(ghostPosition.x - globalOffset.value.x),
                                         mutableStateOf(ghostPosition.y - globalOffset.value.y),
                                         width = mutableStateOf(200.dp)
@@ -289,11 +283,9 @@ fun CreateNewProject(
                                 ghostPosition += dragAmount
                             },
                             {
-                                val newBlock = VariableDeclarationBlock()
                                 viewModel.addBlock(
                                     DraggableBlock(
-                                        newBlock.id.toString(),
-                                        newBlock,
+                                        VariableDeclarationBlock(),
                                         mutableStateOf(ghostPosition.x - globalOffset.value.x),
                                         mutableStateOf(ghostPosition.y - globalOffset.value.y),
                                         width = mutableStateOf(200.dp)
@@ -328,11 +320,9 @@ fun CreateNewProject(
                                 ghostPosition += dragAmount
                             },
                             {
-                                val newBlock = VariableReferenceBlock()
                                 viewModel.addBlock(
                                     DraggableBlock(
-                                        newBlock.id.toString(),
-                                        newBlock,
+                                        VariableReferenceBlock(),
                                         mutableStateOf(ghostPosition.x - globalOffset.value.x),
                                         mutableStateOf(ghostPosition.y - globalOffset.value.y),
                                         width = mutableStateOf(100.dp)
@@ -370,11 +360,9 @@ fun CreateNewProject(
                                 ghostPosition += dragAmount
                             },
                             {
-                                val newBlock = IfBlock()
                                 viewModel.addBlock(
                                     DraggableBlock(
-                                        newBlock.id.toString(),
-                                        newBlock,
+                                        IfBlock(),
                                         mutableStateOf(ghostPosition.x - globalOffset.value.x),
                                         mutableStateOf(ghostPosition.y - globalOffset.value.y),
                                         width = mutableStateOf(100.dp)
