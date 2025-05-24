@@ -73,7 +73,7 @@ object ConnectorManager {
             val nearestConY = with(density) {nearestConnection.positionY.toPx()}
 
             viewModel.updateBlockPosition(
-                sourceDragBlock.id,
+                sourceDragBlock,
                 nearestBlock.x.value + nearestConX - (sourceDragBlock.x.value + sourceConX),
                 nearestBlock.y.value + nearestConY - (sourceDragBlock.y.value + sourceConY)
             )
@@ -109,7 +109,7 @@ object ConnectorManager {
                 val nearestConY = with(density) {sourceDragBlock.connectedParentConnectionView!!.positionY.toPx()}
 
                 viewModel.updateBlockPosition(
-                    sourceDragBlock.id,
+                    sourceDragBlock,
                     sourceDragBlock.connectedParent!!.x.value + nearestConX - (sourceDragBlock.x.value + sourceConX),
                     sourceDragBlock.connectedParent!!.y.value + nearestConY - (sourceDragBlock.y.value + sourceConY)
                 )
@@ -306,8 +306,8 @@ object ConnectorManager {
                 val castedBlock = (block as IfBlock)
 
                 ans += mutableListOf(
-                    ConnectionView(castedBlock.topConnector, 0.dp, 0.dp),
-                    ConnectionView(castedBlock.bottomConnector, 0.dp, height),
+                    ConnectionView(castedBlock.topConnector, cornerOffset, 0.dp),
+                    ConnectionView(castedBlock.bottomConnector, cornerOffset, height),
                     ConnectionView(castedBlock.innerConnector, width/2, height),
                     ConnectionView(castedBlock.conditionConnector, width, height/2)
                 )

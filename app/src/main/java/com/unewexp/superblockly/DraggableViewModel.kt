@@ -7,6 +7,7 @@ import com.example.myfirstapplicatioin.utils.disconnect
 import com.unewexp.superblockly.blocks.returnBlocks.VariableReferenceBlock
 import com.unewexp.superblockly.blocks.voidBlocks.SetValueVariableBlock
 import com.unewexp.superblockly.blocks.voidBlocks.VariableDeclarationBlock
+import com.unewexp.superblockly.enums.ConnectorType
 import com.unewexp.superblockly.viewBlocks.DraggableBlock
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,27 +24,27 @@ class DraggableViewModel: ViewModel() {
         }
     }
 
-    fun updateBlockPosition(id: String, offsetX: Float, offsetY: Float) {
-        val currentBlock = findBlockById(id)
-        currentBlock?.scope?.forEach {
-            updateBlockPosition(it.id, offsetX, offsetY)
+    fun updateBlockPosition(currentBlock: DraggableBlock, offsetX: Float, offsetY: Float) {
+        currentBlock.scope.forEach {
+            updateBlockPosition(it, offsetX, offsetY)
         }
-        currentBlock?.let {
-            currentBlock.x.value = currentBlock.x.value + offsetX
-            currentBlock.y.value = currentBlock.y.value + offsetY
-            Log.i("${currentBlock.block.blockType}", "(${currentBlock.x.value} : ${currentBlock.y.value})")
-        }
+
+        currentBlock.x.value = currentBlock.x.value + offsetX
+        currentBlock.y.value = currentBlock.y.value + offsetY
+        Log.i("${currentBlock.block.blockType}", "(${currentBlock.x.value} : ${currentBlock.y.value})")
     }
 
-    fun removeBlock(id: String) {
-        val block = findBlockById(id)
-
-        if(block == null){
-            return
-        }
+    fun removeBlock(block: DraggableBlock) {
 
         for(i in block.scope.indices.reversed()){
-            removeBlock(block.scope[i].id)
+
+            if(block.scope[i].outputConnectionView!!.connector.connectionType == ConnectorType.STRING_TOP){
+                // Если при просмотре детей оказалось, что этот коннектор - верхний у void блока, то этот блок мы удалять не должны
+                block.scope.removeAt(i)
+            }
+            else {
+                removeBlock(block.scope[i])
+            }
         }
 
         if(block.connectedParent != null && block.connectedParentConnectionView != null){
@@ -55,25 +56,15 @@ class DraggableViewModel: ViewModel() {
 
         _blocks.update {
             _blocks.value.filter {
-                Log.i(it.block.blockType.name, it.id)
                 it != block
             }
         }
         Log.i("Delete", "${block.block.blockType} with id: " + block.id)
     }
 
-    fun findBlockById(id: String): DraggableBlock?{
-        _blocks.value.forEach { block ->
-            if (block.id == id){
-                return block
-            }
-        }
-        return null
-    }
-
-    fun updateValue(id: String, newValue: String){
+    fun updateValue(block: DraggableBlock, newValue: String){
         _blocks.value.forEach {
-            if(it.id == id){
+            if(it == block){
                 if(it.block is IntLiteralBlock){
                     val v = newValue.toFloatOrNull()
                     if(v != null){

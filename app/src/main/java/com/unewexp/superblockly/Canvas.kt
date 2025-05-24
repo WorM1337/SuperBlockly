@@ -148,10 +148,10 @@ fun Canvas(
                         },
                         it,
                         onPositionChanged = { offsetX, offsetY ->
-                            viewModel.updateBlockPosition(it.id, offsetX, offsetY)
+                            viewModel.updateBlockPosition(it, offsetX, offsetY)
                         },
                         onDoubleTap = {
-                            viewModel.removeBlock(it.id)
+                            viewModel.removeBlock(it)
                         },
                         onDragEnd = {
                             ConnectorManager.tryConnectAndDisconnectDrag(it, viewModel, density)
@@ -194,22 +194,22 @@ fun TakeViewBlock (block: DraggableBlock, viewModel: DraggableViewModel = viewMo
     when(blockType){
         BlockType.OPERAND -> TODO()
         BlockType.SET_VARIABLE_VALUE -> SetValueVariableView { newValue ->
-            viewModel.updateValue(block.id, newValue)
+            viewModel.updateValue(block, newValue)
         }
 
         BlockType.START -> TODO()
         BlockType.VARIABLE_DECLARATION -> DeclarationVariableView { newValue ->
-            viewModel.updateValue(block.id, newValue)
+            viewModel.updateValue(block, newValue)
         }
 
         BlockType.INT_LITERAL -> IntLiteralView { newValue ->
-            viewModel.updateValue(block.id, newValue)
+            viewModel.updateValue(block, newValue)
         }
 
         BlockType.STRING_LITERAL -> TODO()
         BlockType.BOOLEAN_LITERAL -> TODO()
         BlockType.VARIABLE_REFERENCE -> VariableReferenceView { newValue ->
-            viewModel.updateValue(block.id, newValue)
+            viewModel.updateValue(block, newValue)
         }
 
         BlockType.STRING_CONCAT -> TODO()
