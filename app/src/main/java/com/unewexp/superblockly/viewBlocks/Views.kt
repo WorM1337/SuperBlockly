@@ -270,9 +270,24 @@ fun StartBlockView(){
     ){
         Text(
             stringResource(R.string.core),
+            modifier = Modifier.fillMaxSize(),
+            style = MaterialTheme.typography.bodyMedium,
             fontSize = 28.sp,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxSize()
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
+@Composable
+fun PrintBlockView(){
+
+    Row(verticalAlignment = Alignment.CenterVertically){
+        Text(
+            stringResource(R.string.print),
+            modifier = Modifier.padding(end = 4.dp).fillMaxSize(),
+            style = MaterialTheme.typography.bodyMedium,
+            fontSize = 28.sp,
+            textAlign = TextAlign.Center
         )
     }
 }

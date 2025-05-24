@@ -14,6 +14,7 @@ import com.unewexp.superblockly.viewBlocks.DeclarationVariableViewForCard
 import com.unewexp.superblockly.viewBlocks.IfBlockView
 import com.unewexp.superblockly.viewBlocks.IfBlockViewForCard
 import com.unewexp.superblockly.viewBlocks.IntLiteralViewForCard
+import com.unewexp.superblockly.viewBlocks.PrintBlockView
 import com.unewexp.superblockly.viewBlocks.SetValueVariableViewForCard
 import com.unewexp.superblockly.viewBlocks.VariableReferenceViewForCard
 
@@ -81,5 +82,17 @@ fun IfBlockCard(){
             .padding(2.dp)
     ){
         IfBlockViewForCard()
+    }
+}
+
+@Composable
+fun PrintBlockCard(){
+    Card(
+        modifier = Modifier
+            .width(200.dp)
+            .width(60.dp)
+            .padding(2.dp)
+    ){
+        PrintBlockView()
     }
 }

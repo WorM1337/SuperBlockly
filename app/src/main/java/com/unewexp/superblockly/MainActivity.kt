@@ -54,6 +54,7 @@ import com.example.myfirstapplicatioin.blocks.Block
 import com.example.myfirstapplicatioin.blocks.literals.IntLiteralBlock
 import com.unewexp.superblockly.blocks.logic.IfBlock
 import com.unewexp.superblockly.blocks.returnBlocks.VariableReferenceBlock
+import com.unewexp.superblockly.blocks.voidBlocks.PrintBlock
 import com.unewexp.superblockly.blocks.voidBlocks.SetValueVariableBlock
 import com.unewexp.superblockly.blocks.voidBlocks.VariableDeclarationBlock
 import com.unewexp.superblockly.ui.theme.DrawerColor
@@ -150,7 +151,43 @@ fun CreateNewProject(
                         }
                     }
                     item{
-
+                        ListItem(
+                            {
+                                canBeDraggable.value = true
+                            },
+                            {
+                                canBeDraggable.value = false
+                            },
+                            { dragStartPosition ->
+                                ghostContent = { PrintBlockCard() }
+                                ghostPosition = dragStartPosition
+                                ghostVisible = true
+                                canBeDraggable.value = true
+                            },
+                            { dragAmount ->
+                                ghostPosition += dragAmount
+                            },
+                            {
+                                val newBlock = PrintBlock()
+                                viewModel.addBlock(
+                                    DraggableBlock(
+                                        newBlock.id.toString(),
+                                        newBlock,
+                                        mutableStateOf(ghostPosition.x - globalOffset.value.x),
+                                        mutableStateOf(ghostPosition.y - globalOffset.value.y),
+                                        width = mutableStateOf(100.dp)
+                                    )
+                                )
+                                ghostVisible = false
+                                canBeDraggable.value = false
+                            },
+                            {
+                                ghostVisible = false
+                                canBeDraggable.value = false
+                            }
+                        ){
+                            PrintBlockCard()
+                        }
                     }
                         item{
                             Text("Математика", color = Color.White)

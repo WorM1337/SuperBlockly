@@ -45,6 +45,7 @@ import com.unewexp.superblockly.viewBlocks.DraggableBase
 import com.unewexp.superblockly.viewBlocks.DraggableBlock
 import com.unewexp.superblockly.viewBlocks.IfBlockView
 import com.unewexp.superblockly.viewBlocks.IntLiteralView
+import com.unewexp.superblockly.viewBlocks.PrintBlockView
 import com.unewexp.superblockly.viewBlocks.SetValueVariableView
 import com.unewexp.superblockly.viewBlocks.StartBlockView
 import com.unewexp.superblockly.viewBlocks.VariableReferenceView
@@ -103,7 +104,7 @@ fun Canvas(
                 contentAlignment = Alignment.CenterEnd
             ){
                 IconButton(
-                    onClick = {blocks.first().block.execute()},
+                    onClick = {coreBlock.execute()},
                     modifier =
                         Modifier
                             .border(3.dp, Color.Green, CircleShape)){
@@ -229,7 +230,7 @@ fun TakeViewBlock (block: DraggableBlock, viewModel: DraggableViewModel = viewMo
 
         BlockType.STRING_CONCAT -> TODO()
         BlockType.STRING_APPEND -> TODO()
-        BlockType.PRINT_BLOCK -> TODO()
+        BlockType.PRINT_BLOCK -> PrintBlockView()
         BlockType.SHORTHAND_ARITHMETIC_BLOCK -> TODO()
         BlockType.COMPARE_NUMBERS_BLOCK -> TODO()
         BlockType.BOOLEAN_LOGIC_BLOCK -> TODO()
