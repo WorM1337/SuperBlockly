@@ -1,22 +1,16 @@
 package com.unewexp.superblockly
 
 import android.util.Log
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import com.example.myfirstapplicatioin.blocks.literals.IntLiteralBlock
-import com.example.myfirstapplicatioin.model.ConnectionView
 import com.example.myfirstapplicatioin.utils.disconnect
 import com.unewexp.superblockly.blocks.returnBlocks.VariableReferenceBlock
 import com.unewexp.superblockly.blocks.voidBlocks.SetValueVariableBlock
 import com.unewexp.superblockly.blocks.voidBlocks.VariableDeclarationBlock
-import com.unewexp.superblockly.blocks.voidBlocks.VoidBlock
-import com.unewexp.superblockly.enums.BlockType
 import com.unewexp.superblockly.viewBlocks.DraggableBlock
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import java.util.UUID
-import kotlin.math.abs
 
 class DraggableViewModel: ViewModel() {
 
