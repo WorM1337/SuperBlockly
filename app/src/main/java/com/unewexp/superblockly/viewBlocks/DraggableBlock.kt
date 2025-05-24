@@ -20,7 +20,8 @@ data class DraggableBlock(
     var width: MutableState<Dp> = mutableStateOf(100.dp),
     var height: MutableState<Dp> = mutableStateOf(60.dp),
     var connectedParent: DraggableBlock? = null,
-    var connectedParentConnectionView: ConnectionView? = null
+    var connectedParentConnectionView: ConnectionView? = null,
+    var isInner: Boolean = false // Показывает, находится ли блок внутри другого блока. Например параметры для OperandBlock, либо поле для void-блоков для if
 ){
     init {
 
@@ -33,7 +34,7 @@ data class DraggableBlock(
         val connectionViews = ConnectorManager.initConnectionsFromBlock(block)
 
         connectionViews.forEach{
-            if(it.connector.connectionType == ConnectorType.OUTPUT){
+            if(it.connector.connectionType == ConnectorType.OUTPUT || it.connector.connectionType == ConnectorType.STRING_TOP){
                 outputConnectionView = it
             }
             else {

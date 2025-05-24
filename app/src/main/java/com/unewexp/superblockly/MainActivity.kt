@@ -53,10 +53,8 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.pointerInteropFilter
-import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
@@ -556,7 +554,7 @@ fun Canvas(
                             viewModel.removeBlock(it.id)
                         },
                         onDragEnd = {
-                            ConnectorManager.tryConnectDrag(it, viewModel, density)
+                            ConnectorManager.tryConnectAndDisconnectDrag(it, viewModel, density)
                         }
                     )
 
