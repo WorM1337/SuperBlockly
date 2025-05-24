@@ -154,7 +154,7 @@ fun Canvas(
                             viewModel.removeBlock(it.id)
                         },
                         onDragEnd = {
-                            ConnectorManager.tryConnectDrag(it, viewModel, density)
+                            ConnectorManager.tryConnectAndDisconnectDrag(it, viewModel, density)
                         }
                     )
 
