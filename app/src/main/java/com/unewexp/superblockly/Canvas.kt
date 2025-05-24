@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.unewexp.superblockly.blocks.StartBlock
 import com.unewexp.superblockly.enums.BlockType
 import com.unewexp.superblockly.model.ConnectorManager
 import com.unewexp.superblockly.viewBlocks.DeclarationVariableView
@@ -45,6 +46,7 @@ import com.unewexp.superblockly.viewBlocks.DraggableBlock
 import com.unewexp.superblockly.viewBlocks.IfBlockView
 import com.unewexp.superblockly.viewBlocks.IntLiteralView
 import com.unewexp.superblockly.viewBlocks.SetValueVariableView
+import com.unewexp.superblockly.viewBlocks.StartBlockView
 import com.unewexp.superblockly.viewBlocks.VariableReferenceView
 import kotlin.math.roundToInt
 
@@ -60,6 +62,17 @@ fun Canvas(
     val zoomFactor = 0.7f
     val globalOffset = remember { mutableStateOf(Offset.Zero) }
     val blocks by viewModel.blocks.collectAsState()
+
+    val coreBlock = StartBlock()
+    val core = DraggableBlock(
+        coreBlock.id.toString(),
+        coreBlock,
+        mutableStateOf(100f),
+        mutableStateOf(100f))
+
+    if(blocks.isEmpty()){
+        viewModel.addBlock(core)
+    }
 
     fun dpToPx(dp: Dp): Float {
         val pxValue = with(density) {dp.toPx()}  // Упрощённый расчёт
@@ -90,7 +103,7 @@ fun Canvas(
                 contentAlignment = Alignment.CenterEnd
             ){
                 IconButton(
-                    onClick = {TODO("Запуск программы")},
+                    onClick = {blocks.first().block.execute()},
                     modifier =
                         Modifier
                             .border(3.dp, Color.Green, CircleShape)){
@@ -154,7 +167,9 @@ fun Canvas(
                             viewModel.removeBlock(it)
                         },
                         onDragEnd = {
-                            ConnectorManager.tryConnectAndDisconnectDrag(it, viewModel, density)
+                            if (it.block !is StartBlock){
+                                ConnectorManager.tryConnectAndDisconnectDrag(it, viewModel, density)
+                            }
                         }
                     )
 
@@ -197,7 +212,7 @@ fun TakeViewBlock (block: DraggableBlock, viewModel: DraggableViewModel = viewMo
             viewModel.updateValue(block, newValue)
         }
 
-        BlockType.START -> TODO()
+        BlockType.START -> StartBlockView()
         BlockType.VARIABLE_DECLARATION -> DeclarationVariableView { newValue ->
             viewModel.updateValue(block, newValue)
         }

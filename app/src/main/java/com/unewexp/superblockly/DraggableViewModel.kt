@@ -1,9 +1,11 @@
 package com.unewexp.superblockly
 
 import android.util.Log
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.example.myfirstapplicatioin.blocks.literals.IntLiteralBlock
 import com.example.myfirstapplicatioin.utils.disconnect
+import com.unewexp.superblockly.blocks.StartBlock
 import com.unewexp.superblockly.blocks.returnBlocks.VariableReferenceBlock
 import com.unewexp.superblockly.blocks.voidBlocks.SetValueVariableBlock
 import com.unewexp.superblockly.blocks.voidBlocks.VariableDeclarationBlock
@@ -35,6 +37,10 @@ class DraggableViewModel: ViewModel() {
     }
 
     fun removeBlock(block: DraggableBlock) {
+
+        if(block.block is StartBlock){
+            return
+        }
 
         for(i in block.scope.indices.reversed()){
 

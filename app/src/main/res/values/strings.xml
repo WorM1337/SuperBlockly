@@ -8,4 +8,5 @@
     <string name="about_body1">Легко - понятный интерфейс</string>
     <string name="about_body2">Быстро - не пиши, перетаскивай блоки</string>
     <string name="about_body3">Интересно - собирай конструктор и развлекайся</string>
+    <string name="core">Core</string>
 </resources>

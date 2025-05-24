@@ -9,6 +9,7 @@ import com.example.myfirstapplicatioin.model.ConnectionView
 import com.example.myfirstapplicatioin.utils.disconnect
 import com.example.myfirstapplicatioin.utils.safeConnect
 import com.unewexp.superblockly.DraggableViewModel
+import com.unewexp.superblockly.blocks.StartBlock
 import com.unewexp.superblockly.blocks.arithmetic.OperandBlock
 import com.unewexp.superblockly.blocks.literals.BooleanLiteralBlock
 import com.unewexp.superblockly.blocks.literals.StringLiteralBlock
@@ -219,7 +220,14 @@ object ConnectorManager {
         val height = sizeOfBlock.height
 
         when(block.blockType) {
-            BlockType.START -> {}
+            BlockType.START -> {
+                val castedBlock = (block as StartBlock)
+
+                ans += mutableListOf(
+                    ConnectionView(castedBlock.bottomConnector, width/2, height),
+                    ConnectionView(castedBlock.topConnector, width/2, 0.dp)
+                )
+            }
             BlockType.OPERAND -> {
                 val castedBlock = (block as OperandBlock)
 
