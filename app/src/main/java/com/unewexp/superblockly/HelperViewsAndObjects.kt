@@ -11,9 +11,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.unewexp.superblockly.enums.BlockType
+import com.unewexp.superblockly.ui.theme.BooleanColor
+import com.unewexp.superblockly.ui.theme.MathColor
+import com.unewexp.superblockly.ui.theme.PrintColor
+import com.unewexp.superblockly.ui.theme.StartColor
+import com.unewexp.superblockly.ui.theme.VariablesColor
 
 sealed class Routes(val route: String) {
 
@@ -65,6 +72,41 @@ class DragState {
     fun onDragCancel() {
         isGhostVisible = false
     }
+}
+
+@Composable
+fun getColorByBlockType(type: BlockType): Color {
+    var color: Color = Color(0xFFE0E0E0)
+    when(type){
+        BlockType.SET_VARIABLE_VALUE -> color = VariablesColor
+        BlockType.START -> color = StartColor
+        BlockType.INT_LITERAL -> color = MathColor
+        BlockType.STRING_LITERAL -> TODO()
+        BlockType.BOOLEAN_LITERAL -> color = BooleanColor
+        BlockType.OPERAND -> TODO()
+        BlockType.SHORTHAND_ARITHMETIC_BLOCK -> TODO()
+        BlockType.VARIABLE_DECLARATION -> color = VariablesColor
+        BlockType.VARIABLE_REFERENCE -> color = VariablesColor
+        BlockType.STRING_CONCAT -> TODO()
+        BlockType.STRING_APPEND -> TODO()
+        BlockType.PRINT_BLOCK -> color = PrintColor
+        BlockType.COMPARE_NUMBERS_BLOCK -> color = BooleanColor
+        BlockType.BOOLEAN_LOGIC_BLOCK -> color = BooleanColor
+        BlockType.NOT_BLOCK -> TODO()
+        BlockType.IF_BLOCK -> color = BooleanColor
+        BlockType.ELSE_BLOCK -> color = BooleanColor
+        BlockType.IF_ELSE_BLOCK -> color = BooleanColor
+        BlockType.REPEAT_N_TIMES -> TODO()
+        BlockType.WHILE_BLOCK -> TODO()
+        BlockType.FOR_BLOCK -> TODO()
+        BlockType.FOR_ELEMENT_IN_LIST -> TODO()
+        BlockType.FIXED_VALUE_AND_SIZE_LIST -> TODO()
+        BlockType.GET_VALUE_BY_INDEX -> TODO()
+        BlockType.REMOVE_VALUE_BY_INDEX -> TODO()
+        BlockType.ADD_VALUE_BY_INDEX -> TODO()
+        BlockType.GET_LIST_SIZE -> TODO()
+    }
+    return color
 }
 
 @Composable

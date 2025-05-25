@@ -45,19 +45,23 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
+import androidx.compose.ui.unit.min
 import com.unewexp.superblockly.blocks.Logger
 
 
-@Preview
 @Composable
-fun ConsolePanel(){
+fun ConsolePanel(
+    height: Dp
+){
     val logs = Logger.logs
     var isExpanded by remember{ mutableStateOf(false) }
     var widthDp by remember { mutableStateOf(300.dp) }
 
 
-    val minWidth = 150.dp
+    val minWidth = 50.dp
     val maxWidth = 650.dp
 
     val density = LocalDensity.current
@@ -72,7 +76,7 @@ fun ConsolePanel(){
 
     Box(
         modifier = Modifier
-            .fillMaxHeight()
+            .height(height)
             .wrapContentWidth(Alignment.End)
             .width(widthDp)
             .background(
@@ -100,7 +104,7 @@ fun ConsolePanel(){
                         orientation = Orientation.Horizontal,
                         state = rememberDraggableState { distance: Float ->
                             val distanceDp = with(density) { distance.toDp() }
-                            widthDp += distanceDp.coerceIn(minWidth - widthDp, maxWidth - widthDp)
+                            widthDp = max(minWidth, (min(maxWidth, widthDp - distanceDp)))
                         }
                     ),
                 contentAlignment = Alignment.Center

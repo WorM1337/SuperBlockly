@@ -37,7 +37,10 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
+import com.unewexp.superblockly.DraggableBlock
 import com.unewexp.superblockly.enums.BlockType
+import com.unewexp.superblockly.getColorByBlockType
 import com.unewexp.superblockly.ui.theme.BooleanColor
 import com.unewexp.superblockly.ui.theme.MathColor
 import com.unewexp.superblockly.ui.theme.PrintColor
@@ -52,46 +55,19 @@ fun DraggableBase(
     draggableBlock: DraggableBlock,
     onPositionChanged: (Float, Float) -> Unit,
     onDoubleTap: () -> Unit,
+    onDragStart: () -> Unit,
     onDragEnd: () -> Unit
 ){
 
     val currentBlock by rememberUpdatedState(draggableBlock)
     val latestOnPositionChanged by rememberUpdatedState(onPositionChanged)
     val latestOnDoubleTap by rememberUpdatedState(onDoubleTap)
+    val latestOnDragStart by rememberUpdatedState(onDragStart)
     val latestOnDragEnd by rememberUpdatedState(onDragEnd)
     var offsetX = currentBlock.x.value
     var offsetY = currentBlock.y.value
 
-    var color: Color = Color(0xFFE0E0E0)
-    when(currentBlock.block.blockType){
-        BlockType.SET_VARIABLE_VALUE -> color = VariablesColor
-        BlockType.START -> color = StartColor
-        BlockType.INT_LITERAL -> color = MathColor
-        BlockType.STRING_LITERAL -> TODO()
-        BlockType.BOOLEAN_LITERAL -> color = BooleanColor
-        BlockType.OPERAND -> TODO()
-        BlockType.SHORTHAND_ARITHMETIC_BLOCK -> TODO()
-        BlockType.VARIABLE_DECLARATION -> color = VariablesColor
-        BlockType.VARIABLE_REFERENCE -> color = VariablesColor
-        BlockType.STRING_CONCAT -> TODO()
-        BlockType.STRING_APPEND -> TODO()
-        BlockType.PRINT_BLOCK -> color = PrintColor
-        BlockType.COMPARE_NUMBERS_BLOCK -> color = BooleanColor
-        BlockType.BOOLEAN_LOGIC_BLOCK -> color = BooleanColor
-        BlockType.NOT_BLOCK -> TODO()
-        BlockType.IF_BLOCK -> color = BooleanColor
-        BlockType.ELSE_BLOCK -> color = BooleanColor
-        BlockType.IF_ELSE_BLOCK -> color = BooleanColor
-        BlockType.REPEAT_N_TIMES -> TODO()
-        BlockType.WHILE_BLOCK -> TODO()
-        BlockType.FOR_BLOCK -> TODO()
-        BlockType.FOR_ELEMENT_IN_LIST -> TODO()
-        BlockType.FIXED_VALUE_AND_SIZE_LIST -> TODO()
-        BlockType.GET_VALUE_BY_INDEX -> TODO()
-        BlockType.REMOVE_VALUE_BY_INDEX -> TODO()
-        BlockType.ADD_VALUE_BY_INDEX -> TODO()
-        BlockType.GET_LIST_SIZE -> TODO()
-    }
+    val color = getColorByBlockType(currentBlock.block.blockType)
 
     Box(
         modifier = Modifier
@@ -100,6 +76,9 @@ fun DraggableBase(
             .background(color, shape = MaterialTheme.shapes.small)
             .pointerInput(Unit) {
                 detectDragGestures(
+                    onDragStart = {
+                        latestOnDragStart()
+                    },
                     onDragEnd = {
                         latestOnDragEnd()
                     }
@@ -116,6 +95,7 @@ fun DraggableBase(
                 )
             }
             .padding(horizontal = 8.dp, vertical = 4.dp)
+            .zIndex(currentBlock.zIndex.value)
     ) {
         content()
     }

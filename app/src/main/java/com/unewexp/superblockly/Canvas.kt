@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
@@ -44,7 +45,7 @@ import com.unewexp.superblockly.model.ConnectorManager
 import com.unewexp.superblockly.viewBlocks.BottomConnector
 import com.unewexp.superblockly.viewBlocks.DeclarationVariableView
 import com.unewexp.superblockly.viewBlocks.DraggableBase
-import com.unewexp.superblockly.viewBlocks.DraggableBlock
+import com.unewexp.superblockly.DraggableBlock
 import com.unewexp.superblockly.viewBlocks.IfBlockView
 import com.unewexp.superblockly.viewBlocks.IntLiteralView
 import com.unewexp.superblockly.viewBlocks.PrintBlockView
@@ -52,6 +53,8 @@ import com.unewexp.superblockly.viewBlocks.SetValueVariableView
 import com.unewexp.superblockly.viewBlocks.StartBlockView
 import com.unewexp.superblockly.viewBlocks.TopConnector
 import com.unewexp.superblockly.viewBlocks.VariableReferenceView
+import java.util.Queue
+import kotlin.math.max
 import kotlin.math.roundToInt
 
 @Composable
@@ -86,7 +89,7 @@ fun Canvas(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             Box(
-                modifier = Modifier.fillMaxWidth().background(Color.White)
+                modifier = Modifier.fillMaxWidth().height(50.dp).background(Color.White)
             ) {
                 Row {
                     Box {
@@ -148,18 +151,16 @@ fun Canvas(
 
                             TakeViewBlock(it, viewModel)
 
-                            TopConnector(
-                                modifier = Modifier
-                                    .offset(it.outputConnectionView!!.positionX, it.outputConnectionView!!.positionY - 15.dp),
-                                color = if (it.connectedParent != null) Color(0xFF2069B8) else Color.Gray.copy(alpha = 0.5f)
-                            )
-
-                            it.inputConnectionViews.forEach{
-                                BottomConnector(
+                            if (it.block.blockType != BlockType.START) {
+                                TopConnector(
                                     modifier = Modifier
-                                        .offset(it.positionX, it.positionY - 5.dp),
-                                    color = Color(0xFF2069B8),
-                                    true
+                                        .offset(
+                                            it.outputConnectionView!!.positionX - 10.dp - 8.dp,
+                                            it.outputConnectionView!!.positionY - 12.dp - 4.dp
+                                        ),
+                                    color = if (it.connectedParent != null) getColorByBlockType(it.block.blockType) else Color.Gray.copy(
+                                        alpha = 0.5f
+                                    )
                                 )
                             }
 
@@ -171,10 +172,35 @@ fun Canvas(
                         onDoubleTap = {
                             viewModel.removeBlock(it)
                         },
+                        onDragStart = {
+                            val queue: MutableList<DraggableBlock> = mutableListOf(it)
+                            while(!queue.isEmpty()){
+                                val item = queue.first()
+                                queue.removeAt(0)
+                                item.scope.forEach { element ->
+                                    queue.add(element)
+                                }
+                                item.zIndex.value += viewModel.maxZIndex + 0.1f
+                                viewModel.maxZIndex = max(item.zIndex.value, viewModel.maxZIndex)
+                            }
+                        },
                         onDragEnd = {
                             if (it.block !is StartBlock){
                                 ConnectorManager.tryConnectAndDisconnectDrag(it, viewModel, density)
+                                it.connectedParent?.let{ parent ->
+                                    val queue: MutableList<DraggableBlock> = mutableListOf(parent)
+                                    while(!queue.isEmpty()){
+                                        val item = queue.first()
+                                        queue.removeAt(0)
+                                        item.scope.forEach { element ->
+                                            queue.add(element)
+                                            element.zIndex.value = item.zIndex.value + 0.1f
+                                            viewModel.maxZIndex = max(element.zIndex.value, viewModel.maxZIndex)
+                                        }
+                                    }
+                                }
                             }
+                            viewModel.normalizeZIndex()
                         }
                     )
                 }
@@ -183,7 +209,9 @@ fun Canvas(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.BottomEnd
             ){
-                ConsolePanel()
+                ConsolePanel(
+                    height = LocalConfiguration.current.screenHeightDp.dp - 50.dp
+                )
             }
         }
     )

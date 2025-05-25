@@ -10,20 +10,23 @@ import com.unewexp.superblockly.blocks.returnBlocks.VariableReferenceBlock
 import com.unewexp.superblockly.blocks.voidBlocks.SetValueVariableBlock
 import com.unewexp.superblockly.blocks.voidBlocks.VariableDeclarationBlock
 import com.unewexp.superblockly.enums.ConnectorType
-import com.unewexp.superblockly.viewBlocks.DraggableBlock
+import com.unewexp.superblockly.DraggableBlock
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlin.math.min
 
 class DraggableViewModel: ViewModel() {
 
     private val _blocks = MutableStateFlow<List<DraggableBlock>>(listOf())
     val blocks = _blocks.asStateFlow()
+    var maxZIndex = 0f;
 
     fun addBlock(dragBlock: DraggableBlock) {
         _blocks.update {
             (_blocks.value + dragBlock)
         }
+        maxZIndex += 0.1f
     }
 
     fun updateBlockPosition(currentBlock: DraggableBlock, offsetX: Float, offsetY: Float) {
@@ -87,6 +90,18 @@ class DraggableViewModel: ViewModel() {
                 if(it.block is VariableReferenceBlock){
                     it.block.selectedVariableName = newValue
                 }
+            }
+        }
+    }
+
+    fun normalizeZIndex() {
+        var minZIndex = maxZIndex
+        blocks.value.forEach {
+            minZIndex = min(minZIndex, it.zIndex.value)
+        }
+        if(minZIndex > 0){
+            _blocks.value.forEach {
+                it.zIndex.value -= minZIndex
             }
         }
     }

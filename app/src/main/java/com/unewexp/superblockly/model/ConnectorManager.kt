@@ -23,7 +23,7 @@ import com.unewexp.superblockly.blocks.voidBlocks.VariableDeclarationBlock
 import com.unewexp.superblockly.blocks.voidBlocks.VoidBlock
 import com.unewexp.superblockly.enums.BlockType
 import com.unewexp.superblockly.enums.ConnectorType
-import com.unewexp.superblockly.viewBlocks.DraggableBlock
+import com.unewexp.superblockly.DraggableBlock
 import com.unewexp.superblockly.viewBlocks.ViewInitialSize
 import kotlin.math.pow
 import kotlin.math.sqrt
