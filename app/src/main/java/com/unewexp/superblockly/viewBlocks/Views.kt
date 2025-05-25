@@ -83,7 +83,7 @@ fun TextFieldLike(
 fun IntLiteralView(
     onNameChanged: (String) -> Unit
 ) {
-    var value by remember { mutableStateOf(TextFieldValue("0")) }
+    var value by remember { mutableStateOf(TextFieldValue("123")) }
 
     TextField(
         value = value,

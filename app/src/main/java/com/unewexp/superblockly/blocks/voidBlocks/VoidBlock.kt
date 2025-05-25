@@ -36,7 +36,7 @@ open class VoidBlock(
 
 
     open val bottomConnector = Connector(
-        connectionType = ConnectorType.STRING_BOTTOM,
+        connectionType = ConnectorType.STRING_BOTTOM_OUTER,
 
         sourceBlock = this,
         allowedBlockTypes = setOf(

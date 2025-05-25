@@ -44,12 +44,11 @@ class DraggableViewModel: ViewModel() {
 
         for(i in block.scope.indices.reversed()){
 
-            if(block.scope[i].outputConnectionView!!.connector.connectionType == ConnectorType.STRING_TOP){
-                // Если при просмотре детей оказалось, что этот коннектор - верхний у void блока, то этот блок мы удалять не должны
-                block.scope.removeAt(i)
+            if(block.scope[i].connectedParentConnectionView!!.connector.connectionType != ConnectorType.STRING_BOTTOM_OUTER || block.scope[i].isInner){
+                removeBlock(block.scope[i])
             }
             else {
-                removeBlock(block.scope[i])
+                block.scope.removeAt(i)
             }
         }
 

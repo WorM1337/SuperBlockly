@@ -33,7 +33,7 @@ open class ConditionBlock(
     )
 
     val innerConnector = Connector( // соединение для внутреннего блока в условии
-        connectionType = ConnectorType.INPUT,
+        connectionType = ConnectorType.STRING_BOTTOM_INNER,
         sourceBlock = this,
         allowedBlockTypes = setOf(
             BlockType.IF_BLOCK,
@@ -52,7 +52,7 @@ open class ConditionBlock(
     )
 
     override val bottomConnector = Connector( // переход на следующий блок условия или дальше в программу
-        connectionType = ConnectorType.OUTPUT,
+        connectionType = ConnectorType.STRING_BOTTOM_OUTER,
         sourceBlock = this,
         allowedBlockTypes = setOf(
             BlockType.STRING_APPEND,

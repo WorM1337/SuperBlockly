@@ -50,12 +50,16 @@ object ConnectorManager {
 
         when(connectionType){
             ConnectorType.OUTPUT -> {
-                nearestBlock = getBlockWithNearestConnection(sourceDragBlock, listDragBlocks, density, ConnectorType.INPUT, false)
-                nearestConnection = getNearestConnection(sourceDragBlock, listDragBlocks, density, ConnectorType.INPUT)
+                nearestBlock = getBlockWithNearestConnection(sourceDragBlock, listDragBlocks, density,
+                    mutableListOf(ConnectorType.INPUT), false)
+                nearestConnection = getNearestConnection(sourceDragBlock, listDragBlocks, density,
+                    mutableListOf(ConnectorType.INPUT))
             }
             ConnectorType.STRING_TOP -> {
-                nearestBlock = getBlockWithNearestConnection(sourceDragBlock, listDragBlocks, density, ConnectorType.STRING_BOTTOM, true)
-                nearestConnection = getNearestConnection(sourceDragBlock, listDragBlocks, density, ConnectorType.STRING_BOTTOM)
+                nearestBlock = getBlockWithNearestConnection(sourceDragBlock, listDragBlocks, density,
+                    mutableListOf(ConnectorType.STRING_BOTTOM_INNER, ConnectorType.STRING_BOTTOM_OUTER), true)
+                nearestConnection = getNearestConnection(sourceDragBlock, listDragBlocks, density,
+                    mutableListOf(ConnectorType.STRING_BOTTOM_INNER, ConnectorType.STRING_BOTTOM_OUTER))
 
             }
             else -> throw IllegalArgumentException("Коннектор типа ${sourceDragBlock.outputConnectionView!!.connector.connectionType} выступил как получатель")
@@ -82,7 +86,10 @@ object ConnectorManager {
             sourceDragBlock.connectedParentConnectionView = nearestConnection
             nearestBlock.scope.add(sourceDragBlock)
             Log.i("Connect", "${sourceDragBlock.block.blockType}")
-
+            if(sourceDragBlock.connectedParentConnectionView!!.connector.connectionType != ConnectorType.STRING_BOTTOM_OUTER || sourceDragBlock.connectedParent!!.isInner)
+                sourceDragBlock.isInner = true
+            else
+                sourceDragBlock.isInner = false
         }
     }
 
@@ -114,6 +121,10 @@ object ConnectorManager {
                     sourceDragBlock.connectedParent!!.x.value + nearestConX - (sourceDragBlock.x.value + sourceConX),
                     sourceDragBlock.connectedParent!!.y.value + nearestConY - (sourceDragBlock.y.value + sourceConY)
                 )
+                if(sourceDragBlock.connectedParentConnectionView!!.connector.connectionType != ConnectorType.STRING_BOTTOM_OUTER || sourceDragBlock.connectedParent!!.isInner)
+                    sourceDragBlock.isInner = true
+                else
+                    sourceDragBlock.isInner = false
                 return false
             }
         }
@@ -140,7 +151,7 @@ object ConnectorManager {
 
         return sqrt((x1 - x2).toDouble().pow(2) + (y1 - y2).toDouble().pow(2))
     }
-    fun getBlockWithNearestConnection(dragBlock: DraggableBlock, listBlocks: MutableList<DraggableBlock>, density: Density, connectionType: ConnectorType, requiresVoid: Boolean): DraggableBlock? {
+    fun getBlockWithNearestConnection(dragBlock: DraggableBlock, listBlocks: MutableList<DraggableBlock>, density: Density, connectionTypes: MutableList<ConnectorType>, requiresVoid: Boolean): DraggableBlock? {
 
         var ans: DraggableBlock? = null
 
@@ -153,7 +164,7 @@ object ConnectorManager {
 
                 for(connection in block.inputConnectionViews){
 
-                    if(connection.connector.connectionType != connectionType) continue // Проверка на то, что мы ищем именно тот тип коннектора, который нам нужен
+                    if(connection.connector.connectionType !in connectionTypes) continue // Проверка на то, что мы ищем именно тот тип коннектора, который нам нужен
 
                     val length = getLengthFromConnections(dragBlock, block, dragBlock.outputConnectionView!!, connection, density)
                     if( length < r){
@@ -169,7 +180,7 @@ object ConnectorManager {
 
                 for(connection in block.inputConnectionViews){
 
-                    if(connection.connector.connectionType != connectionType) continue // Проверка на то, что мы ищем именно тот тип коннектора, который нам нужен
+                    if(connection.connector.connectionType !in connectionTypes) continue // Проверка на то, что мы ищем именно тот тип коннектора, который нам нужен
 
                     val length = getLengthFromConnections(dragBlock, block, dragBlock.outputConnectionView!!, connection, density)
                     if( length < r){
@@ -182,7 +193,7 @@ object ConnectorManager {
 
         return ans
     }
-    fun getNearestConnection(dragBlock: DraggableBlock,listBlocks: MutableList<DraggableBlock>, density: Density, connectionType: ConnectorType): ConnectionView? {
+    fun getNearestConnection(dragBlock: DraggableBlock,listBlocks: MutableList<DraggableBlock>, density: Density, connectionTypes:MutableList<ConnectorType>): ConnectionView? {
 
         var ans: ConnectionView? = null
 
@@ -192,7 +203,7 @@ object ConnectorManager {
 
             for(connection in block.inputConnectionViews){
 
-                if(connection.connector.connectionType != connectionType) continue // Проверка на то, что мы ищем именно тот тип коннектора, который нам нужен
+                if(connection.connector.connectionType !in connectionTypes) continue // Проверка на то, что мы ищем именно тот тип коннектора, который нам нужен
 
                 val length = getLengthFromConnections(dragBlock, block, dragBlock.outputConnectionView!!, connection, density)
                 if( length < r){
@@ -224,8 +235,8 @@ object ConnectorManager {
                 val castedBlock = (block as StartBlock)
 
                 ans += mutableListOf(
-                    ConnectionView(castedBlock.bottomConnector, 0.dp, height),
-                    ConnectionView(castedBlock.topConnector, width/10, 0.dp)
+                    ConnectionView(castedBlock.bottomConnector, cornerOffset, height),
+                    ConnectionView(castedBlock.topConnector, cornerOffset, 0.dp)
                 )
             }
             BlockType.OPERAND -> {

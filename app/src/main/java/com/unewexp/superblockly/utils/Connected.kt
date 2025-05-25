@@ -28,8 +28,8 @@ fun checkTypeConnector(source: Connector, target: Connector): Boolean{
         return when (source.connectionType) {
                 ConnectorType.INPUT -> target.connectionType == ConnectorType.OUTPUT
                 ConnectorType.OUTPUT -> target.connectionType == ConnectorType.INPUT
-                ConnectorType.STRING_TOP -> target.connectionType == ConnectorType.STRING_BOTTOM
-                ConnectorType.STRING_BOTTOM -> target.connectionType == ConnectorType.STRING_TOP
+                ConnectorType.STRING_TOP -> target.connectionType == ConnectorType.STRING_BOTTOM_OUTER || target.connectionType == ConnectorType.STRING_BOTTOM_INNER
+                ConnectorType.STRING_BOTTOM_OUTER, ConnectorType.STRING_BOTTOM_INNER -> target.connectionType == ConnectorType.STRING_TOP
         }
 }
 
