@@ -108,7 +108,7 @@ fun Canvas(
                     contentAlignment = Alignment.CenterEnd
                 ) {
                     IconButton(
-                        onClick = { core.block.execute() },
+                        onClick = { blocks[0].block.execute() },
                         modifier =
                             Modifier
                                 .border(3.dp, Color.Green, CircleShape)
@@ -151,6 +151,14 @@ fun Canvas(
 
                             TakeViewBlock(it, viewModel)
 
+                            it.inputConnectionViews.forEach { connector ->
+                                Box(modifier = Modifier
+                                    .offset (connector.positionX, connector.positionY)
+                                    .size(15.dp)
+                                    .background(Color(255,140,170))
+                                )
+                            }
+
                             if (it.block.blockType != BlockType.START) {
                                 TopConnector(
                                     modifier = Modifier
@@ -171,6 +179,7 @@ fun Canvas(
                         },
                         onDoubleTap = {
                             viewModel.removeBlock(it)
+
                         },
                         onDragStart = {
                             val queue: MutableList<DraggableBlock> = mutableListOf(it)

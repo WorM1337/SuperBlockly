@@ -332,7 +332,7 @@ object ConnectorManager {
                 ans += mutableListOf(
                     ConnectionView(castedBlock.topConnector, cornerOffset, 0.dp),
                     ConnectionView(castedBlock.bottomConnector, cornerOffset, height),
-                    ConnectionView(castedBlock.innerConnector, width/2, height),
+                    ConnectionView(castedBlock.innerConnector, cornerOffset, 60.dp),
                     ConnectionView(castedBlock.conditionConnector, width, height/2)
                 )
             }

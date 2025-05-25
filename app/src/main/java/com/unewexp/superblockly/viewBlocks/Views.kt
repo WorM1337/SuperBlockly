@@ -339,7 +339,7 @@ fun DeclarationVariableViewForCard(){
 
 @Composable
 fun IfBlockView() {
-    val textHeight = 24.dp
+    val textHeight = 60.dp
     val bottomLineHeight = 1.dp
     val lineWidth = 1.dp
     val bottomLineWidth = 60.dp
@@ -356,11 +356,11 @@ fun IfBlockView() {
                 modifier = Modifier
                     .height(textHeight)
                     .fillMaxWidth(),
-                contentAlignment = Alignment.TopStart
+                contentAlignment = Alignment.CenterStart
             ) {
                 Text(
                     "If",
-                    style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 20.sp),
+                    style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 32.sp),
                     modifier = Modifier.padding(bottom = 4.dp)
                 )
             }
