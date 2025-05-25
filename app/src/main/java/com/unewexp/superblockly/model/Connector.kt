@@ -10,7 +10,8 @@ import com.unewexp.superblockly.enums.ConnectorType
 data class ConnectionView(
     val connector: Connector,
     var positionX: Dp,
-    var positionY: Dp
+    var positionY: Dp,
+    var isConnected: Boolean = false
 )
 
 data class Connector(

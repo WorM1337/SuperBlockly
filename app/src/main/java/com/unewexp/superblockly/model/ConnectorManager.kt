@@ -29,7 +29,7 @@ import kotlin.math.pow
 import kotlin.math.sqrt
 
 object ConnectorManager {
-    val connetionLength = 50.0
+    val connetionLength = 70.0
 
 
     fun tryConnectAndDisconnectDrag(sourceDragBlock: DraggableBlock, viewModel: DraggableViewModel, density: Density){
@@ -90,6 +90,8 @@ object ConnectorManager {
                 sourceDragBlock.isInner = true
             else
                 sourceDragBlock.isInner = false
+            sourceDragBlock.connectedParentConnectionView!!.isConnected = true
+            sourceDragBlock.outputConnectionView!!.isConnected = true
         }
     }
 
@@ -103,6 +105,9 @@ object ConnectorManager {
                 disconnect(sourceDragBlock.outputConnectionView!!.connector, sourceDragBlock.connectedParentConnectionView!!.connector)
 
                 sourceDragBlock.connectedParent!!.scope.remove(sourceDragBlock)
+
+                sourceDragBlock.connectedParentConnectionView!!.isConnected = false
+                sourceDragBlock.outputConnectionView!!.isConnected = false
 
                 sourceDragBlock.connectedParent = null
                 sourceDragBlock.connectedParentConnectionView = null
@@ -164,7 +169,7 @@ object ConnectorManager {
 
                 for(connection in block.inputConnectionViews){
 
-                    if(connection.connector.connectionType !in connectionTypes) continue // Проверка на то, что мы ищем именно тот тип коннектора, который нам нужен
+                    if(connection.connector.connectionType !in connectionTypes || connection.isConnected) continue // Проверка на то, что мы ищем именно тот тип коннектора, который нам нужен
 
                     val length = getLengthFromConnections(dragBlock, block, dragBlock.outputConnectionView!!, connection, density)
                     if( length < r){
@@ -178,9 +183,9 @@ object ConnectorManager {
         else {
             for(block in listBlocks) {
 
-                for(connection in block.inputConnectionViews){
+                for(connection in block.inputConnectionViews ){
 
-                    if(connection.connector.connectionType !in connectionTypes) continue // Проверка на то, что мы ищем именно тот тип коннектора, который нам нужен
+                    if(connection.connector.connectionType !in connectionTypes || connection.isConnected) continue // Проверка на то, что мы ищем именно тот тип коннектора, который нам нужен
 
                     val length = getLengthFromConnections(dragBlock, block, dragBlock.outputConnectionView!!, connection, density)
                     if( length < r){
@@ -203,7 +208,7 @@ object ConnectorManager {
 
             for(connection in block.inputConnectionViews){
 
-                if(connection.connector.connectionType !in connectionTypes) continue // Проверка на то, что мы ищем именно тот тип коннектора, который нам нужен
+                if(connection.connector.connectionType !in connectionTypes || connection.isConnected) continue // Проверка на то, что мы ищем именно тот тип коннектора, который нам нужен
 
                 val length = getLengthFromConnections(dragBlock, block, dragBlock.outputConnectionView!!, connection, density)
                 if( length < r){
