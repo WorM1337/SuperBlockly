@@ -2,10 +2,13 @@ package com.unewexp.superblockly.blocks.voidBlocks
 
 import com.example.myfirstapplicatioin.model.Connector
 import com.unewexp.superblockly.blocks.ExecutionContext
+import com.unewexp.superblockly.blocks.Logger
+import com.unewexp.superblockly.blocks.Logger.LogType
 import com.unewexp.superblockly.enums.BlockType
 import com.unewexp.superblockly.enums.ConnectorType
 import java.lang.IllegalStateException
 import java.util.UUID
+
 
 class PrintBlock() : VoidBlock(UUID.randomUUID(), BlockType.PRINT_BLOCK) {
 
@@ -18,7 +21,7 @@ class PrintBlock() : VoidBlock(UUID.randomUUID(), BlockType.PRINT_BLOCK) {
     override fun execute() {
         val value = inputConnector.connectedTo?.evaluate()
             ?: throw IllegalStateException("В PrintBlock не добавлено значение вывода")
-        ExecutionContext.appendLog(value.toString())
+        Logger.appendLog(LogType.TEXT, value.toString())
     }
 
 }
