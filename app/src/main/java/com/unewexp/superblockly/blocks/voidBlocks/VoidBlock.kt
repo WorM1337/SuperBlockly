@@ -13,7 +13,7 @@ open class VoidBlock(
 ) : Block(id, blockType) {
 
     open val topConnector = Connector(
-        connectionType = ConnectorType.OUTPUT,
+        connectionType = ConnectorType.STRING_TOP,
         sourceBlock = this,
         allowedBlockTypes = setOf(
             BlockType.START,
@@ -36,7 +36,7 @@ open class VoidBlock(
 
 
     open val bottomConnector = Connector(
-        connectionType = ConnectorType.INPUT,
+        connectionType = ConnectorType.STRING_BOTTOM,
 
         sourceBlock = this,
         allowedBlockTypes = setOf(

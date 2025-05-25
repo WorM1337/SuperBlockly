@@ -31,13 +31,13 @@ object ViewInitialSize {
             BlockType.VARIABLE_DECLARATION ->
                 PairDp(width = 200.dp, height = 60.dp)
             BlockType.VARIABLE_REFERENCE ->
-                PairDp(width = 100.dp, height = 60.dp)
+                PairDp(width = 150.dp, height = 60.dp)
             BlockType.STRING_CONCAT ->
                 PairDp(width = 240.dp, height = 60.dp)
             BlockType.STRING_APPEND ->
                 PairDp(width = 200.dp, height = 60.dp)
             BlockType.PRINT_BLOCK ->
-                PairDp(width = 200.dp, height = 60.dp)
+                PairDp(width = 100.dp, height = 60.dp)
             BlockType.COMPARE_NUMBERS_BLOCK ->
                 PairDp(width = 200.dp, height = 60.dp)
             BlockType.BOOLEAN_LOGIC_BLOCK ->

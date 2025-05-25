@@ -9,6 +9,7 @@ import com.example.myfirstapplicatioin.model.ConnectionView
 import com.example.myfirstapplicatioin.utils.disconnect
 import com.example.myfirstapplicatioin.utils.safeConnect
 import com.unewexp.superblockly.DraggableViewModel
+import com.unewexp.superblockly.blocks.StartBlock
 import com.unewexp.superblockly.blocks.arithmetic.OperandBlock
 import com.unewexp.superblockly.blocks.literals.BooleanLiteralBlock
 import com.unewexp.superblockly.blocks.literals.StringLiteralBlock
@@ -19,7 +20,9 @@ import com.unewexp.superblockly.blocks.voidBlocks.PrintBlock
 import com.unewexp.superblockly.blocks.voidBlocks.SetValueVariableBlock
 import com.unewexp.superblockly.blocks.voidBlocks.StringAppendBlock
 import com.unewexp.superblockly.blocks.voidBlocks.VariableDeclarationBlock
+import com.unewexp.superblockly.blocks.voidBlocks.VoidBlock
 import com.unewexp.superblockly.enums.BlockType
+import com.unewexp.superblockly.enums.ConnectorType
 import com.unewexp.superblockly.viewBlocks.DraggableBlock
 import com.unewexp.superblockly.viewBlocks.ViewInitialSize
 import kotlin.math.pow
@@ -29,46 +32,35 @@ object ConnectorManager {
     val connetionLength = 50.0
 
 
-    fun tryConnectDrag(sourceDragBlock: DraggableBlock, viewModel: DraggableViewModel, density: Density){
+    fun tryConnectAndDisconnectDrag(sourceDragBlock: DraggableBlock, viewModel: DraggableViewModel, density: Density){
+
+        if(!parentDisconnectOrNot(sourceDragBlock, viewModel, density)) return // Рассконекчивает, если достаточно далеко
+
+        if(sourceDragBlock.connectedParent!= null && sourceDragBlock.connectedParentConnectionView != null) return; // Если не расконектил, то не надо и коннектить
 
 
-        sourceDragBlock.connectedParent?.let {
-            if(sourceDragBlock.connectedParentConnectionView == null) {
-                sourceDragBlock.connectedParent = null
-                Log.i("Disconnect", "ConnectionView оказался null")
-            }
-            else if(getLengthFromConnections(sourceDragBlock, sourceDragBlock.connectedParent!!, sourceDragBlock.outputConnectionView!!, sourceDragBlock.connectedParentConnectionView!!, density) > connetionLength){
-                disconnect(sourceDragBlock.outputConnectionView!!.connector, sourceDragBlock.connectedParentConnectionView!!.connector)
-
-                sourceDragBlock.connectedParent!!.scope.remove(sourceDragBlock)
-
-                sourceDragBlock.connectedParent = null
-                sourceDragBlock.connectedParentConnectionView = null
-                Log.i("Disconnect", "${sourceDragBlock.block.blockType}")
-            }
-            else{
-
-                val sourceConX = with(density) {sourceDragBlock.outputConnectionView!!.positionX.toPx()}
-                val sourceConY = with(density) {sourceDragBlock.outputConnectionView!!.positionY.toPx()}
-                val nearestConX = with(density) {sourceDragBlock.connectedParentConnectionView!!.positionX.toPx()}
-                val nearestConY = with(density) {sourceDragBlock.connectedParentConnectionView!!.positionY.toPx()}
-
-                viewModel.updateBlockPosition(
-                    sourceDragBlock.id,
-                    sourceDragBlock.connectedParent!!.x.value + nearestConX - (sourceDragBlock.x.value + sourceConX),
-                    sourceDragBlock.connectedParent!!.y.value + nearestConY - (sourceDragBlock.y.value + sourceConY)
-                )
-                return
-            }
-        }
-
-
-        if(sourceDragBlock.connectedParent!= null && sourceDragBlock.connectedParentConnectionView != null) return;
+        tryConnectBlock(sourceDragBlock, viewModel, density, sourceDragBlock.outputConnectionView!!.connector.connectionType)
+    }
+    private fun tryConnectBlock(sourceDragBlock: DraggableBlock, viewModel: DraggableViewModel, density: Density, connectionType: ConnectorType){
 
         val listDragBlocks = viewModel.blocks.value.filter { it !in sourceDragBlock.scope && (it != sourceDragBlock) }.toMutableList()
 
-        val nearestBlock = getBlockWithNearestConnection(sourceDragBlock, listDragBlocks, density)
-        val nearestConnection = getNearestConnection(sourceDragBlock, listDragBlocks, density)
+        val nearestBlock: DraggableBlock?
+        val nearestConnection: ConnectionView?
+
+        when(connectionType){
+            ConnectorType.OUTPUT -> {
+                nearestBlock = getBlockWithNearestConnection(sourceDragBlock, listDragBlocks, density, ConnectorType.INPUT, false)
+                nearestConnection = getNearestConnection(sourceDragBlock, listDragBlocks, density, ConnectorType.INPUT)
+            }
+            ConnectorType.STRING_TOP -> {
+                nearestBlock = getBlockWithNearestConnection(sourceDragBlock, listDragBlocks, density, ConnectorType.STRING_BOTTOM, true)
+                nearestConnection = getNearestConnection(sourceDragBlock, listDragBlocks, density, ConnectorType.STRING_BOTTOM)
+
+            }
+            else -> throw IllegalArgumentException("Коннектор типа ${sourceDragBlock.outputConnectionView!!.connector.connectionType} выступил как получатель")
+        }
+
 
         if(nearestBlock == null || sourceDragBlock.outputConnectionView == null || nearestConnection == null) return
 
@@ -82,7 +74,7 @@ object ConnectorManager {
             val nearestConY = with(density) {nearestConnection.positionY.toPx()}
 
             viewModel.updateBlockPosition(
-                sourceDragBlock.id,
+                sourceDragBlock,
                 nearestBlock.x.value + nearestConX - (sourceDragBlock.x.value + sourceConX),
                 nearestBlock.y.value + nearestConY - (sourceDragBlock.y.value + sourceConY)
             )
@@ -94,6 +86,39 @@ object ConnectorManager {
         }
     }
 
+    private fun parentDisconnectOrNot(sourceDragBlock: DraggableBlock, viewModel: DraggableViewModel, density: Density): Boolean {
+        sourceDragBlock.connectedParent?.let {
+            if(sourceDragBlock.connectedParentConnectionView == null) {
+                sourceDragBlock.connectedParent = null
+                throw IllegalArgumentException("ConnectionView для ${sourceDragBlock.block.blockType} оказался null")
+            }
+            else if(getLengthFromConnections(sourceDragBlock, sourceDragBlock.connectedParent!!, sourceDragBlock.outputConnectionView!!, sourceDragBlock.connectedParentConnectionView!!, density) > connetionLength){
+                disconnect(sourceDragBlock.outputConnectionView!!.connector, sourceDragBlock.connectedParentConnectionView!!.connector)
+
+                sourceDragBlock.connectedParent!!.scope.remove(sourceDragBlock)
+
+                sourceDragBlock.connectedParent = null
+                sourceDragBlock.connectedParentConnectionView = null
+                Log.i("Disconnect", "${sourceDragBlock.block.blockType}")
+                return true
+            }
+            else{
+
+                val sourceConX = with(density) {sourceDragBlock.outputConnectionView!!.positionX.toPx()}
+                val sourceConY = with(density) {sourceDragBlock.outputConnectionView!!.positionY.toPx()}
+                val nearestConX = with(density) {sourceDragBlock.connectedParentConnectionView!!.positionX.toPx()}
+                val nearestConY = with(density) {sourceDragBlock.connectedParentConnectionView!!.positionY.toPx()}
+
+                viewModel.updateBlockPosition(
+                    sourceDragBlock,
+                    sourceDragBlock.connectedParent!!.x.value + nearestConX - (sourceDragBlock.x.value + sourceConX),
+                    sourceDragBlock.connectedParent!!.y.value + nearestConY - (sourceDragBlock.y.value + sourceConY)
+                )
+                return false
+            }
+        }
+        return true
+    }
 
     private fun getLengthFromConnections(
         dragBlock1: DraggableBlock,
@@ -115,25 +140,49 @@ object ConnectorManager {
 
         return sqrt((x1 - x2).toDouble().pow(2) + (y1 - y2).toDouble().pow(2))
     }
-    fun getBlockWithNearestConnection(dragBlock: DraggableBlock, listBlocks: MutableList<DraggableBlock>, density: Density): DraggableBlock? {
+    fun getBlockWithNearestConnection(dragBlock: DraggableBlock, listBlocks: MutableList<DraggableBlock>, density: Density, connectionType: ConnectorType, requiresVoid: Boolean): DraggableBlock? {
 
         var ans: DraggableBlock? = null
 
         var r = 1000000.0
 
-        for(block in listBlocks) {
+        if(requiresVoid){
+            for(block in listBlocks) {
 
-            for(connection in block.inputConnectionViews){
-                val length = getLengthFromConnections(dragBlock, block, dragBlock.outputConnectionView!!, connection, density)
-                if( length < r){
-                    r = length
-                    ans = block
+                if(block.block !is VoidBlock) continue
+
+                for(connection in block.inputConnectionViews){
+
+                    if(connection.connector.connectionType != connectionType) continue // Проверка на то, что мы ищем именно тот тип коннектора, который нам нужен
+
+                    val length = getLengthFromConnections(dragBlock, block, dragBlock.outputConnectionView!!, connection, density)
+                    if( length < r){
+                        r = length
+                        ans = block
+                    }
+                }
+
+            }
+        }
+        else {
+            for(block in listBlocks) {
+
+                for(connection in block.inputConnectionViews){
+
+                    if(connection.connector.connectionType != connectionType) continue // Проверка на то, что мы ищем именно тот тип коннектора, который нам нужен
+
+                    val length = getLengthFromConnections(dragBlock, block, dragBlock.outputConnectionView!!, connection, density)
+                    if( length < r){
+                        r = length
+                        ans = block
+                    }
                 }
             }
         }
+
         return ans
     }
-    fun getNearestConnection(dragBlock: DraggableBlock,listBlocks: MutableList<DraggableBlock>, density: Density): ConnectionView? {
+    fun getNearestConnection(dragBlock: DraggableBlock,listBlocks: MutableList<DraggableBlock>, density: Density, connectionType: ConnectorType): ConnectionView? {
 
         var ans: ConnectionView? = null
 
@@ -142,6 +191,9 @@ object ConnectorManager {
         for(block in listBlocks) {
 
             for(connection in block.inputConnectionViews){
+
+                if(connection.connector.connectionType != connectionType) continue // Проверка на то, что мы ищем именно тот тип коннектора, который нам нужен
+
                 val length = getLengthFromConnections(dragBlock, block, dragBlock.outputConnectionView!!, connection, density)
                 if( length < r){
                     r = length
@@ -168,7 +220,14 @@ object ConnectorManager {
         val height = sizeOfBlock.height
 
         when(block.blockType) {
-            BlockType.START -> {}
+            BlockType.START -> {
+                val castedBlock = (block as StartBlock)
+
+                ans += mutableListOf(
+                    ConnectionView(castedBlock.bottomConnector, 0.dp, height),
+                    ConnectionView(castedBlock.topConnector, width/10, 0.dp)
+                )
+            }
             BlockType.OPERAND -> {
                 val castedBlock = (block as OperandBlock)
 
@@ -233,7 +292,7 @@ object ConnectorManager {
                     ConnectionView(castedBlock.rightInputConnector, width*3/4, height/2),
                 )
             }
-            BlockType.STRING_APPEND -> { // Пока что неактуальная версия - Кирилл уже переписал. Нужно будет залить и дописать
+            BlockType.STRING_APPEND -> {
                 val castedBlock = (block as StringAppendBlock)
 
                 ans += mutableListOf(
@@ -255,8 +314,8 @@ object ConnectorManager {
                 val castedBlock = (block as IfBlock)
 
                 ans += mutableListOf(
-                    ConnectionView(castedBlock.topConnector, 0.dp, 0.dp),
-                    ConnectionView(castedBlock.bottomConnector, 0.dp, height),
+                    ConnectionView(castedBlock.topConnector, cornerOffset, 0.dp),
+                    ConnectionView(castedBlock.bottomConnector, cornerOffset, height),
                     ConnectionView(castedBlock.innerConnector, width/2, height),
                     ConnectionView(castedBlock.conditionConnector, width, height/2)
                 )

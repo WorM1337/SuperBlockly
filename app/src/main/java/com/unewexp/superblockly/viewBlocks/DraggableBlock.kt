@@ -10,7 +10,6 @@ import com.unewexp.superblockly.enums.ConnectorType
 import com.unewexp.superblockly.model.ConnectorManager
 
 data class DraggableBlock(
-    val id: String,
     val block: Block,
     var x: MutableState<Float>,
     var y: MutableState<Float>,
@@ -20,7 +19,8 @@ data class DraggableBlock(
     var width: MutableState<Dp> = mutableStateOf(100.dp),
     var height: MutableState<Dp> = mutableStateOf(60.dp),
     var connectedParent: DraggableBlock? = null,
-    var connectedParentConnectionView: ConnectionView? = null
+    var connectedParentConnectionView: ConnectionView? = null,
+    var isInner: Boolean = false // Показывает, находится ли блок внутри другого блока. Например, параметры для OperandBlock, либо поле для void-блоков для if
 ){
     init {
 
@@ -33,7 +33,7 @@ data class DraggableBlock(
         val connectionViews = ConnectorManager.initConnectionsFromBlock(block)
 
         connectionViews.forEach{
-            if(it.connector.connectionType == ConnectorType.OUTPUT){
+            if(it.connector.connectionType == ConnectorType.OUTPUT || it.connector.connectionType == ConnectorType.STRING_TOP){
                 outputConnectionView = it
             }
             else {
@@ -42,7 +42,7 @@ data class DraggableBlock(
         }
         if(outputConnectionView == null){
             inputConnectionViews = mutableListOf()
-            throw IllegalArgumentException("Ошибка отрисовки коннекторов для блока ${this.id}")
+            throw IllegalArgumentException("Ошибка отрисовки коннекторов для блока ${this.block.id}")
         }
     }
 }
