@@ -181,7 +181,7 @@ fun Canvas(
             }
             Box(
                 modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.CenterEnd
+                contentAlignment = Alignment.BottomEnd
             ){
                 ConsolePanel()
             }
