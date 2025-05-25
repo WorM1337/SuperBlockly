@@ -92,7 +92,7 @@ open class ConditionBlock(
                     try{
                         current.execute()
                     } catch (ex: Exception){
-                        ErrorHandler.setError(current.id, ex.message ?: "Неизвестная ошибка")
+                        ErrorHandler.setBlockError(current.id, ex.message ?: "Неизвестная ошибка")
                     }
                     current = ExecutionContext.getNextBlockInScope()
                 }

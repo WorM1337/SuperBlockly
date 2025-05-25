@@ -3,6 +3,7 @@ package com.example.myfirstapplicatioin.utils
 import com.example.myfirstapplicatioin.model.ConnectionView
 import com.example.myfirstapplicatioin.model.Connector
 import com.unewexp.superblockly.blocks.ErrorHandler
+import com.unewexp.superblockly.enums.ConnectorType
 import java.lang.Math.pow
 import kotlin.math.abs
 import kotlin.math.pow
@@ -13,17 +14,31 @@ fun safeConnect(source: Connector, target: Connector){ // для сани, по�
         try{
                 connectTo(source, target)
         } catch (ex: Exception){
-                ErrorHandler.setError(source.sourceBlock.id, ex.message ?: "Ошибка соединения блоков")
-                ErrorHandler.setError(target.sourceBlock.id, ex.message ?: "Ошибка соединения блоков")
+                ErrorHandler.setConnectionError(source.sourceBlock.id, ex.message ?: "Ошибка соединения блоков")
+                ErrorHandler.setConnectionError(target.sourceBlock.id, ex.message ?: "Ошибка соединения блоков")
+
+                source.sourceBlock.hasException = true
+                target.sourceBlock.hasException = true
+
         }
 }
 
 
+fun checkTypeConnector(source: Connector, target: Connector): Boolean{
+        return when (source.connectionType) {
+                ConnectorType.INPUT -> target.connectionType == ConnectorType.OUTPUT
+                ConnectorType.OUTPUT -> target.connectionType == ConnectorType.INPUT
+                ConnectorType.STRING_TOP -> target.connectionType == ConnectorType.STRING_BOTTOM
+                ConnectorType.STRING_BOTTOM -> target.connectionType == ConnectorType.STRING_TOP
+        }
+}
+
 fun connectTo(source: Connector, target: Connector) {
 
-        require(source.connectionType != target.connectionType) {
-                "Нельзя соединять два коннектора одного типа"
+        require(checkTypeConnector(source, target)){
+                "Блоки не могут быть соединены. Проверьте типы соединений"
         }
+
 
         require(source.canConnect(target)) {
                 "Эти блоки не могут быть соединены. " +
@@ -32,11 +47,18 @@ fun connectTo(source: Connector, target: Connector) {
 
         source.connectedTo = target.sourceBlock
         target.connectedTo = source.sourceBlock
+
 }
 
 fun disconnect(source: Connector, target: Connector) {
         source.connectedTo = null
         target.connectedTo = null
+
+        source.sourceBlock.hasException = false
+        target.sourceBlock.hasException = false
+
+        ErrorHandler.clearConnectionError(source.sourceBlock.id)
+        ErrorHandler.clearConnectionError(target.sourceBlock.id)
 }
 
 fun canConnect(source: Connector, target: Connector): Boolean {

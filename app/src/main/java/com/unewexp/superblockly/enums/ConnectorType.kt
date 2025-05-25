@@ -4,4 +4,6 @@ enum class ConnectorType {
     INPUT,
     OUTPUT,
 
+    STRING_TOP,
+    STRING_BOTTOM
 }

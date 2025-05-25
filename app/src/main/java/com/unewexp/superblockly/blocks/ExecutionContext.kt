@@ -15,6 +15,7 @@ object ExecutionContext {
 
 
 
+
     fun enterNewScope(startBlock: Block) {
         scopes.add(mutableMapOf())
         scopesBlocks.add(startBlock)

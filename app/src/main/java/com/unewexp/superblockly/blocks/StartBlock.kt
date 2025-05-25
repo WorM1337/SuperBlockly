@@ -11,7 +11,7 @@ import java.util.UUID
 class StartBlock : VoidBlock(UUID.randomUUID(), BlockType.START) {
 
     override fun execute() {
-        ErrorHandler.clearAllErrors()
+
         ExecutionContext.clearLogs()
         ExecutionContext.clearVariables()
 
@@ -23,7 +23,8 @@ class StartBlock : VoidBlock(UUID.randomUUID(), BlockType.START) {
                     try {
                         current.execute()
                     } catch (e: Exception) {
-                        ErrorHandler.setError(current.id, e.message ?: "Неизвестная ошибка")
+                        ErrorHandler.setBlockError(current.id, e.message ?: "Неизвестная ошибка")
+                        current.hasException = true
                         break
                     }
                     current = ExecutionContext.getNextBlockInScope()
