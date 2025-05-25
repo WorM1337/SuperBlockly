@@ -9,6 +9,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -128,7 +129,6 @@ fun CreateNewProject(
     val scope = rememberCoroutineScope()
 
     val globalOffset = remember { mutableStateOf(Offset.Zero) }
-    val canBeDraggable = remember { mutableStateOf(false) }
 
     var ghostVisible by remember { mutableStateOf(false) }
     var ghostPosition by remember { mutableStateOf(Offset.Zero) }
@@ -152,17 +152,10 @@ fun CreateNewProject(
                     }
                     item{
                         ListItem(
-                            {
-                                canBeDraggable.value = true
-                            },
-                            {
-                                canBeDraggable.value = false
-                            },
                             { dragStartPosition ->
                                 ghostContent = { PrintBlockCard() }
                                 ghostPosition = dragStartPosition
                                 ghostVisible = true
-                                canBeDraggable.value = true
                             },
                             { dragAmount ->
                                 ghostPosition += dragAmount
@@ -177,11 +170,9 @@ fun CreateNewProject(
                                     )
                                 )
                                 ghostVisible = false
-                                canBeDraggable.value = false
                             },
                             {
                                 ghostVisible = false
-                                canBeDraggable.value = false
                             }
                         ){
                             PrintBlockCard()
@@ -192,17 +183,10 @@ fun CreateNewProject(
                         }
                         item {
                             ListItem(
-                                {
-                                    canBeDraggable.value = true
-                                },
-                                {
-                                    canBeDraggable.value = false
-                                },
                                 { dragStartPosition ->
                                     ghostContent = { IntLiteralBlockCard() }
                                     ghostPosition = dragStartPosition
                                     ghostVisible = true
-                                    canBeDraggable.value = true
                                 },
                                 { dragAmount ->
                                     ghostPosition += dragAmount
@@ -217,11 +201,9 @@ fun CreateNewProject(
                                         )
                                     )
                                     ghostVisible = false
-                                    canBeDraggable.value = false
                                 },
                                 {
                                     ghostVisible = false
-                                    canBeDraggable.value = false
                                 }
                             ){
                                 IntLiteralBlockCard()
@@ -230,17 +212,10 @@ fun CreateNewProject(
                         item { Text("Переменные", color = Color.White) }
                     item {
                         ListItem(
-                            {
-                                canBeDraggable.value = true
-                            },
-                            {
-                                canBeDraggable.value = false
-                            },
                             { dragStartPosition ->
                                 ghostContent = { SetValueVariableCard() }
                                 ghostPosition = dragStartPosition
                                 ghostVisible = true
-                                canBeDraggable.value = true
                             },
                             { dragAmount ->
                                 ghostPosition += dragAmount
@@ -255,11 +230,9 @@ fun CreateNewProject(
                                     )
                                 )
                                 ghostVisible = false
-                                canBeDraggable.value = false
                             },
                             {
                                 ghostVisible = false
-                                canBeDraggable.value = false
                             }
                         ){
                             SetValueVariableCard()
@@ -267,17 +240,10 @@ fun CreateNewProject(
                     }
                     item {
                         ListItem(
-                            {
-                                canBeDraggable.value = true
-                            },
-                            {
-                                canBeDraggable.value = false
-                            },
                             { dragStartPosition ->
                                 ghostContent = { DeclarationVariableCard() }
                                 ghostPosition = dragStartPosition
                                 ghostVisible = true
-                                canBeDraggable.value = true
                             },
                             { dragAmount ->
                                 ghostPosition += dragAmount
@@ -292,11 +258,9 @@ fun CreateNewProject(
                                     )
                                 )
                                 ghostVisible = false
-                                canBeDraggable.value = false
                             },
                             {
                                 ghostVisible = false
-                                canBeDraggable.value = false
                             }
                         ){
                             DeclarationVariableCard()
@@ -304,17 +268,10 @@ fun CreateNewProject(
                     }
                     item {
                         ListItem(
-                            {
-                                canBeDraggable.value = true
-                            },
-                            {
-                                canBeDraggable.value = false
-                            },
                             { dragStartPosition ->
                                 ghostContent = { ReferenceVariableCard() }
                                 ghostPosition = dragStartPosition
                                 ghostVisible = true
-                                canBeDraggable.value = true
                             },
                             { dragAmount ->
                                 ghostPosition += dragAmount
@@ -329,11 +286,9 @@ fun CreateNewProject(
                                     )
                                 )
                                 ghostVisible = false
-                                canBeDraggable.value = false
                             },
                             {
                                 ghostVisible = false
-                                canBeDraggable.value = false
                             }
                         ){
                             ReferenceVariableCard()
@@ -344,17 +299,10 @@ fun CreateNewProject(
                     }
                     item {
                         ListItem(
-                            {
-                                canBeDraggable.value = true
-                            },
-                            {
-                                canBeDraggable.value = false
-                            },
                             { dragStartPosition ->
                                 ghostContent = { IfBlockCard() }
                                 ghostPosition = dragStartPosition
                                 ghostVisible = true
-                                canBeDraggable.value = true
                             },
                             { dragAmount ->
                                 ghostPosition += dragAmount
@@ -369,11 +317,9 @@ fun CreateNewProject(
                                     )
                                 )
                                 ghostVisible = false
-                                canBeDraggable.value = false
                             },
                             {
                                 ghostVisible = false
-                                canBeDraggable.value = false
                             }
                         ){
                             IfBlockCard()
@@ -403,8 +349,6 @@ fun CreateNewProject(
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ListItem(
-    onLongPress: () -> Unit,
-    pointerInteropFilter: () -> Unit,
     onDragStart: (dragStartPosition: Offset) -> Unit,
     onDrag: (dragAmount: Offset) -> Unit,
     onDragEnd: () -> Unit,
@@ -413,6 +357,7 @@ fun ListItem(
 ){
 
     var dragStartPosition by remember { mutableStateOf(Offset.Zero) }
+    var isDragging by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -420,28 +365,25 @@ fun ListItem(
                 dragStartPosition = coordinates.positionInRoot()
             }
             .pointerInput(Unit) {
-                detectTapGestures(
-                    onLongPress = { onLongPress() }
-                )
-            }
-            .pointerInteropFilter {
-                if (it.action == MotionEvent.ACTION_UP) {
-                    pointerInteropFilter()
-                }
-
-                true
-            }
-            .pointerInput(Unit) {
-                detectDragGestures(
+                detectDragGesturesAfterLongPress(
                     onDragStart = { offset ->
                         onDragStart(dragStartPosition)
+                        isDragging = true
                     },
                     onDrag = { change, dragAmount ->
-                        change.consume()
-                        onDrag(dragAmount)
+                        if (isDragging) {
+                            change.consume()
+                            onDrag(dragAmount)
+                        }
                     },
-                    onDragEnd = { onDragEnd() },
-                    onDragCancel = { onDragCancel() }
+                    onDragEnd = {
+                        isDragging = false
+                        onDragEnd()
+                                },
+                    onDragCancel = {
+                        isDragging = false
+                        onDragCancel()
+                    }
                 )
             }
     ) {
