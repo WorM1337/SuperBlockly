@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.unewexp.superblockly.blocks.StartBlock
+import com.unewexp.superblockly.debug.ConsolePanel
 import com.unewexp.superblockly.enums.BlockType
 import com.unewexp.superblockly.model.ConnectorManager
 import com.unewexp.superblockly.viewBlocks.BottomConnector
@@ -86,29 +87,31 @@ fun Canvas(
         topBar = {
             Box(
                 modifier = Modifier.fillMaxWidth().background(Color.White)
-            )
-            Row{
-                Box {
-                    IconButton(onClick = openDrawer) {
-                        Icon(Icons.Filled.List, null)
+            ) {
+                Row {
+                    Box {
+                        IconButton(onClick = openDrawer) {
+                            Icon(Icons.Filled.List, null)
+                        }
+                    }
+                    Box {
+                        onHomeClick()
                     }
                 }
-                Box {
-                    onHomeClick()
-                }
-            }
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(0.dp, 0.dp, 5.dp, 0.dp),
-                contentAlignment = Alignment.CenterEnd
-            ){
-                IconButton(
-                    onClick = {core.block.execute()},
-                    modifier =
-                        Modifier
-                            .border(3.dp, Color.Green, CircleShape)){
-                    Icon(Icons.Filled.PlayArrow, null)
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(0.dp, 0.dp, 5.dp, 0.dp),
+                    contentAlignment = Alignment.CenterEnd
+                ) {
+                    IconButton(
+                        onClick = { core.block.execute() },
+                        modifier =
+                            Modifier
+                                .border(3.dp, Color.Green, CircleShape)
+                    ) {
+                        Icon(Icons.Filled.PlayArrow, null)
+                    }
                 }
             }
         },
@@ -175,6 +178,12 @@ fun Canvas(
                         }
                     )
                 }
+            }
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.BottomEnd
+            ){
+                ConsolePanel()
             }
         }
     )
