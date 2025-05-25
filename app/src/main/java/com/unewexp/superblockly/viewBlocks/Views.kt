@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -48,9 +49,13 @@ fun IntLiteralView(
         value = value,
         onValueChange = {
             if (it.text.isEmpty()) {
-                value = TextFieldValue("0")
+                value = TextFieldValue("0", TextRange(1))
             } else if (it.text.matches(Regex("^\\d*\$"))) {
-                value = it
+                if(it.text.length != 1 && it.text[0] == '0'){
+                    value = TextFieldValue(it.text.substring(1), TextRange(1))
+                }else{
+                    value = it
+                }
             }
             onNameChanged(value.text)
         },
