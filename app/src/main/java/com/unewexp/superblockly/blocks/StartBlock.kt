@@ -12,7 +12,7 @@ class StartBlock : VoidBlock(UUID.randomUUID(), BlockType.START) {
 
     override fun execute() {
 
-        ExecutionContext.clearLogs()
+        Logger.clearLogs()
         ExecutionContext.clearVariables()
 
         getNextBlock()?.let { firstBlock ->

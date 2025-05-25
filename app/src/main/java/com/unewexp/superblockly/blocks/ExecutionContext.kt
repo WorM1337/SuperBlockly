@@ -10,9 +10,6 @@ object ExecutionContext {
     private val variableTypes = mutableMapOf<String, Class<*>>() // Class<*> означает что туда будет поступать класс неопределенного типа
     private val scopesBlocks = mutableListOf<Block>()
 
-    private val _logs = mutableStateListOf<String>();
-    val logs: List<String> get() = _logs; // это типо инкапсуляции, нужно, чтобы мы могли использовать только для чтения
-
 
 
 
@@ -98,13 +95,6 @@ object ExecutionContext {
         scopes.clear()
     }
 
-    fun appendLog(message: String){
-        _logs.add(message)
-    }
-
-    fun clearLogs(){
-        _logs.clear()
-    }
 
 
 }
