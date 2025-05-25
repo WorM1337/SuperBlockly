@@ -1,6 +1,7 @@
 package com.unewexp.superblockly.viewBlocks
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -39,6 +40,44 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.unewexp.superblockly.R
+
+@Composable
+fun TextFieldLike(
+    value: String = "",
+    placeholder: String = "Num",
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .padding(horizontal = 4.dp)
+            .height(TextFieldDefaults.MinHeight)
+            .background(
+                color = MaterialTheme.colorScheme.surface,
+                shape = MaterialTheme.shapes.small
+            )
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.outline,
+                shape = MaterialTheme.shapes.small
+            )
+            .padding(horizontal = 12.dp, vertical = 8.dp),
+        contentAlignment = Alignment.CenterStart
+    ) {
+        if (value.isEmpty()) {
+            Text(
+                text = placeholder,
+                style = MaterialTheme.typography.bodySmall.copy(
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                )
+            )
+        } else {
+            Text(
+                text = value,
+                style = MaterialTheme.typography.bodySmall
+            )
+        }
+    }
+}
 
 @Composable
 fun IntLiteralView(
@@ -88,24 +127,7 @@ fun IntLiteralViewForCard(){
 
     var value by remember { mutableStateOf(TextFieldValue("0")) }
 
-    TextField(
-        enabled = false,
-        value = value,
-        onValueChange = {
-            if(it.text.isEmpty()){
-                value = TextFieldValue("0")
-            }else{
-                value = it
-            }
-        },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-        placeholder = { Text("Num") },
-        singleLine = true,
-        modifier = Modifier
-            .clickable(enabled = false, onClick = {})
-            .padding(horizontal = 4.dp),
-        textStyle = MaterialTheme.typography.bodySmall
-    )
+    TextFieldLike(placeholder = "Num", modifier = Modifier.fillMaxWidth())
 }
 
 @Composable
@@ -185,19 +207,7 @@ fun SetValueVariableViewForCard(){
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.padding(end = 4.dp)
         )
-        TextField(
-            enabled = false,
-            value = name,
-            onValueChange = {
-                name = it
-            },
-            placeholder = { Text("Var") },
-            singleLine = true,
-            modifier = Modifier
-                .weight(1f)
-                .padding(horizontal = 4.dp),
-            textStyle = MaterialTheme.typography.bodySmall
-        )
+        TextFieldLike(placeholder = "Var", modifier = Modifier.width(150.dp))
         Text(
             "to",
             style = MaterialTheme.typography.bodyMedium,
@@ -255,16 +265,7 @@ fun VariableReferenceView(
 fun VariableReferenceViewForCard(){
     var name by remember { mutableStateOf(TextFieldValue("")) }
 
-    TextField(
-        enabled = false,
-        value = name,
-        onValueChange = {},
-        placeholder = { Text("Var") },
-        singleLine = true,
-        modifier = Modifier
-            .padding(horizontal = 4.dp),
-        textStyle = MaterialTheme.typography.bodySmall
-    )
+    TextFieldLike(placeholder = "Var", modifier = Modifier.fillMaxWidth())
 }
 
 @Composable
@@ -326,26 +327,13 @@ fun DeclarationVariableView(
 
 @Composable
 fun DeclarationVariableViewForCard(){
-
-    var name by remember { mutableStateOf(TextFieldValue("")) }
-
     Row(verticalAlignment = Alignment.CenterVertically){
         Text(
             "Init",
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.padding(end = 4.dp)
         )
-        TextField(
-            enabled = false,
-            value = name,
-            onValueChange = {},
-            placeholder = { Text("Var") },
-            singleLine = true,
-            modifier = Modifier
-                .weight(1f)
-                .padding(horizontal = 4.dp),
-            textStyle = MaterialTheme.typography.bodySmall
-        )
+        TextFieldLike(placeholder = "Var", modifier = Modifier.fillMaxWidth())
     }
 }
 
