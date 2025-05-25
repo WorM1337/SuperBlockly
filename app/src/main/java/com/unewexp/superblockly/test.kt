@@ -124,10 +124,11 @@ fun main() {
 
 
     // вывести все логи в консоль
+    /*
     startBlock.execute()
     val logs = ExecutionContext.logs
     for (log in logs){
         println(log)
     }
-
+    */
 }

@@ -58,6 +58,7 @@ import com.unewexp.superblockly.blocks.returnBlocks.VariableReferenceBlock
 import com.unewexp.superblockly.blocks.voidBlocks.PrintBlock
 import com.unewexp.superblockly.blocks.voidBlocks.SetValueVariableBlock
 import com.unewexp.superblockly.blocks.voidBlocks.VariableDeclarationBlock
+import com.unewexp.superblockly.debug.ConsolePanel
 import com.unewexp.superblockly.ui.theme.DrawerColor
 import com.unewexp.superblockly.ui.theme.SuperBlocklyTheme
 import com.unewexp.superblockly.viewBlocks.DraggableBlock
