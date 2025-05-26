@@ -245,7 +245,7 @@ fun CreateNewProject(
                         }
                     }
                     item {
-                        Text("Логика", color = Color.White)
+                        Text(stringResource(R.string.logic), color = Color.White)
                     }
                     item {
                         ListItem(
@@ -261,6 +261,23 @@ fun CreateNewProject(
                             }
                         ){
                             IfBlockCard()
+                        }
+                    }
+                    item { Text(stringResource(R.string.loops), color = Color.White) }
+                    item{
+                        ListItem(
+                            { offset ->
+                                viewModel.addBlock(
+                                    DraggableBlock(
+                                        IfBlock(),
+                                        mutableStateOf(offset.x - globalOffset.value.x),
+                                        mutableStateOf(offset.y - globalOffset.value.y),
+                                        width = mutableStateOf(100.dp)
+                                    )
+                                )
+                            }
+                        ){
+                            WhileBlockCard()
                         }
                     }
                 }

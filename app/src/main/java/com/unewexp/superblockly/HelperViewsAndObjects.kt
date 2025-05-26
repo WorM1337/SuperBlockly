@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.unewexp.superblockly.enums.BlockType
 import com.unewexp.superblockly.ui.theme.BooleanColor
+import com.unewexp.superblockly.ui.theme.LoopColor
 import com.unewexp.superblockly.ui.theme.MathColor
 import com.unewexp.superblockly.ui.theme.PrintColor
 import com.unewexp.superblockly.ui.theme.StartColor
@@ -105,10 +106,10 @@ fun getColorByBlockType(type: BlockType): Color {
         BlockType.IF_BLOCK -> color = BooleanColor
         BlockType.ELSE_BLOCK -> color = BooleanColor
         BlockType.IF_ELSE_BLOCK -> color = BooleanColor
-        BlockType.REPEAT_N_TIMES -> TODO()
-        BlockType.WHILE_BLOCK -> TODO()
-        BlockType.FOR_BLOCK -> TODO()
-        BlockType.FOR_ELEMENT_IN_LIST -> TODO()
+        BlockType.REPEAT_N_TIMES -> color = LoopColor
+        BlockType.WHILE_BLOCK -> color = LoopColor
+        BlockType.FOR_BLOCK -> color = LoopColor
+        BlockType.FOR_ELEMENT_IN_LIST -> color = LoopColor
         BlockType.FIXED_VALUE_AND_SIZE_LIST -> TODO()
         BlockType.GET_VALUE_BY_INDEX -> TODO()
         BlockType.REMOVE_VALUE_BY_INDEX -> TODO()

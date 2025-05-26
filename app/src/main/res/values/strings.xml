@@ -9,5 +9,10 @@
     <string name="about_body2">Быстро - не пиши, перетаскивай блоки</string>
     <string name="about_body3">Интересно - собирай конструктор и развлекайся</string>
     <string name="core">Core</string>
+    <string name="loops">Циклы</string>
     <string name="print">Print</string>
+    <string name="If">If</string>
+    <string name="While">While</string>
+    <string name="For">For</string>
+    <string name="logic">Логика</string>
 </resources>

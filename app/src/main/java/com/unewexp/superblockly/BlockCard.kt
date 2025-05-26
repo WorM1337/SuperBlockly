@@ -16,6 +16,7 @@ import com.unewexp.superblockly.viewBlocks.OperandBlockForCard
 import com.unewexp.superblockly.viewBlocks.PrintBlockView
 import com.unewexp.superblockly.viewBlocks.SetValueVariableViewForCard
 import com.unewexp.superblockly.viewBlocks.VariableReferenceViewForCard
+import com.unewexp.superblockly.viewBlocks.WhileBlockViewForCard
 
 @Composable
 fun BlockCard(content: @Composable () -> Unit, onClick: () -> Unit){
@@ -110,5 +111,17 @@ fun OperandBlockCard(){
             .padding(2.dp)
     ){
         OperandBlockForCard()
+    }
+}
+
+@Composable
+fun WhileBlockCard(){
+    Card(
+        modifier = Modifier
+            .width(200.dp)
+            .height(60.dp)
+            .padding(2.dp)
+    ){
+        WhileBlockViewForCard()
     }
 }

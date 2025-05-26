@@ -372,7 +372,7 @@ fun IfBlockView() {
                 contentAlignment = Alignment.CenterStart
             ) {
                 Text(
-                    "If",
+                    stringResource(R.string.If),
                     style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 32.sp),
                     modifier = Modifier.padding(bottom = 4.dp)
                 )
@@ -400,7 +400,7 @@ fun IfBlockViewForCard(
 ){
     Column {
         Box{
-            Text("If")
+            Text(stringResource(R.string.If))
         }
     }
 }
@@ -598,6 +598,61 @@ fun OperandBlockForCard(
                         shape = RoundedCornerShape(4.dp)
                     )
             )
+        }
+    }
+}
+
+@Composable
+fun WhileBlockView() {
+    val textHeight = 60.dp
+    val bottomLineHeight = 1.dp
+    val lineWidth = 1.dp
+    val bottomLineWidth = 60.dp
+
+    Box(
+        modifier = Modifier
+            .width(60.dp)
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Top
+        ) {
+            Box(
+                modifier = Modifier
+                    .height(textHeight)
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.CenterStart
+            ) {
+                Text(
+                    stringResource(R.string.While),
+                    style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 32.sp),
+                    modifier = Modifier.padding(bottom = 4.dp)
+                )
+            }
+
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .width(lineWidth)
+                    .background(Color.White)
+            )
+
+            Box(
+                modifier = Modifier
+                    .height(bottomLineHeight)
+                    .width(bottomLineWidth)
+                    .background(Color.White)
+            )
+        }
+    }
+}
+
+@Composable
+fun WhileBlockViewForCard(
+){
+    Column {
+        Box{
+            Text(stringResource(R.string.While))
         }
     }
 }

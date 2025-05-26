@@ -56,6 +56,7 @@ import com.unewexp.superblockly.viewBlocks.SetValueVariableView
 import com.unewexp.superblockly.viewBlocks.StartBlockView
 import com.unewexp.superblockly.viewBlocks.TopConnector
 import com.unewexp.superblockly.viewBlocks.VariableReferenceView
+import com.unewexp.superblockly.viewBlocks.WhileBlockView
 import java.util.Queue
 import kotlin.math.max
 import kotlin.math.roundToInt
@@ -267,7 +268,7 @@ fun TakeViewBlock (block: DraggableBlock, viewModel: DraggableViewModel = viewMo
         BlockType.ELSE_BLOCK -> TODO()
         BlockType.IF_ELSE_BLOCK -> TODO()
         BlockType.REPEAT_N_TIMES -> TODO()
-        BlockType.WHILE_BLOCK -> TODO()
+        BlockType.WHILE_BLOCK -> WhileBlockView()
         BlockType.FOR_BLOCK -> TODO()
         BlockType.FOR_ELEMENT_IN_LIST -> TODO()
         BlockType.FIXED_VALUE_AND_SIZE_LIST -> TODO()
