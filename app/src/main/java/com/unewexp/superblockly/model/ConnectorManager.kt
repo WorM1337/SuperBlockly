@@ -25,6 +25,7 @@ import com.unewexp.superblockly.blocks.voidBlocks.VoidBlock
 import com.unewexp.superblockly.enums.BlockType
 import com.unewexp.superblockly.enums.ConnectorType
 import com.unewexp.superblockly.DraggableBlock
+import com.unewexp.superblockly.blocks.loops.ForBlock
 import com.unewexp.superblockly.enums.ExtendConnectionViewType
 import com.unewexp.superblockly.viewBlocks.ViewInitialSize
 import kotlin.math.pow
@@ -647,6 +648,18 @@ object ConnectorManager {
                     ConnectionView(castedBlock.bottomConnector, cornerOffset, height),
                     ConnectionView(castedBlock.innerConnector, cornerOffset, 60.dp, ExtendConnectionViewType.INNER_BOTTOM),
                     ConnectionView(castedBlock.conditionConnector, width, height/2, ExtendConnectionViewType.SIDE)
+                )
+            }
+            BlockType.FOR_BLOCK -> {
+                val castedBlock = (block as ForBlock)
+
+                ans += mutableListOf(
+                    ConnectionView(castedBlock.topConnector, cornerOffset, 0.dp),
+                    ConnectionView(castedBlock.bottomConnector, cornerOffset, height),
+                    ConnectionView(castedBlock.innerConnector, cornerOffset, 60.dp, ExtendConnectionViewType.INNER_BOTTOM),
+                    ConnectionView(castedBlock.initialValueBlock, 150.dp, 10.dp),
+                    ConnectionView(castedBlock.maxValueBlock, 225.dp, 10.dp),
+                    ConnectionView(castedBlock.stepBlock, 320.dp, 10.dp)
                 )
             }
             else -> {}

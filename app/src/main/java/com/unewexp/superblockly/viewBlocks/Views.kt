@@ -779,113 +779,112 @@ fun ForBlockView(
     val lineWidth = 1.dp
     val bottomLineWidth = 60.dp
 
-    Box(
-        modifier = Modifier
-            .width(60.dp)
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Top
     ) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Top
+        Row(
+            modifier = Modifier
+                .height(textHeight)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start
         ) {
-            Row(
-                modifier = Modifier
-                    .height(textHeight)
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Start
-            ) {
-                Text(
-                    stringResource(R.string.For),
-                    style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 32.sp),
-                    modifier = Modifier.padding(bottom = 4.dp)
-                )
+            Text(
+                stringResource(R.string.For),
+                style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
+                modifier = Modifier.padding(bottom = 4.dp)
+            )
 
-                BasicTextField(
-                    value = name,
-                    onValueChange = {
-                        name = it
-                        onNameChanged(name.text)
-                    },
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(24.dp)
-                        .align(Alignment.CenterVertically),
-                    singleLine = true,
-                    textStyle = MaterialTheme.typography.bodyMedium.copy(
-                        color = MaterialTheme.colorScheme.onSurface,
-                        textAlign = TextAlign.Start
-                    ),
-                    decorationBox = { innerTextField ->
-                        Box(
-                            modifier = Modifier.fillMaxWidth(),
-                            contentAlignment = Alignment.CenterStart
-                        ) {
-                            if (name.text.isEmpty()) {
-                                Text(
-                                    "Var",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
-                                )
-                            }
-                            innerTextField()
-                        }
-                    }
-                )
-
-                Text(
-                    stringResource(R.string.from),
-                    style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 32.sp),
-                    modifier = Modifier.padding(bottom = 4.dp)
-                )
-
-                Box(
-                    modifier = Modifier
-                        .width(60.dp)
-                        .height(50.dp)
-                        .background(EmptySpace)
-                ){}
-
-                Text(
-                    stringResource(R.string.to),
-                    style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 32.sp),
-                    modifier = Modifier.padding(bottom = 4.dp)
-                )
-
-                Box(
-                    modifier = Modifier
-                        .width(60.dp)
-                        .height(50.dp)
-                        .background(EmptySpace)
-                ){}
-
-                Text(
-                    stringResource(R.string.step),
-                    style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 32.sp),
-                    modifier = Modifier.padding(bottom = 4.dp)
-                )
-
-                Box(
-                    modifier = Modifier
-                        .width(60.dp)
-                        .height(50.dp)
-                        .background(EmptySpace)
-                ){}
-            }
-
-            Box(
+            BasicTextField(
+                value = name,
+                onValueChange = {
+                    name = it
+                    onNameChanged(name.text)
+                },
                 modifier = Modifier
                     .weight(1f)
-                    .width(lineWidth)
-                    .background(Color.White)
+                    .height(24.dp)
+                    .padding(4.dp, 0.dp)
+                    .align(Alignment.CenterVertically),
+                singleLine = true,
+                textStyle = MaterialTheme.typography.bodyMedium.copy(
+                    color = MaterialTheme.colorScheme.onSurface,
+                    textAlign = TextAlign.Start
+                ),
+                decorationBox = { innerTextField ->
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.CenterStart
+                    ) {
+                        if (name.text.isEmpty()) {
+                            Text(
+                                "Var",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                            )
+                        }
+                        innerTextField()
+                    }
+                }
+            )
+
+            Text(
+                stringResource(R.string.from),
+                style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
+                modifier = Modifier.padding(bottom = 4.dp)
             )
 
             Box(
                 modifier = Modifier
-                    .height(bottomLineHeight)
-                    .width(bottomLineWidth)
-                    .background(Color.White)
+                    .width(60.dp)
+                    .height(50.dp)
+                    .padding(4.dp, 0.dp)
+                    .background(EmptySpace)
+            ){}
+
+            Text(
+                stringResource(R.string.to),
+                style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
+                modifier = Modifier.padding(bottom = 4.dp)
             )
+
+            Box(
+                modifier = Modifier
+                    .width(60.dp)
+                    .height(50.dp)
+                    .padding(4.dp, 0.dp)
+                    .background(EmptySpace)
+            ){}
+
+            Text(
+                stringResource(R.string.step),
+                style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
+                modifier = Modifier.padding(bottom = 4.dp)
+            )
+
+            Box(
+                modifier = Modifier
+                    .width(60.dp)
+                    .height(50.dp)
+                    .padding(4.dp, 0.dp)
+                    .background(EmptySpace)
+            ){}
         }
+
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .width(lineWidth)
+                .background(Color.White)
+        )
+
+        Box(
+            modifier = Modifier
+                .height(bottomLineHeight)
+                .width(bottomLineWidth)
+                .background(Color.White)
+        )
     }
 }
 
