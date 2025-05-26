@@ -26,7 +26,19 @@ class DraggableViewModel: ViewModel() {
     val blocks = _blocks.asStateFlow()
     var maxZIndex = 0f;
 
-    fun addBlock(dragBlock: DraggableBlock) {
+    fun handleAction(action: BlocklyAction) {
+        when(action) {
+            is BlocklyAction.MoveBlock -> updateBlockPosition(
+                action.block,
+                action.offsetX,
+                action.offsetX
+            )
+            is BlocklyAction.AddBlock -> addBlock(action.block)
+            is BlocklyAction.RemoveBlock -> removeBlock(action.block, action.isFirst)
+        }
+    }
+
+    private fun addBlock(dragBlock: DraggableBlock) {
         _blocks.update {
             (_blocks.value + dragBlock)
         }
@@ -122,5 +134,11 @@ class DraggableViewModel: ViewModel() {
                 it.zIndex.value -= minZIndex
             }
         }
+    }
+
+    sealed class BlocklyAction{
+        data class MoveBlock(var block: DraggableBlock, var offsetX: Float, var offsetY: Float): BlocklyAction()
+        data class AddBlock(var block: DraggableBlock): BlocklyAction()
+        data class RemoveBlock(var block: DraggableBlock, var isFirst: Boolean = true): BlocklyAction()
     }
 }

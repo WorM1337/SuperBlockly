@@ -83,7 +83,9 @@ fun Canvas(
         mutableStateOf(100f))
 
     if(blocks.isEmpty()){
-        viewModel.addBlock(core)
+        viewModel.handleAction(
+            DraggableViewModel.BlocklyAction.AddBlock(core)
+        )
     }
 
     fun dpToPx(dp: Dp): Float {

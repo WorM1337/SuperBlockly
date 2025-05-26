@@ -140,14 +140,13 @@ fun CreateNewProject(
                     item{
                         ListItem(
                             { offset ->
-                                viewModel.addBlock(
-                                    DraggableBlock(
-                                        PrintBlock(),
-                                        mutableStateOf(offset.x - globalOffset.value.x),
-                                        mutableStateOf(offset.y - globalOffset.value.y),
-                                        width = mutableStateOf(100.dp)
-                                    )
+                                val newBlock = DraggableBlock(
+                                    PrintBlock(),
+                                    mutableStateOf(offset.x - globalOffset.value.x),
+                                    mutableStateOf(offset.y - globalOffset.value.y),
+                                    width = mutableStateOf(100.dp)
                                 )
+                                viewModel.handleAction(DraggableViewModel.BlocklyAction.AddBlock(newBlock))
                             }
                         ){
                             PrintBlockCard()
@@ -159,13 +158,14 @@ fun CreateNewProject(
                     item {
                         ListItem(
                             { offset ->
-                                viewModel.addBlock(
-                                    DraggableBlock(
-                                        IntLiteralBlock(),
-                                        mutableStateOf(offset.x - globalOffset.value.x),
-                                        mutableStateOf(offset.y - globalOffset.value.y),
-                                        width = mutableStateOf(200.dp)
-                                    )
+                                val newBlock = DraggableBlock(
+                                    IntLiteralBlock(),
+                                    mutableStateOf(offset.x - globalOffset.value.x),
+                                    mutableStateOf(offset.y - globalOffset.value.y),
+                                    width = mutableStateOf(200.dp)
+                                )
+                                viewModel.handleAction(
+                                    DraggableViewModel.BlocklyAction.AddBlock(newBlock)
                                 )
                             }
                         ){
@@ -173,13 +173,14 @@ fun CreateNewProject(
                         }
                         ListItem(
                             { offset ->
-                                viewModel.addBlock(
-                                    DraggableBlock(
-                                        OperandBlock(),
-                                        mutableStateOf(offset.x - globalOffset.value.x),
-                                        mutableStateOf(offset.y - globalOffset.value.y),
-                                        width = mutableStateOf(200.dp)
-                                    )
+                                val newBlock = DraggableBlock(
+                                    OperandBlock(),
+                                    mutableStateOf(offset.x - globalOffset.value.x),
+                                    mutableStateOf(offset.y - globalOffset.value.y),
+                                    width = mutableStateOf(200.dp)
+                                )
+                                viewModel.handleAction(
+                                    DraggableViewModel.BlocklyAction.AddBlock(newBlock)
                                 )
                             }
                         ){
@@ -190,13 +191,14 @@ fun CreateNewProject(
                     item {
                         ListItem(
                             { offset ->
-                                viewModel.addBlock(
-                                    DraggableBlock(
-                                        SetValueVariableBlock(),
-                                        mutableStateOf(offset.x - globalOffset.value.x),
-                                        mutableStateOf(offset.y - globalOffset.value.y),
-                                        width = mutableStateOf(200.dp)
-                                    )
+                                val newBlock = DraggableBlock(
+                                    SetValueVariableBlock(),
+                                    mutableStateOf(offset.x - globalOffset.value.x),
+                                    mutableStateOf(offset.y - globalOffset.value.y),
+                                    width = mutableStateOf(200.dp)
+                                )
+                                viewModel.handleAction(
+                                    DraggableViewModel.BlocklyAction.AddBlock(newBlock)
                                 )
                             }
                         ){
@@ -206,13 +208,14 @@ fun CreateNewProject(
                     item {
                         ListItem(
                             { offset ->
-                                viewModel.addBlock(
-                                    DraggableBlock(
-                                        VariableDeclarationBlock(),
-                                        mutableStateOf(offset.x - globalOffset.value.x),
-                                        mutableStateOf(offset.y - globalOffset.value.y),
-                                        width = mutableStateOf(200.dp)
-                                    )
+                                val newBlock = DraggableBlock(
+                                    VariableDeclarationBlock(),
+                                    mutableStateOf(offset.x - globalOffset.value.x),
+                                    mutableStateOf(offset.y - globalOffset.value.y),
+                                    width = mutableStateOf(200.dp)
+                                )
+                                viewModel.handleAction(
+                                    DraggableViewModel.BlocklyAction.AddBlock(newBlock)
                                 )
                             }
                         ){
@@ -222,13 +225,14 @@ fun CreateNewProject(
                     item {
                         ListItem(
                             { offset ->
-                                viewModel.addBlock(
-                                    DraggableBlock(
-                                        VariableReferenceBlock(),
-                                        mutableStateOf(offset.x - globalOffset.value.x),
-                                        mutableStateOf(offset.y - globalOffset.value.y),
-                                        width = mutableStateOf(150.dp)
-                                    )
+                                val newBlock = DraggableBlock(
+                                    VariableReferenceBlock(),
+                                    mutableStateOf(offset.x - globalOffset.value.x),
+                                    mutableStateOf(offset.y - globalOffset.value.y),
+                                    width = mutableStateOf(150.dp)
+                                )
+                                viewModel.handleAction(
+                                    DraggableViewModel.BlocklyAction.AddBlock(newBlock)
                                 )
                             }
                         ){
@@ -241,13 +245,14 @@ fun CreateNewProject(
                     item {
                         ListItem(
                             { offset ->
-                                viewModel.addBlock(
-                                    DraggableBlock(
-                                        IfBlock(),
-                                        mutableStateOf(offset.x - globalOffset.value.x),
-                                        mutableStateOf(offset.y - globalOffset.value.y),
-                                        width = mutableStateOf(100.dp)
-                                    )
+                                val newBlock = DraggableBlock(
+                                    IfBlock(),
+                                    mutableStateOf(offset.x - globalOffset.value.x),
+                                    mutableStateOf(offset.y - globalOffset.value.y),
+                                    width = mutableStateOf(100.dp)
+                                )
+                                viewModel.handleAction(
+                                    DraggableViewModel.BlocklyAction.AddBlock(newBlock)
                                 )
                             }
                         ){
@@ -255,13 +260,14 @@ fun CreateNewProject(
                         }
                         ListItem(
                             { offset ->
-                                viewModel.addBlock(
-                                    DraggableBlock(
-                                        ElseBlock(),
-                                        mutableStateOf(offset.x - globalOffset.value.x),
-                                        mutableStateOf(offset.y - globalOffset.value.y),
-                                        width = mutableStateOf(100.dp)
-                                    )
+                                val newBlock = DraggableBlock(
+                                    ElseBlock(),
+                                    mutableStateOf(offset.x - globalOffset.value.x),
+                                    mutableStateOf(offset.y - globalOffset.value.y),
+                                    width = mutableStateOf(100.dp)
+                                )
+                                viewModel.handleAction(
+                                    DraggableViewModel.BlocklyAction.AddBlock(newBlock)
                                 )
                             }
                         ){
@@ -269,13 +275,14 @@ fun CreateNewProject(
                         }
                         ListItem(
                             { offset ->
-                                viewModel.addBlock(
-                                    DraggableBlock(
-                                        ElseIfBlock(),
-                                        mutableStateOf(offset.x - globalOffset.value.x),
-                                        mutableStateOf(offset.y - globalOffset.value.y),
-                                        width = mutableStateOf(100.dp)
-                                    )
+                                val newBlock = DraggableBlock(
+                                    ElseIfBlock(),
+                                    mutableStateOf(offset.x - globalOffset.value.x),
+                                    mutableStateOf(offset.y - globalOffset.value.y),
+                                    width = mutableStateOf(100.dp)
+                                )
+                                viewModel.handleAction(
+                                    DraggableViewModel.BlocklyAction.AddBlock(newBlock)
                                 )
                             }
                         ){
@@ -286,13 +293,14 @@ fun CreateNewProject(
                     item{
                         ListItem(
                             { offset ->
-                                viewModel.addBlock(
-                                    DraggableBlock(
-                                        WhileBlock(),
-                                        mutableStateOf(offset.x - globalOffset.value.x),
-                                        mutableStateOf(offset.y - globalOffset.value.y),
-                                        width = mutableStateOf(300.dp)
-                                    )
+                                val newBlock = DraggableBlock(
+                                    WhileBlock(),
+                                    mutableStateOf(offset.x - globalOffset.value.x),
+                                    mutableStateOf(offset.y - globalOffset.value.y),
+                                    width = mutableStateOf(300.dp)
+                                )
+                                viewModel.handleAction(
+                                    DraggableViewModel.BlocklyAction.AddBlock(newBlock)
                                 )
                             }
                         ){
@@ -302,13 +310,14 @@ fun CreateNewProject(
                     item {
                         ListItem(
                             { offset ->
-                                viewModel.addBlock(
-                                    DraggableBlock(
-                                        ForBlock(),
-                                        mutableStateOf(offset.x - globalOffset.value.x),
-                                        mutableStateOf(offset.y - globalOffset.value.y),
-                                        width = mutableStateOf(100.dp)
-                                    )
+                                val newBlock = DraggableBlock(
+                                    ForBlock(),
+                                    mutableStateOf(offset.x - globalOffset.value.x),
+                                    mutableStateOf(offset.y - globalOffset.value.y),
+                                    width = mutableStateOf(100.dp)
+                                )
+                                viewModel.handleAction(
+                                    DraggableViewModel.BlocklyAction.AddBlock(newBlock)
                                 )
                             }
                         ){
