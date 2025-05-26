@@ -46,8 +46,11 @@ import com.unewexp.superblockly.viewBlocks.BottomConnector
 import com.unewexp.superblockly.viewBlocks.DeclarationVariableView
 import com.unewexp.superblockly.viewBlocks.DraggableBase
 import com.unewexp.superblockly.DraggableBlock
+import com.unewexp.superblockly.blocks.arithmetic.OperandBlock
+import com.unewexp.superblockly.enums.symbol
 import com.unewexp.superblockly.viewBlocks.IfBlockView
 import com.unewexp.superblockly.viewBlocks.IntLiteralView
+import com.unewexp.superblockly.viewBlocks.OperandBlockView
 import com.unewexp.superblockly.viewBlocks.PrintBlockView
 import com.unewexp.superblockly.viewBlocks.SetValueVariableView
 import com.unewexp.superblockly.viewBlocks.StartBlockView
@@ -231,7 +234,9 @@ fun Canvas(
 fun TakeViewBlock (block: DraggableBlock, viewModel: DraggableViewModel = viewModel()){
     val blockType = block.block.blockType
     when(blockType){
-        BlockType.OPERAND -> TODO()
+        BlockType.OPERAND -> OperandBlockView { type ->
+            (block.block as OperandBlock).operand = type
+        }
         BlockType.SET_VARIABLE_VALUE -> SetValueVariableView { newValue ->
             viewModel.updateValue(block, newValue)
         }

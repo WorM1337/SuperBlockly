@@ -12,6 +12,7 @@ import androidx.compose.ui.unit.dp
 import com.unewexp.superblockly.viewBlocks.DeclarationVariableViewForCard
 import com.unewexp.superblockly.viewBlocks.IfBlockViewForCard
 import com.unewexp.superblockly.viewBlocks.IntLiteralViewForCard
+import com.unewexp.superblockly.viewBlocks.OperandBlockForCard
 import com.unewexp.superblockly.viewBlocks.PrintBlockView
 import com.unewexp.superblockly.viewBlocks.SetValueVariableViewForCard
 import com.unewexp.superblockly.viewBlocks.VariableReferenceViewForCard
@@ -32,6 +33,7 @@ fun IntLiteralBlockCard(alpha: Float = 1f){
     Card(
         modifier = Modifier
             .width(200.dp)
+            .height(60.dp)
             .padding(2.dp)
             .alpha(alpha)
     ){
@@ -44,6 +46,7 @@ fun SetValueVariableCard(){
     Card(
         modifier = Modifier
             .width(200.dp)
+            .height(60.dp)
             .padding(2.dp)
     ){
         SetValueVariableViewForCard()
@@ -55,6 +58,7 @@ fun DeclarationVariableCard(){
     Card(
         modifier = Modifier
             .width(200.dp)
+            .height(60.dp)
             .padding(2.dp)
     ){
         DeclarationVariableViewForCard()
@@ -66,6 +70,7 @@ fun ReferenceVariableCard(){
     Card(
         modifier = Modifier
             .width(200.dp)
+            .height(60.dp)
             .padding(2.dp)
     ){
         VariableReferenceViewForCard()
@@ -76,7 +81,7 @@ fun ReferenceVariableCard(){
 fun IfBlockCard(){
     Card(
         modifier = Modifier
-            .width(100.dp)
+            .width(200.dp)
             .height(60.dp)
             .padding(2.dp)
     ){
@@ -93,5 +98,17 @@ fun PrintBlockCard(){
             .padding(2.dp)
     ){
         PrintBlockView()
+    }
+}
+
+@Composable
+fun OperandBlockCard(){
+    Card(
+        modifier = Modifier
+            .width(200.dp)
+            .height(60.dp)
+            .padding(2.dp)
+    ){
+        OperandBlockForCard()
     }
 }
