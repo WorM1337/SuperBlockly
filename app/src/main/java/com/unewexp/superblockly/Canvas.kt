@@ -48,6 +48,8 @@ import com.unewexp.superblockly.viewBlocks.DraggableBase
 import com.unewexp.superblockly.DraggableBlock
 import com.unewexp.superblockly.blocks.arithmetic.OperandBlock
 import com.unewexp.superblockly.enums.symbol
+import com.unewexp.superblockly.viewBlocks.ElseBlockView
+import com.unewexp.superblockly.viewBlocks.ElseIfBlockView
 import com.unewexp.superblockly.viewBlocks.IfBlockView
 import com.unewexp.superblockly.viewBlocks.IntLiteralView
 import com.unewexp.superblockly.viewBlocks.OperandBlockView
@@ -265,8 +267,8 @@ fun TakeViewBlock (block: DraggableBlock, viewModel: DraggableViewModel = viewMo
         BlockType.BOOLEAN_LOGIC_BLOCK -> TODO()
         BlockType.NOT_BLOCK -> TODO()
         BlockType.IF_BLOCK -> IfBlockView()
-        BlockType.ELSE_BLOCK -> TODO()
-        BlockType.IF_ELSE_BLOCK -> TODO()
+        BlockType.ELSE_BLOCK -> ElseBlockView()
+        BlockType.IF_ELSE_BLOCK -> ElseIfBlockView()
         BlockType.REPEAT_N_TIMES -> TODO()
         BlockType.WHILE_BLOCK -> WhileBlockView()
         BlockType.FOR_BLOCK -> TODO()

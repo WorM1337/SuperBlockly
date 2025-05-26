@@ -10,6 +10,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
 import com.unewexp.superblockly.viewBlocks.DeclarationVariableViewForCard
+import com.unewexp.superblockly.viewBlocks.ElseBlockViewForCard
+import com.unewexp.superblockly.viewBlocks.ElseIfBlockViewForCard
 import com.unewexp.superblockly.viewBlocks.IfBlockViewForCard
 import com.unewexp.superblockly.viewBlocks.IntLiteralViewForCard
 import com.unewexp.superblockly.viewBlocks.OperandBlockForCard
@@ -87,6 +89,30 @@ fun IfBlockCard(){
             .padding(2.dp)
     ){
         IfBlockViewForCard()
+    }
+}
+
+@Composable
+fun ElseBlockCard(){
+    Card(
+        modifier = Modifier
+            .width(200.dp)
+            .height(60.dp)
+            .padding(2.dp)
+    ){
+        ElseBlockViewForCard()
+    }
+}
+
+@Composable
+fun ElseIfBlockCard(){
+    Card(
+        modifier = Modifier
+            .width(200.dp)
+            .height(60.dp)
+            .padding(2.dp)
+    ){
+        ElseIfBlockViewForCard()
     }
 }
 

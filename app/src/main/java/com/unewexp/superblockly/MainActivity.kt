@@ -3,18 +3,14 @@
 package com.unewexp.superblockly
 
 import android.os.Bundle
-import android.view.MotionEvent
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
@@ -36,35 +32,28 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.myfirstapplicatioin.blocks.Block
 import com.example.myfirstapplicatioin.blocks.literals.IntLiteralBlock
 import com.unewexp.superblockly.blocks.logic.IfBlock
 import com.unewexp.superblockly.blocks.returnBlocks.VariableReferenceBlock
 import com.unewexp.superblockly.blocks.voidBlocks.PrintBlock
 import com.unewexp.superblockly.blocks.voidBlocks.SetValueVariableBlock
 import com.unewexp.superblockly.blocks.voidBlocks.VariableDeclarationBlock
-import com.unewexp.superblockly.debug.ConsolePanel
 import com.unewexp.superblockly.ui.theme.DrawerColor
 import com.unewexp.superblockly.ui.theme.SuperBlocklyTheme
-import com.unewexp.superblockly.DraggableBlock
 import com.unewexp.superblockly.blocks.arithmetic.OperandBlock
+import com.unewexp.superblockly.blocks.logic.ElseBlock
+import com.unewexp.superblockly.blocks.logic.ElseIfBlock
 import kotlinx.coroutines.launch
-import kotlin.math.roundToInt
 
 
 
@@ -261,6 +250,34 @@ fun CreateNewProject(
                             }
                         ){
                             IfBlockCard()
+                        }
+                        ListItem(
+                            { offset ->
+                                viewModel.addBlock(
+                                    DraggableBlock(
+                                        ElseBlock(),
+                                        mutableStateOf(offset.x - globalOffset.value.x),
+                                        mutableStateOf(offset.y - globalOffset.value.y),
+                                        width = mutableStateOf(100.dp)
+                                    )
+                                )
+                            }
+                        ){
+                            ElseBlockCard()
+                        }
+                        ListItem(
+                            { offset ->
+                                viewModel.addBlock(
+                                    DraggableBlock(
+                                        ElseIfBlock(),
+                                        mutableStateOf(offset.x - globalOffset.value.x),
+                                        mutableStateOf(offset.y - globalOffset.value.y),
+                                        width = mutableStateOf(100.dp)
+                                    )
+                                )
+                            }
+                        ){
+                            ElseIfBlockCard()
                         }
                     }
                     item { Text(stringResource(R.string.loops), color = Color.White) }

@@ -55,6 +55,37 @@ import com.unewexp.superblockly.enums.symbol
 import kotlin.reflect.KClass
 
 @Composable
+fun StartBlockView() {
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        shape = RoundedCornerShape(16.dp),
+        color = MaterialTheme.colorScheme.primaryContainer,
+        shadowElevation = 8.dp
+    ) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = stringResource(R.string.core),
+                    style = MaterialTheme.typography.headlineLarge.copy(
+                        fontSize = 32.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    ),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(horizontal = 24.dp)
+                )
+            }
+        }
+    }
+}
+
+@Composable
 fun TextFieldLike(
     value: String = "",
     placeholder: String = "Num",
@@ -406,32 +437,111 @@ fun IfBlockViewForCard(
 }
 
 @Composable
-fun StartBlockView() {
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        shape = RoundedCornerShape(16.dp),
-        color = MaterialTheme.colorScheme.primaryContainer,
-        shadowElevation = 8.dp
+fun ElseBlockView() {
+    val textHeight = 60.dp
+    val bottomLineHeight = 1.dp
+    val lineWidth = 1.dp
+    val bottomLineWidth = 60.dp
+
+    Box(
+        modifier = Modifier
+            .width(60.dp)
     ) {
-        Box(
+        Column(
             modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
+            verticalArrangement = Arrangement.Top
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+            Box(
+                modifier = Modifier
+                    .height(textHeight)
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.CenterStart
             ) {
                 Text(
-                    text = stringResource(R.string.core),
-                    style = MaterialTheme.typography.headlineLarge.copy(
-                        fontSize = 32.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
-                    ),
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(horizontal = 24.dp)
+                    stringResource(R.string.Else),
+                    style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 32.sp),
+                    modifier = Modifier.padding(bottom = 4.dp)
                 )
             }
+
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .width(lineWidth)
+                    .background(Color.White)
+            )
+
+            Box(
+                modifier = Modifier
+                    .height(bottomLineHeight)
+                    .width(bottomLineWidth)
+                    .background(Color.White)
+            )
+        }
+    }
+}
+
+@Composable
+fun ElseBlockViewForCard(
+){
+    Column {
+        Box{
+            Text(stringResource(R.string.Else))
+        }
+    }
+}
+
+@Composable
+fun ElseIfBlockView() {
+    val textHeight = 60.dp
+    val bottomLineHeight = 1.dp
+    val lineWidth = 1.dp
+    val bottomLineWidth = 60.dp
+
+    Box(
+        modifier = Modifier
+            .width(60.dp)
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Top
+        ) {
+            Box(
+                modifier = Modifier
+                    .height(textHeight)
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.CenterStart
+            ) {
+                Text(
+                    stringResource(R.string.else_if),
+                    style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 32.sp),
+                    modifier = Modifier.padding(bottom = 4.dp)
+                )
+            }
+
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .width(lineWidth)
+                    .background(Color.White)
+            )
+
+            Box(
+                modifier = Modifier
+                    .height(bottomLineHeight)
+                    .width(bottomLineWidth)
+                    .background(Color.White)
+            )
+        }
+    }
+}
+
+@Composable
+fun ElseIfBlockViewForCard(
+){
+    Column {
+        Box{
+            Text(stringResource(R.string.else_if))
         }
     }
 }
