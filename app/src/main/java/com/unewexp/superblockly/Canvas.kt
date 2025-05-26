@@ -46,13 +46,20 @@ import com.unewexp.superblockly.viewBlocks.BottomConnector
 import com.unewexp.superblockly.viewBlocks.DeclarationVariableView
 import com.unewexp.superblockly.viewBlocks.DraggableBase
 import com.unewexp.superblockly.DraggableBlock
+import com.unewexp.superblockly.blocks.arithmetic.OperandBlock
+import com.unewexp.superblockly.enums.symbol
+import com.unewexp.superblockly.viewBlocks.ElseBlockView
+import com.unewexp.superblockly.viewBlocks.ElseIfBlockView
+import com.unewexp.superblockly.viewBlocks.ForBlockView
 import com.unewexp.superblockly.viewBlocks.IfBlockView
 import com.unewexp.superblockly.viewBlocks.IntLiteralView
+import com.unewexp.superblockly.viewBlocks.OperandBlockView
 import com.unewexp.superblockly.viewBlocks.PrintBlockView
 import com.unewexp.superblockly.viewBlocks.SetValueVariableView
 import com.unewexp.superblockly.viewBlocks.StartBlockView
 import com.unewexp.superblockly.viewBlocks.TopConnector
 import com.unewexp.superblockly.viewBlocks.VariableReferenceView
+import com.unewexp.superblockly.viewBlocks.WhileBlockView
 import java.util.Queue
 import kotlin.math.max
 import kotlin.math.roundToInt
@@ -151,6 +158,14 @@ fun Canvas(
 
                             TakeViewBlock(it, viewModel)
 
+                            it.inputConnectionViews.forEach { connector ->
+                                Box(modifier = Modifier
+                                    .offset (connector.positionX, connector.positionY)
+                                    .size(15.dp)
+                                    .background(Color(255,140,170))
+                                )
+                            }
+
                             if (it.block.blockType != BlockType.START) {
                                 TopConnector(
                                     modifier = Modifier
@@ -171,6 +186,7 @@ fun Canvas(
                         },
                         onDoubleTap = {
                             viewModel.removeBlock(it)
+
                         },
                         onDragStart = {
                             val queue: MutableList<DraggableBlock> = mutableListOf(it)
@@ -222,7 +238,9 @@ fun Canvas(
 fun TakeViewBlock (block: DraggableBlock, viewModel: DraggableViewModel = viewModel()){
     val blockType = block.block.blockType
     when(blockType){
-        BlockType.OPERAND -> TODO()
+        BlockType.OPERAND -> OperandBlockView { type ->
+            (block.block as OperandBlock).operand = type
+        }
         BlockType.SET_VARIABLE_VALUE -> SetValueVariableView { newValue ->
             viewModel.updateValue(block, newValue)
         }
@@ -250,11 +268,13 @@ fun TakeViewBlock (block: DraggableBlock, viewModel: DraggableViewModel = viewMo
         BlockType.BOOLEAN_LOGIC_BLOCK -> TODO()
         BlockType.NOT_BLOCK -> TODO()
         BlockType.IF_BLOCK -> IfBlockView()
-        BlockType.ELSE_BLOCK -> TODO()
-        BlockType.IF_ELSE_BLOCK -> TODO()
+        BlockType.ELSE_BLOCK -> ElseBlockView()
+        BlockType.IF_ELSE_BLOCK -> ElseIfBlockView()
         BlockType.REPEAT_N_TIMES -> TODO()
-        BlockType.WHILE_BLOCK -> TODO()
-        BlockType.FOR_BLOCK -> TODO()
+        BlockType.WHILE_BLOCK -> WhileBlockView()
+        BlockType.FOR_BLOCK -> ForBlockView { newValue ->
+            viewModel.updateValue(block, newValue)
+        }
         BlockType.FOR_ELEMENT_IN_LIST -> TODO()
         BlockType.FIXED_VALUE_AND_SIZE_LIST -> TODO()
         BlockType.GET_VALUE_BY_INDEX -> TODO()

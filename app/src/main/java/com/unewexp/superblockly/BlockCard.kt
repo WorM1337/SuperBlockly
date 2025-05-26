@@ -10,11 +10,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
 import com.unewexp.superblockly.viewBlocks.DeclarationVariableViewForCard
+import com.unewexp.superblockly.viewBlocks.ElseBlockViewForCard
+import com.unewexp.superblockly.viewBlocks.ElseIfBlockViewForCard
+import com.unewexp.superblockly.viewBlocks.ForBlockViewForCard
 import com.unewexp.superblockly.viewBlocks.IfBlockViewForCard
 import com.unewexp.superblockly.viewBlocks.IntLiteralViewForCard
+import com.unewexp.superblockly.viewBlocks.OperandBlockForCard
 import com.unewexp.superblockly.viewBlocks.PrintBlockView
 import com.unewexp.superblockly.viewBlocks.SetValueVariableViewForCard
 import com.unewexp.superblockly.viewBlocks.VariableReferenceViewForCard
+import com.unewexp.superblockly.viewBlocks.WhileBlockViewForCard
 
 @Composable
 fun BlockCard(content: @Composable () -> Unit, onClick: () -> Unit){
@@ -32,6 +37,7 @@ fun IntLiteralBlockCard(alpha: Float = 1f){
     Card(
         modifier = Modifier
             .width(200.dp)
+            .height(60.dp)
             .padding(2.dp)
             .alpha(alpha)
     ){
@@ -44,6 +50,7 @@ fun SetValueVariableCard(){
     Card(
         modifier = Modifier
             .width(200.dp)
+            .height(60.dp)
             .padding(2.dp)
     ){
         SetValueVariableViewForCard()
@@ -55,6 +62,7 @@ fun DeclarationVariableCard(){
     Card(
         modifier = Modifier
             .width(200.dp)
+            .height(60.dp)
             .padding(2.dp)
     ){
         DeclarationVariableViewForCard()
@@ -66,6 +74,7 @@ fun ReferenceVariableCard(){
     Card(
         modifier = Modifier
             .width(200.dp)
+            .height(60.dp)
             .padding(2.dp)
     ){
         VariableReferenceViewForCard()
@@ -76,11 +85,35 @@ fun ReferenceVariableCard(){
 fun IfBlockCard(){
     Card(
         modifier = Modifier
-            .width(100.dp)
+            .width(200.dp)
             .height(60.dp)
             .padding(2.dp)
     ){
         IfBlockViewForCard()
+    }
+}
+
+@Composable
+fun ElseBlockCard(){
+    Card(
+        modifier = Modifier
+            .width(200.dp)
+            .height(60.dp)
+            .padding(2.dp)
+    ){
+        ElseBlockViewForCard()
+    }
+}
+
+@Composable
+fun ElseIfBlockCard(){
+    Card(
+        modifier = Modifier
+            .width(200.dp)
+            .height(60.dp)
+            .padding(2.dp)
+    ){
+        ElseIfBlockViewForCard()
     }
 }
 
@@ -93,5 +126,41 @@ fun PrintBlockCard(){
             .padding(2.dp)
     ){
         PrintBlockView()
+    }
+}
+
+@Composable
+fun OperandBlockCard(){
+    Card(
+        modifier = Modifier
+            .width(200.dp)
+            .height(60.dp)
+            .padding(2.dp)
+    ){
+        OperandBlockForCard()
+    }
+}
+
+@Composable
+fun WhileBlockCard(){
+    Card(
+        modifier = Modifier
+            .width(200.dp)
+            .height(60.dp)
+            .padding(2.dp)
+    ){
+        WhileBlockViewForCard()
+    }
+}
+
+@Composable
+fun ForBlockCard(){
+    Card(
+        modifier = Modifier
+            .width(200.dp)
+            .height(60.dp)
+            .padding(2.dp)
+    ){
+        ForBlockViewForCard()
     }
 }

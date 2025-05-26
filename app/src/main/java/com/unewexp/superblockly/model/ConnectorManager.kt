@@ -645,7 +645,7 @@ object ConnectorManager {
                 ans += mutableListOf(
                     ConnectionView(castedBlock.topConnector, cornerOffset, 0.dp),
                     ConnectionView(castedBlock.bottomConnector, cornerOffset, height),
-                    ConnectionView(castedBlock.innerConnector, width/2, height, ExtendConnectionViewType.INNER_BOTTOM),
+                    ConnectionView(castedBlock.innerConnector, cornerOffset, 60.dp, ExtendConnectionViewType.INNER_BOTTOM),
                     ConnectionView(castedBlock.conditionConnector, width, height/2, ExtendConnectionViewType.SIDE)
                 )
             }

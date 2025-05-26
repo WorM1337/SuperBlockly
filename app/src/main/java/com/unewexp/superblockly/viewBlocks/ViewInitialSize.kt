@@ -45,7 +45,7 @@ object ViewInitialSize {
             BlockType.NOT_BLOCK ->
                 PairDp(width = 100.dp, height = 60.dp)
             BlockType.IF_BLOCK ->
-                PairDp(width = 200.dp, height = 60.dp)
+                PairDp(width = 100.dp, height = 140.dp)
             BlockType.ELSE_BLOCK ->
                 PairDp(width = 200.dp, height = 60.dp)
             BlockType.IF_ELSE_BLOCK ->
@@ -55,7 +55,7 @@ object ViewInitialSize {
             BlockType.WHILE_BLOCK ->
                 PairDp(width = 200.dp, height = 60.dp)
             BlockType.FOR_BLOCK ->
-                PairDp(width = 200.dp, height = 60.dp)
+                PairDp(width = 300.dp, height = 60.dp)
             BlockType.FOR_ELEMENT_IN_LIST ->
                 PairDp(width = 200.dp, height = 60.dp)
             BlockType.FIXED_VALUE_AND_SIZE_LIST ->
