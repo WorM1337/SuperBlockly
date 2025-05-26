@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.example.myfirstapplicatioin.blocks.literals.IntLiteralBlock
 import com.example.myfirstapplicatioin.utils.disconnect
 import com.unewexp.superblockly.blocks.StartBlock
+import com.unewexp.superblockly.blocks.loops.ForBlock
 import com.unewexp.superblockly.blocks.returnBlocks.VariableReferenceBlock
 import com.unewexp.superblockly.blocks.voidBlocks.SetValueVariableBlock
 import com.unewexp.superblockly.blocks.voidBlocks.VariableDeclarationBlock
@@ -88,6 +89,9 @@ class DraggableViewModel: ViewModel() {
                 }
                 if(it.block is VariableReferenceBlock){
                     it.block.selectedVariableName = newValue
+                }
+                if(it.block is ForBlock){
+                    it.block.variableName = newValue
                 }
             }
         }

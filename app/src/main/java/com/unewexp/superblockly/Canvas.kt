@@ -50,6 +50,7 @@ import com.unewexp.superblockly.blocks.arithmetic.OperandBlock
 import com.unewexp.superblockly.enums.symbol
 import com.unewexp.superblockly.viewBlocks.ElseBlockView
 import com.unewexp.superblockly.viewBlocks.ElseIfBlockView
+import com.unewexp.superblockly.viewBlocks.ForBlockView
 import com.unewexp.superblockly.viewBlocks.IfBlockView
 import com.unewexp.superblockly.viewBlocks.IntLiteralView
 import com.unewexp.superblockly.viewBlocks.OperandBlockView
@@ -271,7 +272,9 @@ fun TakeViewBlock (block: DraggableBlock, viewModel: DraggableViewModel = viewMo
         BlockType.IF_ELSE_BLOCK -> ElseIfBlockView()
         BlockType.REPEAT_N_TIMES -> TODO()
         BlockType.WHILE_BLOCK -> WhileBlockView()
-        BlockType.FOR_BLOCK -> TODO()
+        BlockType.FOR_BLOCK -> ForBlockView { newValue ->
+            viewModel.updateValue(block, newValue)
+        }
         BlockType.FOR_ELEMENT_IN_LIST -> TODO()
         BlockType.FIXED_VALUE_AND_SIZE_LIST -> TODO()
         BlockType.GET_VALUE_BY_INDEX -> TODO()

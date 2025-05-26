@@ -36,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
@@ -52,6 +53,7 @@ import com.unewexp.superblockly.R
 import com.unewexp.superblockly.Spinner
 import com.unewexp.superblockly.enums.OperandType
 import com.unewexp.superblockly.enums.symbol
+import com.unewexp.superblockly.ui.theme.EmptySpace
 import kotlin.reflect.KClass
 
 @Composable
@@ -243,8 +245,6 @@ fun SetValueVariableView(
 @Composable
 fun SetValueVariableViewForCard(){
 
-    var name by remember { mutableStateOf(TextFieldValue("")) }
-
     Row(verticalAlignment = Alignment.CenterVertically){
         Text(
             "Set",
@@ -253,7 +253,7 @@ fun SetValueVariableViewForCard(){
         )
         TextFieldLike(placeholder = "Var", modifier = Modifier.width(150.dp))
         Text(
-            "to",
+            stringResource(R.string.to),
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.padding(end = 4.dp)
         )
@@ -763,6 +763,177 @@ fun WhileBlockViewForCard(
     Column {
         Box{
             Text(stringResource(R.string.While))
+        }
+    }
+}
+
+@Composable
+fun ForBlockView(
+    onNameChanged: (String) -> Unit
+) {
+
+    var name by remember { mutableStateOf(TextFieldValue("i")) }
+
+    val textHeight = 60.dp
+    val bottomLineHeight = 1.dp
+    val lineWidth = 1.dp
+    val bottomLineWidth = 60.dp
+
+    Box(
+        modifier = Modifier
+            .width(60.dp)
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Top
+        ) {
+            Row(
+                modifier = Modifier
+                    .height(textHeight)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Start
+            ) {
+                Text(
+                    stringResource(R.string.For),
+                    style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 32.sp),
+                    modifier = Modifier.padding(bottom = 4.dp)
+                )
+
+                BasicTextField(
+                    value = name,
+                    onValueChange = {
+                        name = it
+                        onNameChanged(name.text)
+                    },
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(24.dp)
+                        .align(Alignment.CenterVertically),
+                    singleLine = true,
+                    textStyle = MaterialTheme.typography.bodyMedium.copy(
+                        color = MaterialTheme.colorScheme.onSurface,
+                        textAlign = TextAlign.Start
+                    ),
+                    decorationBox = { innerTextField ->
+                        Box(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentAlignment = Alignment.CenterStart
+                        ) {
+                            if (name.text.isEmpty()) {
+                                Text(
+                                    "Var",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                                )
+                            }
+                            innerTextField()
+                        }
+                    }
+                )
+
+                Text(
+                    stringResource(R.string.from),
+                    style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 32.sp),
+                    modifier = Modifier.padding(bottom = 4.dp)
+                )
+
+                Box(
+                    modifier = Modifier
+                        .width(60.dp)
+                        .height(50.dp)
+                        .background(EmptySpace)
+                ){}
+
+                Text(
+                    stringResource(R.string.to),
+                    style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 32.sp),
+                    modifier = Modifier.padding(bottom = 4.dp)
+                )
+
+                Box(
+                    modifier = Modifier
+                        .width(60.dp)
+                        .height(50.dp)
+                        .background(EmptySpace)
+                ){}
+
+                Text(
+                    stringResource(R.string.step),
+                    style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 32.sp),
+                    modifier = Modifier.padding(bottom = 4.dp)
+                )
+
+                Box(
+                    modifier = Modifier
+                        .width(60.dp)
+                        .height(50.dp)
+                        .background(EmptySpace)
+                ){}
+            }
+
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .width(lineWidth)
+                    .background(Color.White)
+            )
+
+            Box(
+                modifier = Modifier
+                    .height(bottomLineHeight)
+                    .width(bottomLineWidth)
+                    .background(Color.White)
+            )
+        }
+    }
+}
+
+@Composable
+fun ForBlockViewForCard() {
+
+    val textHeight = 60.dp
+    val bottomLineHeight = 1.dp
+    val lineWidth = 1.dp
+    val bottomLineWidth = 60.dp
+
+    Box(
+        modifier = Modifier
+            .width(60.dp)
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Top
+        ) {
+            Row(
+                modifier = Modifier
+                    .height(textHeight)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Start
+            ) {
+                Text(
+                    stringResource(R.string.For),
+                    style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 32.sp),
+                    modifier = Modifier.padding(bottom = 4.dp)
+                )
+
+                TextFieldLike(placeholder = "i", modifier = Modifier.width(50.dp))
+            }
+
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .width(lineWidth)
+                    .background(Color.White)
+            )
+
+            Box(
+                modifier = Modifier
+                    .height(bottomLineHeight)
+                    .width(bottomLineWidth)
+                    .background(Color.White)
+            )
         }
     }
 }

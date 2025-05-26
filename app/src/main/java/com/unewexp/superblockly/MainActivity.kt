@@ -53,6 +53,8 @@ import com.unewexp.superblockly.ui.theme.SuperBlocklyTheme
 import com.unewexp.superblockly.blocks.arithmetic.OperandBlock
 import com.unewexp.superblockly.blocks.logic.ElseBlock
 import com.unewexp.superblockly.blocks.logic.ElseIfBlock
+import com.unewexp.superblockly.blocks.loops.ForBlock
+import com.unewexp.superblockly.blocks.loops.WhileBlock
 import kotlinx.coroutines.launch
 
 
@@ -286,7 +288,23 @@ fun CreateNewProject(
                             { offset ->
                                 viewModel.addBlock(
                                     DraggableBlock(
-                                        IfBlock(),
+                                        WhileBlock(),
+                                        mutableStateOf(offset.x - globalOffset.value.x),
+                                        mutableStateOf(offset.y - globalOffset.value.y),
+                                        width = mutableStateOf(300.dp)
+                                    )
+                                )
+                            }
+                        ){
+                            WhileBlockCard()
+                        }
+                    }
+                    item {
+                        ListItem(
+                            { offset ->
+                                viewModel.addBlock(
+                                    DraggableBlock(
+                                        ForBlock(),
                                         mutableStateOf(offset.x - globalOffset.value.x),
                                         mutableStateOf(offset.y - globalOffset.value.y),
                                         width = mutableStateOf(100.dp)
@@ -294,7 +312,7 @@ fun CreateNewProject(
                                 )
                             }
                         ){
-                            WhileBlockCard()
+                            ForBlockCard()
                         }
                     }
                 }

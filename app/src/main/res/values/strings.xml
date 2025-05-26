@@ -17,4 +17,7 @@
     <string name="While">While</string>
     <string name="For">For</string>
     <string name="logic">Логика</string>
+    <string name="from">from</string>
+    <string name="to">to</string>
+    <string name="step">step</string>
 </resources>
