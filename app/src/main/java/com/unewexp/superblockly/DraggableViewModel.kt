@@ -2,8 +2,10 @@ package com.unewexp.superblockly
 
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import com.example.myfirstapplicatioin.blocks.literals.IntLiteralBlock
+import com.example.myfirstapplicatioin.utils.connectTo
 import com.example.myfirstapplicatioin.utils.disconnect
 import com.unewexp.superblockly.blocks.StartBlock
 import com.unewexp.superblockly.blocks.returnBlocks.VariableReferenceBlock
@@ -11,6 +13,7 @@ import com.unewexp.superblockly.blocks.voidBlocks.SetValueVariableBlock
 import com.unewexp.superblockly.blocks.voidBlocks.VariableDeclarationBlock
 import com.unewexp.superblockly.enums.ConnectorType
 import com.unewexp.superblockly.DraggableBlock
+import com.unewexp.superblockly.model.ConnectorManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -39,25 +42,36 @@ class DraggableViewModel: ViewModel() {
         Log.i("${currentBlock.block.blockType}", "(${currentBlock.x.value} : ${currentBlock.y.value})")
     }
 
-    fun removeBlock(block: DraggableBlock) {
+    fun removeBlock(block: DraggableBlock, isFirst: Boolean = true) {
 
         if(block.block is StartBlock){
             return
         }
 
+        var summHeight = 0.dp
+
+        if(isFirst) summHeight = ConnectorManager.getSummaryHeight(block)
+
         for(i in block.scope.indices.reversed()){
 
-            if(block.scope[i].connectedParentConnectionView!!.connector.connectionType != ConnectorType.STRING_BOTTOM_OUTER || block.scope[i].isInner){
-                removeBlock(block.scope[i])
+            if(block.scope[i].connectedParentConnectionView!!.connector.connectionType != ConnectorType.STRING_BOTTOM_OUTER || block.scope[i].isInner && !isFirst){
+                removeBlock(block.scope[i], false)
             }
             else {
+                block.scope[i].connectedParentConnectionView!!.isConnected = false
+                block.scope[i].connectedParent = null
+                block.scope[i].connectedParentConnectionView = null
                 block.scope.removeAt(i)
             }
         }
 
         if(block.connectedParent != null && block.connectedParentConnectionView != null){
             disconnect(block.outputConnectionView!!.connector, block.connectedParentConnectionView!!.connector)
+
+            if(isFirst) ConnectorManager.changeParentParams(block, deltaHeight = summHeight,  isPositive = false)
+
             block.connectedParent!!.scope.remove(block)
+            block.connectedParentConnectionView!!.isConnected = false
             block.connectedParent = null
             block.connectedParentConnectionView = null
         }

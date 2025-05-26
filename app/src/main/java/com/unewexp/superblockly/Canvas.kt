@@ -108,7 +108,7 @@ fun Canvas(
                     contentAlignment = Alignment.CenterEnd
                 ) {
                     IconButton(
-                        onClick = { core.block.execute() },
+                        onClick = { blocks[0].block.execute() },
                         modifier =
                             Modifier
                                 .border(3.dp, Color.Green, CircleShape)
