@@ -388,7 +388,7 @@ fun CreateNewProject(
                                 )
                             }
                         ){
-                            GetValueByIndexView()
+                            GetValueByIndexViewCard()
                         }
                     }
                     item {
@@ -405,7 +405,7 @@ fun CreateNewProject(
                                 )
                             }
                         ){
-                            GetListSizeView()
+                            GetListSizeViewCard()
                         }
                     }
                 }
