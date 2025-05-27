@@ -1000,3 +1000,12 @@ fun FixedValuesAndSizeListViewForCard(){
         )
     }
 }
+
+@Composable
+fun AddElementByIndexView(){
+    Row(
+        modifier = Modifier.fillMaxSize()
+    ){
+
+    }
+}

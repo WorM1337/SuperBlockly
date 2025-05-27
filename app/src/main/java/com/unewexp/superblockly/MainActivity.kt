@@ -130,7 +130,6 @@ fun CreateNewProject(
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-
     val globalOffset = remember { mutableStateOf(Offset.Zero) }
 
     ModalNavigationDrawer(

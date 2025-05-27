@@ -15,6 +15,7 @@ import com.unewexp.superblockly.blocks.voidBlocks.VariableDeclarationBlock
 import com.unewexp.superblockly.enums.ConnectorType
 import com.unewexp.superblockly.DraggableBlock
 import com.unewexp.superblockly.model.CalculationsManager
+import com.unewexp.superblockly.enums.BlockType
 import com.unewexp.superblockly.model.ConnectorManager
 import com.unewexp.superblockly.model.SizeManager
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -57,13 +58,13 @@ class DraggableViewModel: ViewModel() {
         Log.i("${currentBlock.block.blockType}", "(${currentBlock.x.value} : ${currentBlock.y.value})")
     }
 
-    fun removeBlock(block: DraggableBlock, isFirst: Boolean = true) {
+    private fun removeBlock(block: DraggableBlock, isFirst: Boolean = true) {
 
         if(block.block is StartBlock){
             return
         }
 
-        var summHeight = 0.dp
+        var sumHeight = 0.dp
 
         if(isFirst) summHeight = CalculationsManager.getSummaryHeight(block)
 
@@ -122,30 +123,56 @@ class DraggableViewModel: ViewModel() {
         Log.i("Delete", "${block.block.blockType} with id: " + block.block.id)
     }
 
-    fun updateValue(block: DraggableBlock, newValue: String){
-        _blocks.value.forEach {
-            if(it == block){
-                if(it.block is IntLiteralBlock){
-                    val v = newValue.toFloatOrNull()
-                    if(v != null){
-                        it.block.value = v.toInt()
-                    }else{
-                        it.block.value = 0
-                    }
-                }
-                if(it.block is SetValueVariableBlock){
-                    it.block.selectedVariableName = newValue
-                }
-                if(it.block is VariableDeclarationBlock){
-                    it.block.name = newValue
-                }
-                if(it.block is VariableReferenceBlock){
-                    it.block.selectedVariableName = newValue
-                }
-                if(it.block is ForBlock){
-                    it.block.variableName = newValue
+    fun updateValue(block: DraggableBlock, newValue: String): Boolean{
+        val block = block.block
+        when(block.blockType){
+            BlockType.SET_VARIABLE_VALUE -> {
+                (block as SetValueVariableBlock).selectedVariableName = newValue
+                return newValue.matches(Regex("[_a-zA-Z]\\w*"))
+            }
+            BlockType.START -> TODO()
+            BlockType.INT_LITERAL -> {
+                val v = newValue.toFloatOrNull()
+                if(v != null){
+                    (block as IntLiteralBlock).value = v.toInt()
+                    return true
+                }else{
+                    return false
                 }
             }
+            BlockType.STRING_LITERAL -> TODO()
+            BlockType.BOOLEAN_LITERAL -> TODO()
+            BlockType.OPERAND -> TODO()
+            BlockType.SHORTHAND_ARITHMETIC_BLOCK -> TODO()
+            BlockType.VARIABLE_DECLARATION -> {
+                (block as VariableDeclarationBlock).name = newValue
+                return newValue.matches(Regex("[_a-zA-Z]\\w*"))
+            }
+            BlockType.VARIABLE_REFERENCE -> {
+                (block as VariableReferenceBlock).selectedVariableName = newValue
+                return newValue.matches(Regex("[_a-zA-Z]\\w*"))
+            }
+            BlockType.STRING_CONCAT -> TODO()
+            BlockType.STRING_APPEND -> TODO()
+            BlockType.PRINT_BLOCK -> TODO()
+            BlockType.COMPARE_NUMBERS_BLOCK -> TODO()
+            BlockType.BOOLEAN_LOGIC_BLOCK -> TODO()
+            BlockType.NOT_BLOCK -> TODO()
+            BlockType.IF_BLOCK -> TODO()
+            BlockType.ELSE_BLOCK -> TODO()
+            BlockType.IF_ELSE_BLOCK -> TODO()
+            BlockType.REPEAT_N_TIMES -> TODO()
+            BlockType.WHILE_BLOCK -> TODO()
+            BlockType.FOR_BLOCK -> {
+                (block as ForBlock).variableName = newValue
+                return newValue.matches(Regex("[_a-zA-Z]\\w*"))
+            }
+            BlockType.FOR_ELEMENT_IN_LIST -> TODO()
+            BlockType.FIXED_VALUE_AND_SIZE_LIST -> TODO()
+            BlockType.GET_VALUE_BY_INDEX -> TODO()
+            BlockType.REMOVE_VALUE_BY_INDEX -> TODO()
+            BlockType.ADD_VALUE_BY_INDEX -> TODO()
+            BlockType.GET_LIST_SIZE -> TODO()
         }
     }
 
