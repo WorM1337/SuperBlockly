@@ -41,7 +41,6 @@ fun ConsolePanel(
     var isExpanded by remember{ mutableStateOf(false) }
     var widthDp by remember { mutableStateOf(300.dp) }
 
-
     val minWidth = 50.dp
     val maxWidth = 650.dp
 
@@ -68,6 +67,7 @@ fun ConsolePanel(
                 )
             )
     ) {
+
         Row(modifier = Modifier.fillMaxSize()) {
 
             Box(

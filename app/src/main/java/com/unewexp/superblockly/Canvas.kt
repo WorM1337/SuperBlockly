@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Icon
@@ -27,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -78,6 +80,8 @@ fun Canvas(
     val globalOffset = remember { mutableStateOf(Offset.Zero) }
     val blocks by viewModel.blocks.collectAsState()
 
+    var panelIsVisible by remember { mutableStateOf(false) }
+
     val core = DraggableBlock(
         StartBlock(),
         mutableStateOf(100f),
@@ -111,13 +115,24 @@ fun Canvas(
                         .padding(0.dp, 0.dp, 5.dp, 0.dp),
                     contentAlignment = Alignment.CenterEnd
                 ) {
-                    IconButton(
-                        onClick = { blocks[0].block.execute() },
-                        modifier =
-                            Modifier
-                                .border(3.dp, Color.Green, CircleShape)
-                    ) {
-                        Icon(Icons.Filled.PlayArrow, null)
+                    Row{
+                        IconButton(
+                            onClick = { panelIsVisible = !panelIsVisible },
+                            modifier =
+                                Modifier
+                                    .border(3.dp, Color.Black, CircleShape)
+                        ) {
+                            Icon(Icons.Filled.Info, null)
+                        }
+
+                        IconButton(
+                            onClick = { blocks[0].block.execute() },
+                            modifier =
+                                Modifier
+                                    .border(3.dp, Color.Green, CircleShape)
+                        ) {
+                            Icon(Icons.Filled.PlayArrow, null)
+                        }
                     }
                 }
             }
@@ -182,8 +197,7 @@ fun Canvas(
                             viewModel.updateBlockPosition(it, offsetX, offsetY)
                         },
                         onDoubleTap = {
-                            viewModel.removeBlock(it)
-
+                            viewModel.handleAction(DraggableViewModel.BlocklyAction.RemoveBlock(it))
                         },
                         onDragStart = {
                             val queue: MutableList<DraggableBlock> = mutableListOf(it)
@@ -222,9 +236,11 @@ fun Canvas(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.BottomEnd
             ){
-                ConsolePanel(
-                    height = LocalConfiguration.current.screenHeightDp.dp - 50.dp
-                )
+                if(panelIsVisible){
+                    ConsolePanel(
+                        height = LocalConfiguration.current.screenHeightDp.dp - 50.dp
+                    )
+                }
             }
         }
     )
