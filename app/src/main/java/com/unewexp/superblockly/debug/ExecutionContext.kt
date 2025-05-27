@@ -1,6 +1,5 @@
-package com.unewexp.superblockly.blocks
+package com.unewexp.superblockly.debug
 
-import androidx.compose.runtime.mutableStateListOf
 import com.example.myfirstapplicatioin.blocks.Block
 import com.unewexp.superblockly.blocks.voidBlocks.VoidBlock
 import java.lang.IllegalStateException
@@ -43,7 +42,7 @@ object ExecutionContext {
         value?.let{
             val declaredType = variableTypes[name]
             if (declaredType != null && declaredType != it.javaClass){
-                throw kotlin.IllegalStateException("Несоответствие типов для $name")
+                throw IllegalStateException("Несоответствие типов для $name")
             }
         }
 

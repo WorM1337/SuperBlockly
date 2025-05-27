@@ -50,6 +50,7 @@ import com.unewexp.superblockly.blocks.arithmetic.OperandBlock
 import com.unewexp.superblockly.enums.symbol
 import com.unewexp.superblockly.viewBlocks.ElseBlockView
 import com.unewexp.superblockly.viewBlocks.ElseIfBlockView
+import com.unewexp.superblockly.viewBlocks.FixedValuesAndSizeListView
 import com.unewexp.superblockly.viewBlocks.ForBlockView
 import com.unewexp.superblockly.viewBlocks.IfBlockView
 import com.unewexp.superblockly.viewBlocks.IntLiteralView
@@ -86,12 +87,6 @@ fun Canvas(
         viewModel.handleAction(
             DraggableViewModel.BlocklyAction.AddBlock(core)
         )
-    }
-
-    fun dpToPx(dp: Dp): Float {
-        val pxValue = with(density) {dp.toPx()}  // Упрощённый расчёт
-
-        return pxValue
     }
 
     Scaffold(
@@ -278,7 +273,7 @@ fun TakeViewBlock (block: DraggableBlock, viewModel: DraggableViewModel = viewMo
             viewModel.updateValue(block, newValue)
         }
         BlockType.FOR_ELEMENT_IN_LIST -> TODO()
-        BlockType.FIXED_VALUE_AND_SIZE_LIST -> TODO()
+        BlockType.FIXED_VALUE_AND_SIZE_LIST -> FixedValuesAndSizeListView()
         BlockType.GET_VALUE_BY_INDEX -> TODO()
         BlockType.REMOVE_VALUE_BY_INDEX -> TODO()
         BlockType.ADD_VALUE_BY_INDEX -> TODO()

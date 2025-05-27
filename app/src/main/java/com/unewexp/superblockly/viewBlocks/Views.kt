@@ -936,3 +936,67 @@ fun ForBlockViewForCard() {
         }
     }
 }
+
+@Composable
+fun FixedValuesAndSizeListView(){
+    Row{
+
+        Text(
+            stringResource(R.string.create_list_with),
+            style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
+            modifier = Modifier.padding(4.dp)
+        )
+
+        Box(
+            modifier = Modifier
+                .width(60.dp)
+                .fillMaxHeight()
+                .padding(4.dp)
+                .background(EmptySpace)
+        ){}
+
+        Text(
+            stringResource(R.string.repeated),
+            style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
+            modifier = Modifier.padding(4.dp)
+        )
+
+        Box(
+            modifier = Modifier
+                .width(60.dp)
+                .fillMaxHeight()
+                .padding(4.dp)
+                .background(EmptySpace)
+        ){}
+
+        Text(
+            stringResource(R.string.times),
+            style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
+            modifier = Modifier.padding(4.dp)
+        )
+    }
+}
+
+@Composable
+fun FixedValuesAndSizeListViewForCard(){
+    Row(){
+
+        Text(
+            stringResource(R.string.create_list_with),
+            style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
+            modifier = Modifier.padding(4.dp)
+        )
+
+        Text(
+            stringResource(R.string.repeated),
+            style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
+            modifier = Modifier.padding(4.dp)
+        )
+
+        Text(
+            stringResource(R.string.times),
+            style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
+            modifier = Modifier.padding(4.dp)
+        )
+    }
+}

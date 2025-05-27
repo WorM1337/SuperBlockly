@@ -34,7 +34,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -51,6 +53,7 @@ import com.unewexp.superblockly.blocks.voidBlocks.VariableDeclarationBlock
 import com.unewexp.superblockly.ui.theme.DrawerColor
 import com.unewexp.superblockly.ui.theme.SuperBlocklyTheme
 import com.unewexp.superblockly.blocks.arithmetic.OperandBlock
+import com.unewexp.superblockly.blocks.list.FixedValuesAndSizeList
 import com.unewexp.superblockly.blocks.logic.ElseBlock
 import com.unewexp.superblockly.blocks.logic.ElseIfBlock
 import com.unewexp.superblockly.blocks.loops.ForBlock
@@ -118,6 +121,13 @@ fun CreateNewProject(
     viewModel: DraggableViewModel = viewModel()
 ){
 
+    val density = LocalDensity.current
+    fun dpToPx(dp: Dp): Float {
+        val pxValue = with(density) {dp.toPx()}  // Упрощённый расчёт
+
+        return pxValue
+    }
+
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
@@ -142,8 +152,8 @@ fun CreateNewProject(
                             { offset ->
                                 val newBlock = DraggableBlock(
                                     PrintBlock(),
-                                    mutableStateOf(offset.x - globalOffset.value.x),
-                                    mutableStateOf(offset.y - globalOffset.value.y),
+                                    mutableStateOf(offset.x + dpToPx(200.dp) - globalOffset.value.x),
+                                    mutableStateOf(offset.y - dpToPx(60.dp) - globalOffset.value.y),
                                     width = mutableStateOf(100.dp)
                                 )
                                 viewModel.handleAction(DraggableViewModel.BlocklyAction.AddBlock(newBlock))
@@ -160,8 +170,8 @@ fun CreateNewProject(
                             { offset ->
                                 val newBlock = DraggableBlock(
                                     IntLiteralBlock(),
-                                    mutableStateOf(offset.x - globalOffset.value.x),
-                                    mutableStateOf(offset.y - globalOffset.value.y),
+                                    mutableStateOf(offset.x + dpToPx(200.dp) - globalOffset.value.x),
+                                    mutableStateOf(offset.y - dpToPx(60.dp) - globalOffset.value.y),
                                     width = mutableStateOf(200.dp)
                                 )
                                 viewModel.handleAction(
@@ -175,8 +185,8 @@ fun CreateNewProject(
                             { offset ->
                                 val newBlock = DraggableBlock(
                                     OperandBlock(),
-                                    mutableStateOf(offset.x - globalOffset.value.x),
-                                    mutableStateOf(offset.y - globalOffset.value.y),
+                                    mutableStateOf(offset.x + dpToPx(200.dp) - globalOffset.value.x),
+                                    mutableStateOf(offset.y - dpToPx(60.dp) - globalOffset.value.y),
                                     width = mutableStateOf(200.dp)
                                 )
                                 viewModel.handleAction(
@@ -193,8 +203,8 @@ fun CreateNewProject(
                             { offset ->
                                 val newBlock = DraggableBlock(
                                     SetValueVariableBlock(),
-                                    mutableStateOf(offset.x - globalOffset.value.x),
-                                    mutableStateOf(offset.y - globalOffset.value.y),
+                                    mutableStateOf(offset.x + dpToPx(200.dp) - globalOffset.value.x),
+                                    mutableStateOf(offset.y - dpToPx(60.dp) - globalOffset.value.y),
                                     width = mutableStateOf(200.dp)
                                 )
                                 viewModel.handleAction(
@@ -210,8 +220,8 @@ fun CreateNewProject(
                             { offset ->
                                 val newBlock = DraggableBlock(
                                     VariableDeclarationBlock(),
-                                    mutableStateOf(offset.x - globalOffset.value.x),
-                                    mutableStateOf(offset.y - globalOffset.value.y),
+                                    mutableStateOf(offset.x + dpToPx(200.dp) - globalOffset.value.x),
+                                    mutableStateOf(offset.y - dpToPx(60.dp) - globalOffset.value.y),
                                     width = mutableStateOf(200.dp)
                                 )
                                 viewModel.handleAction(
@@ -227,8 +237,8 @@ fun CreateNewProject(
                             { offset ->
                                 val newBlock = DraggableBlock(
                                     VariableReferenceBlock(),
-                                    mutableStateOf(offset.x - globalOffset.value.x),
-                                    mutableStateOf(offset.y - globalOffset.value.y),
+                                    mutableStateOf(offset.x + dpToPx(200.dp) - globalOffset.value.x),
+                                    mutableStateOf(offset.y - dpToPx(60.dp) - globalOffset.value.y),
                                     width = mutableStateOf(150.dp)
                                 )
                                 viewModel.handleAction(
@@ -247,8 +257,8 @@ fun CreateNewProject(
                             { offset ->
                                 val newBlock = DraggableBlock(
                                     IfBlock(),
-                                    mutableStateOf(offset.x - globalOffset.value.x),
-                                    mutableStateOf(offset.y - globalOffset.value.y),
+                                    mutableStateOf(offset.x + dpToPx(200.dp) - globalOffset.value.x),
+                                    mutableStateOf(offset.y - dpToPx(60.dp) - globalOffset.value.y),
                                     width = mutableStateOf(100.dp)
                                 )
                                 viewModel.handleAction(
@@ -262,8 +272,8 @@ fun CreateNewProject(
                             { offset ->
                                 val newBlock = DraggableBlock(
                                     ElseBlock(),
-                                    mutableStateOf(offset.x - globalOffset.value.x),
-                                    mutableStateOf(offset.y - globalOffset.value.y),
+                                    mutableStateOf(offset.x + dpToPx(200.dp) - globalOffset.value.x),
+                                    mutableStateOf(offset.y - dpToPx(60.dp) - globalOffset.value.y),
                                     width = mutableStateOf(100.dp)
                                 )
                                 viewModel.handleAction(
@@ -277,8 +287,8 @@ fun CreateNewProject(
                             { offset ->
                                 val newBlock = DraggableBlock(
                                     ElseIfBlock(),
-                                    mutableStateOf(offset.x - globalOffset.value.x),
-                                    mutableStateOf(offset.y - globalOffset.value.y),
+                                    mutableStateOf(offset.x + dpToPx(200.dp) - globalOffset.value.x),
+                                    mutableStateOf(offset.y - dpToPx(60.dp) - globalOffset.value.y),
                                     width = mutableStateOf(100.dp)
                                 )
                                 viewModel.handleAction(
@@ -295,8 +305,8 @@ fun CreateNewProject(
                             { offset ->
                                 val newBlock = DraggableBlock(
                                     WhileBlock(),
-                                    mutableStateOf(offset.x - globalOffset.value.x),
-                                    mutableStateOf(offset.y - globalOffset.value.y),
+                                    mutableStateOf(offset.x + dpToPx(200.dp) - globalOffset.value.x),
+                                    mutableStateOf(offset.y - dpToPx(60.dp) - globalOffset.value.y),
                                     width = mutableStateOf(300.dp)
                                 )
                                 viewModel.handleAction(
@@ -312,8 +322,8 @@ fun CreateNewProject(
                             { offset ->
                                 val newBlock = DraggableBlock(
                                     ForBlock(),
-                                    mutableStateOf(offset.x - globalOffset.value.x),
-                                    mutableStateOf(offset.y - globalOffset.value.y),
+                                    mutableStateOf(offset.x + dpToPx(200.dp) - globalOffset.value.x),
+                                    mutableStateOf(offset.y - dpToPx(60.dp) - globalOffset.value.y),
                                     width = mutableStateOf(100.dp)
                                 )
                                 viewModel.handleAction(
@@ -322,6 +332,24 @@ fun CreateNewProject(
                             }
                         ){
                             ForBlockCard()
+                        }
+                    }
+                    item { Text(stringResource(R.string.lists), color = Color.White) }
+                    item {
+                        ListItem(
+                            { offset ->
+                                val newBlock = DraggableBlock(
+                                    FixedValuesAndSizeList(),
+                                    mutableStateOf(offset.x + dpToPx(200.dp) - globalOffset.value.x),
+                                    mutableStateOf(offset.y - dpToPx(60.dp) - globalOffset.value.y),
+                                    width = mutableStateOf(400.dp)
+                                )
+                                viewModel.handleAction(
+                                    DraggableViewModel.BlocklyAction.AddBlock(newBlock)
+                                )
+                            }
+                        ){
+                            FixedValuesAndSizeListViewCard()
                         }
                     }
                 }

@@ -2,10 +2,8 @@ package com.example.myfirstapplicatioin.utils
 
 import com.example.myfirstapplicatioin.model.ConnectionView
 import com.example.myfirstapplicatioin.model.Connector
-import com.unewexp.superblockly.blocks.ErrorHandler
+import com.unewexp.superblockly.debug.ErrorHandler
 import com.unewexp.superblockly.enums.ConnectorType
-import java.lang.Math.pow
-import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.sqrt
 

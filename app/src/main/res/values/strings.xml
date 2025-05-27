@@ -20,4 +20,12 @@
     <string name="from">from</string>
     <string name="to">to</string>
     <string name="step">step</string>
+    <string name="create_list_with_item">create list with item</string>
+    <string name="create_list_with">create list with</string>
+    <string name="create_empty_list">create empty list</string>
+    <string name="item">item</string>
+    <string name="items">items</string>
+    <string name="repeated">repeated</string>
+    <string name="times">times</string>
+    <string name="lists">Списки</string>
 </resources>

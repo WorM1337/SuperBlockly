@@ -2,8 +2,8 @@ package com.unewexp.superblockly.blocks.logic
 
 import com.example.myfirstapplicatioin.blocks.Block
 import com.example.myfirstapplicatioin.model.Connector
-import com.unewexp.superblockly.blocks.ErrorHandler
-import com.unewexp.superblockly.blocks.ExecutionContext
+import com.unewexp.superblockly.debug.ErrorHandler
+import com.unewexp.superblockly.debug.ExecutionContext
 import com.unewexp.superblockly.blocks.voidBlocks.VoidBlock
 import com.unewexp.superblockly.enums.BlockType
 import com.unewexp.superblockly.enums.ConnectorType

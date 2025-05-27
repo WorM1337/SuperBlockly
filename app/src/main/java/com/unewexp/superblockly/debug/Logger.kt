@@ -1,7 +1,6 @@
-package com.unewexp.superblockly.blocks
+package com.unewexp.superblockly.debug
 
 import androidx.compose.runtime.mutableStateListOf
-import kotlin.text.clear
 
 object Logger {
     private val _logs = mutableStateListOf<Log>();

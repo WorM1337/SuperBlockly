@@ -12,6 +12,7 @@ import androidx.compose.ui.unit.dp
 import com.unewexp.superblockly.viewBlocks.DeclarationVariableViewForCard
 import com.unewexp.superblockly.viewBlocks.ElseBlockViewForCard
 import com.unewexp.superblockly.viewBlocks.ElseIfBlockViewForCard
+import com.unewexp.superblockly.viewBlocks.FixedValuesAndSizeListViewForCard
 import com.unewexp.superblockly.viewBlocks.ForBlockViewForCard
 import com.unewexp.superblockly.viewBlocks.IfBlockViewForCard
 import com.unewexp.superblockly.viewBlocks.IntLiteralViewForCard
@@ -162,5 +163,17 @@ fun ForBlockCard(){
             .padding(2.dp)
     ){
         ForBlockViewForCard()
+    }
+}
+
+@Composable
+fun FixedValuesAndSizeListViewCard(){
+    Card(
+        modifier = Modifier
+            .width(200.dp)
+            .height(60.dp)
+            .padding(2.dp)
+    ){
+        FixedValuesAndSizeListViewForCard()
     }
 }

@@ -25,6 +25,7 @@ import com.unewexp.superblockly.blocks.voidBlocks.VoidBlock
 import com.unewexp.superblockly.enums.BlockType
 import com.unewexp.superblockly.enums.ConnectorType
 import com.unewexp.superblockly.DraggableBlock
+import com.unewexp.superblockly.blocks.list.FixedValuesAndSizeList
 import com.unewexp.superblockly.blocks.loops.ForBlock
 import com.unewexp.superblockly.enums.ExtendConnectionViewType
 import com.unewexp.superblockly.viewBlocks.ViewInitialSize
@@ -662,7 +663,30 @@ object ConnectorManager {
                     ConnectionView(castedBlock.stepBlock, 320.dp, 10.dp)
                 )
             }
-            else -> {}
+
+            BlockType.SHORTHAND_ARITHMETIC_BLOCK -> TODO()
+            BlockType.COMPARE_NUMBERS_BLOCK -> TODO()
+            BlockType.BOOLEAN_LOGIC_BLOCK -> TODO()
+            BlockType.NOT_BLOCK -> TODO()
+            BlockType.ELSE_BLOCK -> TODO()
+            BlockType.IF_ELSE_BLOCK -> TODO()
+            BlockType.REPEAT_N_TIMES -> TODO()
+            BlockType.WHILE_BLOCK -> TODO()
+            BlockType.FOR_ELEMENT_IN_LIST -> TODO()
+            BlockType.FIXED_VALUE_AND_SIZE_LIST -> {
+                val castedBlock = (block as FixedValuesAndSizeList)
+
+                ans += mutableListOf(
+                    ConnectionView(castedBlock.topConnector, cornerOffset, 0.dp),
+                    ConnectionView(castedBlock.bottomConnector, cornerOffset, height),
+                    ConnectionView(castedBlock.valueInput, 100.dp, height/6),
+                    ConnectionView(castedBlock.repeatTimes, 220.dp, height/6),
+                )
+            }
+            BlockType.GET_VALUE_BY_INDEX -> TODO()
+            BlockType.REMOVE_VALUE_BY_INDEX -> TODO()
+            BlockType.ADD_VALUE_BY_INDEX -> TODO()
+            BlockType.GET_LIST_SIZE -> TODO()
         }
         return ans
     }
