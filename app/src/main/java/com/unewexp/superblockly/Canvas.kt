@@ -198,7 +198,9 @@ fun Canvas(
                         },
                         it,
                         onPositionChanged = { offsetX, offsetY ->
-                            viewModel.updateBlockPosition(it, offsetX, offsetY)
+                            viewModel.handleAction(DraggableViewModel.BlocklyAction.MoveBlock(
+                                it, offsetX, offsetY
+                            ))
                         },
                         onDoubleTap = {
                             viewModel.handleAction(DraggableViewModel.BlocklyAction.RemoveBlock(it))
