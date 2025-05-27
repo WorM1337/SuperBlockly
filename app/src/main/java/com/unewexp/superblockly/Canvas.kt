@@ -50,10 +50,13 @@ import com.unewexp.superblockly.viewBlocks.DraggableBase
 import com.unewexp.superblockly.DraggableBlock
 import com.unewexp.superblockly.blocks.arithmetic.OperandBlock
 import com.unewexp.superblockly.enums.symbol
+import com.unewexp.superblockly.viewBlocks.AddElementByIndexView
 import com.unewexp.superblockly.viewBlocks.ElseBlockView
 import com.unewexp.superblockly.viewBlocks.ElseIfBlockView
 import com.unewexp.superblockly.viewBlocks.FixedValuesAndSizeListView
 import com.unewexp.superblockly.viewBlocks.ForBlockView
+import com.unewexp.superblockly.viewBlocks.GetListSizeView
+import com.unewexp.superblockly.viewBlocks.GetValueByIndexView
 import com.unewexp.superblockly.viewBlocks.IfBlockView
 import com.unewexp.superblockly.viewBlocks.IntLiteralView
 import com.unewexp.superblockly.viewBlocks.OperandBlockView
@@ -290,9 +293,9 @@ fun TakeViewBlock (block: DraggableBlock, viewModel: DraggableViewModel = viewMo
         }
         BlockType.FOR_ELEMENT_IN_LIST -> TODO()
         BlockType.FIXED_VALUE_AND_SIZE_LIST -> FixedValuesAndSizeListView()
-        BlockType.GET_VALUE_BY_INDEX -> TODO()
+        BlockType.GET_VALUE_BY_INDEX -> GetValueByIndexView()
         BlockType.REMOVE_VALUE_BY_INDEX -> TODO()
-        BlockType.ADD_VALUE_BY_INDEX -> TODO()
-        BlockType.GET_LIST_SIZE -> TODO()
+        BlockType.ADD_VALUE_BY_INDEX -> AddElementByIndexView()
+        BlockType.GET_LIST_SIZE -> GetListSizeView()
     }
 }

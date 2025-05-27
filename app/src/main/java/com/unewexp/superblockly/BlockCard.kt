@@ -9,11 +9,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
+import com.unewexp.superblockly.viewBlocks.AddElementByIndexViewForCard
 import com.unewexp.superblockly.viewBlocks.DeclarationVariableViewForCard
 import com.unewexp.superblockly.viewBlocks.ElseBlockViewForCard
 import com.unewexp.superblockly.viewBlocks.ElseIfBlockViewForCard
 import com.unewexp.superblockly.viewBlocks.FixedValuesAndSizeListViewForCard
 import com.unewexp.superblockly.viewBlocks.ForBlockViewForCard
+import com.unewexp.superblockly.viewBlocks.GetListSizeView
+import com.unewexp.superblockly.viewBlocks.GetListSizeViewForCard
+import com.unewexp.superblockly.viewBlocks.GetValueByIndexViewForCard
 import com.unewexp.superblockly.viewBlocks.IfBlockViewForCard
 import com.unewexp.superblockly.viewBlocks.IntLiteralViewForCard
 import com.unewexp.superblockly.viewBlocks.OperandBlockForCard
@@ -175,5 +179,41 @@ fun FixedValuesAndSizeListViewCard(){
             .padding(2.dp)
     ){
         FixedValuesAndSizeListViewForCard()
+    }
+}
+
+@Composable
+fun AddElementByIndexViewCard(){
+    Card(
+        modifier = Modifier
+            .width(200.dp)
+            .height(60.dp)
+            .padding(2.dp)
+    ){
+        AddElementByIndexViewForCard()
+    }
+}
+
+@Composable
+fun GetValueByIndexViewCard(){
+    Card(
+        modifier = Modifier
+            .width(200.dp)
+            .height(60.dp)
+            .padding(2.dp)
+    ){
+        GetValueByIndexViewForCard()
+    }
+}
+
+@Composable
+fun GetListSizeViewCard(){
+    Card(
+        modifier = Modifier
+            .width(200.dp)
+            .height(60.dp)
+            .padding(2.dp)
+    ){
+        GetListSizeViewForCard()
     }
 }

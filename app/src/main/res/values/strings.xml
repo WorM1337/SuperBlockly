@@ -28,4 +28,11 @@
     <string name="repeated">repeated</string>
     <string name="times">times</string>
     <string name="lists">Списки</string>
+    <string name="in_list">in list</string>
+    <string name="insert">insert</string>
+    <string name="id">id</string>
+    <string name="value">value</string>
+    <string name="get">get</string>
+    <string name="length_of">length of</string>
+    <string name="list">list</string>
 </resources>
