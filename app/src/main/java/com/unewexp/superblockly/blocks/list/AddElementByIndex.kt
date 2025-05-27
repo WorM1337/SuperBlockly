@@ -50,15 +50,13 @@ class AddElementByIndex : VoidBlock(UUID.randomUUID(), BlockType.ADD_VALUE_BY_IN
         @Suppress("UNCHECKED_CAST")
         val mutableList = list as MutableList<Any?>
 
-
-
-        if (index == null || index !in 0..mutableList.size) {
-
-            mutableList.add(newValue)
-        } else {
-            // Добавить по указанному индексу
-            mutableList.add(index, newValue)
+        if (index == null || index !in 0..mutableList.size){
+            throw IllegalStateException("Индекс массива не существует: $index")
         }
+
+
+        mutableList.add(index, newValue)
+
 
 
 

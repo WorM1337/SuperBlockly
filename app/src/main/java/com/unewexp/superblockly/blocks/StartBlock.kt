@@ -13,6 +13,7 @@ class StartBlock : VoidBlock(UUID.randomUUID(), BlockType.START) {
     override fun execute() {
 
         Logger.clearLogs()
+
         ExecutionContext.clearVariables()
 
         getNextBlock()?.let { firstBlock ->
@@ -31,6 +32,7 @@ class StartBlock : VoidBlock(UUID.randomUUID(), BlockType.START) {
                 }
             } finally {
                 ExecutionContext.exitCurrentScope()
+                Logger.markFinished()
             }
         }
     }
