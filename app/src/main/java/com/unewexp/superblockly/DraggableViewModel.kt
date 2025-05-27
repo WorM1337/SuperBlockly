@@ -2,15 +2,20 @@ package com.unewexp.superblockly
 
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import com.example.myfirstapplicatioin.blocks.literals.IntLiteralBlock
+import com.example.myfirstapplicatioin.utils.connectTo
 import com.example.myfirstapplicatioin.utils.disconnect
 import com.unewexp.superblockly.blocks.StartBlock
+import com.unewexp.superblockly.blocks.loops.ForBlock
 import com.unewexp.superblockly.blocks.returnBlocks.VariableReferenceBlock
 import com.unewexp.superblockly.blocks.voidBlocks.SetValueVariableBlock
 import com.unewexp.superblockly.blocks.voidBlocks.VariableDeclarationBlock
 import com.unewexp.superblockly.enums.ConnectorType
 import com.unewexp.superblockly.DraggableBlock
+import com.unewexp.superblockly.enums.BlockType
+import com.unewexp.superblockly.model.ConnectorManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -22,7 +27,19 @@ class DraggableViewModel: ViewModel() {
     val blocks = _blocks.asStateFlow()
     var maxZIndex = 0f;
 
-    fun addBlock(dragBlock: DraggableBlock) {
+    fun handleAction(action: BlocklyAction) {
+        when(action) {
+            is BlocklyAction.MoveBlock -> updateBlockPosition(
+                action.block,
+                action.offsetX,
+                action.offsetX
+            )
+            is BlocklyAction.AddBlock -> addBlock(action.block)
+            is BlocklyAction.RemoveBlock -> removeBlock(action.block, action.isFirst)
+        }
+    }
+
+    private fun addBlock(dragBlock: DraggableBlock) {
         _blocks.update {
             (_blocks.value + dragBlock)
         }
@@ -39,25 +56,36 @@ class DraggableViewModel: ViewModel() {
         Log.i("${currentBlock.block.blockType}", "(${currentBlock.x.value} : ${currentBlock.y.value})")
     }
 
-    fun removeBlock(block: DraggableBlock) {
+    private fun removeBlock(block: DraggableBlock, isFirst: Boolean = true) {
 
         if(block.block is StartBlock){
             return
         }
 
+        var sumHeight = 0.dp
+
+        if(isFirst) sumHeight = ConnectorManager.getSummaryHeight(block)
+
         for(i in block.scope.indices.reversed()){
 
-            if(block.scope[i].connectedParentConnectionView!!.connector.connectionType != ConnectorType.STRING_BOTTOM_OUTER || block.scope[i].isInner){
-                removeBlock(block.scope[i])
+            if(block.scope[i].connectedParentConnectionView!!.connector.connectionType != ConnectorType.STRING_BOTTOM_OUTER || block.scope[i].isInner && !isFirst){
+                removeBlock(block.scope[i], false)
             }
             else {
+                block.scope[i].connectedParentConnectionView!!.isConnected = false
+                block.scope[i].connectedParent = null
+                block.scope[i].connectedParentConnectionView = null
                 block.scope.removeAt(i)
             }
         }
 
         if(block.connectedParent != null && block.connectedParentConnectionView != null){
             disconnect(block.outputConnectionView!!.connector, block.connectedParentConnectionView!!.connector)
+
+            if(isFirst) ConnectorManager.changeParentParams(block, deltaHeight = sumHeight,  isPositive = false)
+
             block.connectedParent!!.scope.remove(block)
+            block.connectedParentConnectionView!!.isConnected = false
             block.connectedParent = null
             block.connectedParentConnectionView = null
         }
@@ -70,27 +98,56 @@ class DraggableViewModel: ViewModel() {
         Log.i("Delete", "${block.block.blockType} with id: " + block.block.id)
     }
 
-    fun updateValue(block: DraggableBlock, newValue: String){
-        _blocks.value.forEach {
-            if(it == block){
-                if(it.block is IntLiteralBlock){
-                    val v = newValue.toFloatOrNull()
-                    if(v != null){
-                        it.block.value = v.toInt()
-                    }else{
-                        it.block.value = 0
-                    }
-                }
-                if(it.block is SetValueVariableBlock){
-                    it.block.selectedVariableName = newValue
-                }
-                if(it.block is VariableDeclarationBlock){
-                    it.block.name = newValue
-                }
-                if(it.block is VariableReferenceBlock){
-                    it.block.selectedVariableName = newValue
+    fun updateValue(block: DraggableBlock, newValue: String): Boolean{
+        val block = block.block
+        when(block.blockType){
+            BlockType.SET_VARIABLE_VALUE -> {
+                (block as SetValueVariableBlock).selectedVariableName = newValue
+                return newValue.matches(Regex("[_a-zA-Z]\\w*"))
+            }
+            BlockType.START -> TODO()
+            BlockType.INT_LITERAL -> {
+                val v = newValue.toFloatOrNull()
+                if(v != null){
+                    (block as IntLiteralBlock).value = v.toInt()
+                    return true
+                }else{
+                    return false
                 }
             }
+            BlockType.STRING_LITERAL -> TODO()
+            BlockType.BOOLEAN_LITERAL -> TODO()
+            BlockType.OPERAND -> TODO()
+            BlockType.SHORTHAND_ARITHMETIC_BLOCK -> TODO()
+            BlockType.VARIABLE_DECLARATION -> {
+                (block as VariableDeclarationBlock).name = newValue
+                return newValue.matches(Regex("[_a-zA-Z]\\w*"))
+            }
+            BlockType.VARIABLE_REFERENCE -> {
+                (block as VariableReferenceBlock).selectedVariableName = newValue
+                return newValue.matches(Regex("[_a-zA-Z]\\w*"))
+            }
+            BlockType.STRING_CONCAT -> TODO()
+            BlockType.STRING_APPEND -> TODO()
+            BlockType.PRINT_BLOCK -> TODO()
+            BlockType.COMPARE_NUMBERS_BLOCK -> TODO()
+            BlockType.BOOLEAN_LOGIC_BLOCK -> TODO()
+            BlockType.NOT_BLOCK -> TODO()
+            BlockType.IF_BLOCK -> TODO()
+            BlockType.ELSE_BLOCK -> TODO()
+            BlockType.IF_ELSE_BLOCK -> TODO()
+            BlockType.REPEAT_N_TIMES -> TODO()
+            BlockType.WHILE_BLOCK -> TODO()
+            BlockType.FOR_BLOCK -> {
+                (block as ForBlock).variableName = newValue
+                return newValue.matches(Regex("[_a-zA-Z]\\w*"))
+            }
+            BlockType.FOR_ELEMENT_IN_LIST -> TODO()
+            BlockType.FIXED_VALUE_AND_SIZE_LIST -> TODO()
+            BlockType.GET_VALUE_BY_INDEX -> TODO()
+            BlockType.REMOVE_VALUE_BY_INDEX -> TODO()
+            BlockType.ADD_VALUE_BY_INDEX -> TODO()
+            BlockType.GET_LIST_SIZE -> TODO()
         }
     }
 
@@ -104,5 +161,11 @@ class DraggableViewModel: ViewModel() {
                 it.zIndex.value -= minZIndex
             }
         }
+    }
+
+    sealed class BlocklyAction{
+        data class MoveBlock(var block: DraggableBlock, var offsetX: Float, var offsetY: Float): BlocklyAction()
+        data class AddBlock(var block: DraggableBlock): BlocklyAction()
+        data class RemoveBlock(var block: DraggableBlock, var isFirst: Boolean = true): BlocklyAction()
     }
 }

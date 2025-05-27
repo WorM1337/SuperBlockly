@@ -1,10 +1,10 @@
-package com.unewexp.superblockly.blocks
+package com.unewexp.superblockly.debug
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import kotlin.text.clear
+
 
 object Logger {
     private val _logs = mutableStateListOf<Log>();

@@ -1,7 +1,7 @@
-package com.unewexp.superblockly.blocks
+package com.unewexp.superblockly.debug
 
 import androidx.compose.runtime.mutableStateMapOf
-import com.unewexp.superblockly.blocks.Logger.LogType
+import com.unewexp.superblockly.debug.Logger.LogType
 import java.util.UUID
 
 

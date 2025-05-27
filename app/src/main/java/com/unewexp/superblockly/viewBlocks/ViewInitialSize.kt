@@ -17,7 +17,7 @@ object ViewInitialSize {
             BlockType.SET_VARIABLE_VALUE ->
                 PairDp(width = 200.dp, height = 60.dp)
             BlockType.START ->
-                PairDp(width = 300.dp, height = 200.dp)
+                PairDp(width = 200.dp, height = 100.dp)
             BlockType.INT_LITERAL ->
                 PairDp(width = 100.dp, height = 60.dp)
             BlockType.STRING_LITERAL ->
@@ -55,11 +55,11 @@ object ViewInitialSize {
             BlockType.WHILE_BLOCK ->
                 PairDp(width = 200.dp, height = 60.dp)
             BlockType.FOR_BLOCK ->
-                PairDp(width = 200.dp, height = 60.dp)
+                PairDp(width = 400.dp, height = 100.dp)
             BlockType.FOR_ELEMENT_IN_LIST ->
                 PairDp(width = 200.dp, height = 60.dp)
             BlockType.FIXED_VALUE_AND_SIZE_LIST ->
-                PairDp(width = 200.dp, height = 60.dp)
+                PairDp(width = 400.dp, height = 60.dp)
             BlockType.GET_VALUE_BY_INDEX ->
                 PairDp(width = 200.dp, height = 60.dp)
             BlockType.REMOVE_VALUE_BY_INDEX ->

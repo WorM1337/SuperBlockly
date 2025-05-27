@@ -8,3 +8,13 @@ enum class OperandType{
     MULTIPLICATION,
     MODULO,
 }
+
+fun OperandType.symbol(): String {
+    return when (this) {
+        OperandType.PLUS -> "+"
+        OperandType.MINUS -> "-"
+        OperandType.DIVISION -> "/"
+        OperandType.MULTIPLICATION -> "*"
+        OperandType.MODULO -> "%"
+    }
+}

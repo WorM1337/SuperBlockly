@@ -7,12 +7,14 @@ import com.unewexp.superblockly.blocks.list.GetValueByIndex
 import com.unewexp.superblockly.blocks.returnBlocks.VariableReferenceBlock
 import com.unewexp.superblockly.enums.BlockType
 import com.unewexp.superblockly.enums.ConnectorType
+import com.unewexp.superblockly.enums.ExtendConnectionViewType
 
 
 data class ConnectionView(
     val connector: Connector,
     var positionX: Dp,
     var positionY: Dp,
+    val extendType: ExtendConnectionViewType = ExtendConnectionViewType.NONE,
     var isConnected: Boolean = false
 )
 

@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Icon
@@ -27,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -46,13 +48,24 @@ import com.unewexp.superblockly.viewBlocks.BottomConnector
 import com.unewexp.superblockly.viewBlocks.DeclarationVariableView
 import com.unewexp.superblockly.viewBlocks.DraggableBase
 import com.unewexp.superblockly.DraggableBlock
+import com.unewexp.superblockly.blocks.arithmetic.OperandBlock
+import com.unewexp.superblockly.enums.symbol
+import com.unewexp.superblockly.viewBlocks.AddElementByIndexView
+import com.unewexp.superblockly.viewBlocks.ElseBlockView
+import com.unewexp.superblockly.viewBlocks.ElseIfBlockView
+import com.unewexp.superblockly.viewBlocks.FixedValuesAndSizeListView
+import com.unewexp.superblockly.viewBlocks.ForBlockView
+import com.unewexp.superblockly.viewBlocks.GetListSizeView
+import com.unewexp.superblockly.viewBlocks.GetValueByIndexView
 import com.unewexp.superblockly.viewBlocks.IfBlockView
 import com.unewexp.superblockly.viewBlocks.IntLiteralView
+import com.unewexp.superblockly.viewBlocks.OperandBlockView
 import com.unewexp.superblockly.viewBlocks.PrintBlockView
 import com.unewexp.superblockly.viewBlocks.SetValueVariableView
 import com.unewexp.superblockly.viewBlocks.StartBlockView
 import com.unewexp.superblockly.viewBlocks.TopConnector
 import com.unewexp.superblockly.viewBlocks.VariableReferenceView
+import com.unewexp.superblockly.viewBlocks.WhileBlockView
 import java.util.Queue
 import kotlin.math.max
 import kotlin.math.roundToInt
@@ -70,19 +83,17 @@ fun Canvas(
     val globalOffset = remember { mutableStateOf(Offset.Zero) }
     val blocks by viewModel.blocks.collectAsState()
 
+    var panelIsVisible by remember { mutableStateOf(false) }
+
     val core = DraggableBlock(
         StartBlock(),
         mutableStateOf(100f),
         mutableStateOf(100f))
 
     if(blocks.isEmpty()){
-        viewModel.addBlock(core)
-    }
-
-    fun dpToPx(dp: Dp): Float {
-        val pxValue = with(density) {dp.toPx()}  // Упрощённый расчёт
-
-        return pxValue
+        viewModel.handleAction(
+            DraggableViewModel.BlocklyAction.AddBlock(core)
+        )
     }
 
     Scaffold(
@@ -107,13 +118,24 @@ fun Canvas(
                         .padding(0.dp, 0.dp, 5.dp, 0.dp),
                     contentAlignment = Alignment.CenterEnd
                 ) {
-                    IconButton(
-                        onClick = { blocks[0].block.execute() },
-                        modifier =
-                            Modifier
-                                .border(3.dp, Color.Green, CircleShape)
-                    ) {
-                        Icon(Icons.Filled.PlayArrow, null)
+                    Row{
+                        IconButton(
+                            onClick = { panelIsVisible = !panelIsVisible },
+                            modifier =
+                                Modifier
+                                    .border(3.dp, Color.Black, CircleShape)
+                        ) {
+                            Icon(Icons.Filled.Info, null)
+                        }
+
+                        IconButton(
+                            onClick = { blocks[0].block.execute() },
+                            modifier =
+                                Modifier
+                                    .border(3.dp, Color.Green, CircleShape)
+                        ) {
+                            Icon(Icons.Filled.PlayArrow, null)
+                        }
                     }
                 }
             }
@@ -178,8 +200,7 @@ fun Canvas(
                             viewModel.updateBlockPosition(it, offsetX, offsetY)
                         },
                         onDoubleTap = {
-                            viewModel.removeBlock(it)
-
+                            viewModel.handleAction(DraggableViewModel.BlocklyAction.RemoveBlock(it))
                         },
                         onDragStart = {
                             val queue: MutableList<DraggableBlock> = mutableListOf(it)
@@ -218,9 +239,11 @@ fun Canvas(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.BottomEnd
             ){
-                ConsolePanel(
-                    height = LocalConfiguration.current.screenHeightDp.dp - 50.dp
-                )
+                if(panelIsVisible){
+                    ConsolePanel(
+                        height = LocalConfiguration.current.screenHeightDp.dp - 50.dp
+                    )
+                }
             }
         }
     )
@@ -231,7 +254,9 @@ fun Canvas(
 fun TakeViewBlock (block: DraggableBlock, viewModel: DraggableViewModel = viewModel()){
     val blockType = block.block.blockType
     when(blockType){
-        BlockType.OPERAND -> TODO()
+        BlockType.OPERAND -> OperandBlockView { type ->
+            (block.block as OperandBlock).operand = type
+        }
         BlockType.SET_VARIABLE_VALUE -> SetValueVariableView { newValue ->
             viewModel.updateValue(block, newValue)
         }
@@ -259,16 +284,18 @@ fun TakeViewBlock (block: DraggableBlock, viewModel: DraggableViewModel = viewMo
         BlockType.BOOLEAN_LOGIC_BLOCK -> TODO()
         BlockType.NOT_BLOCK -> TODO()
         BlockType.IF_BLOCK -> IfBlockView()
-        BlockType.ELSE_BLOCK -> TODO()
-        BlockType.IF_ELSE_BLOCK -> TODO()
+        BlockType.ELSE_BLOCK -> ElseBlockView()
+        BlockType.IF_ELSE_BLOCK -> ElseIfBlockView()
         BlockType.REPEAT_N_TIMES -> TODO()
-        BlockType.WHILE_BLOCK -> TODO()
-        BlockType.FOR_BLOCK -> TODO()
+        BlockType.WHILE_BLOCK -> WhileBlockView()
+        BlockType.FOR_BLOCK -> ForBlockView { newValue ->
+            viewModel.updateValue(block, newValue)
+        }
         BlockType.FOR_ELEMENT_IN_LIST -> TODO()
-        BlockType.FIXED_VALUE_AND_SIZE_LIST -> TODO()
-        BlockType.GET_VALUE_BY_INDEX -> TODO()
+        BlockType.FIXED_VALUE_AND_SIZE_LIST -> FixedValuesAndSizeListView()
+        BlockType.GET_VALUE_BY_INDEX -> GetValueByIndexView()
         BlockType.REMOVE_VALUE_BY_INDEX -> TODO()
-        BlockType.ADD_VALUE_BY_INDEX -> TODO()
-        BlockType.GET_LIST_SIZE -> TODO()
+        BlockType.ADD_VALUE_BY_INDEX -> AddElementByIndexView()
+        BlockType.GET_LIST_SIZE -> GetListSizeView()
     }
 }
