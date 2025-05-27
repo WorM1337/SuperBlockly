@@ -83,7 +83,7 @@ fun Canvas(
     val globalOffset = remember { mutableStateOf(Offset.Zero) }
     val blocks by viewModel.blocks.collectAsState()
 
-    var panelIsVisible by remember { mutableStateOf(false) }
+    var panelIsVisible by remember { mutableStateOf(true) }
 
     val core = DraggableBlock(
         StartBlock(),

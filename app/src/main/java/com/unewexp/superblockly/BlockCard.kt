@@ -9,7 +9,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
+import com.unewexp.superblockly.blocks.logic.CompareNumbers
 import com.unewexp.superblockly.viewBlocks.AddElementByIndexViewForCard
+import com.unewexp.superblockly.viewBlocks.CompareNumbersBlockForCard
 import com.unewexp.superblockly.viewBlocks.DeclarationVariableViewForCard
 import com.unewexp.superblockly.viewBlocks.ElseBlockViewForCard
 import com.unewexp.superblockly.viewBlocks.ElseIfBlockViewForCard
@@ -83,6 +85,18 @@ fun ReferenceVariableCard(){
             .padding(2.dp)
     ){
         VariableReferenceViewForCard()
+    }
+}
+
+@Composable
+fun CompareNumbersBlockCard(){
+    Card(
+        modifier = Modifier
+            .width(200.dp)
+            .height(60.dp)
+            .padding(2.dp)
+    ){
+        CompareNumbersBlockForCard()
     }
 }
 

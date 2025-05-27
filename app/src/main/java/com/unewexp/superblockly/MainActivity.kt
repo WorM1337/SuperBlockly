@@ -57,6 +57,7 @@ import com.unewexp.superblockly.blocks.list.AddElementByIndex
 import com.unewexp.superblockly.blocks.list.FixedValuesAndSizeList
 import com.unewexp.superblockly.blocks.list.GetListSize
 import com.unewexp.superblockly.blocks.list.GetValueByIndex
+import com.unewexp.superblockly.blocks.logic.CompareNumbers
 import com.unewexp.superblockly.blocks.logic.ElseBlock
 import com.unewexp.superblockly.blocks.logic.ElseIfBlock
 import com.unewexp.superblockly.blocks.loops.ForBlock
@@ -256,6 +257,23 @@ fun CreateNewProject(
                     }
                     item {
                         Text(stringResource(R.string.logic), color = Color.White)
+                    }
+                    item {
+                        ListItem(
+                            { offset ->
+                                val newBlock = DraggableBlock(
+                                    CompareNumbers(),
+                                    mutableStateOf(offset.x + dpToPx(200.dp) - globalOffset.value.x),
+                                    mutableStateOf(offset.y - dpToPx(60.dp) - globalOffset.value.y),
+                                    width = mutableStateOf(100.dp)
+                                )
+                                viewModel.handleAction(
+                                    DraggableViewModel.BlocklyAction.AddBlock(newBlock)
+                                )
+                            }
+                        ) {
+                            CompareNumbersBlockCard()
+                        }
                     }
                     item {
                         ListItem(
