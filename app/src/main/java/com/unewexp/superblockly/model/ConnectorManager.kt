@@ -94,11 +94,12 @@ object ConnectorManager {
         val nearestConX = with(density) {connection.positionX.toPx()}
         val nearestConY = with(density) {connection.positionY.toPx()}
 
-        viewModel.updateBlockPosition(
+        viewModel.handleAction(DraggableViewModel.BlocklyAction.MoveBlock(
             connectable,
             target.x.value + nearestConX - (connectable.x.value + sourceConX),
             target.y.value + nearestConY - (connectable.y.value + sourceConY)
-        )
+        ))
+
         connectable.connectedParent = target
         connectable.connectedParentConnectionView = connection
         target.scope.add(connectable)
@@ -173,11 +174,12 @@ object ConnectorManager {
             val nearestConX = with(density) {nearestConnection.positionX.toPx()}
             val nearestConY = with(density) {nearestConnection.positionY.toPx()}
 
-            viewModel.updateBlockPosition(
+            viewModel.handleAction(DraggableViewModel.BlocklyAction.MoveBlock(
                 sourceDragBlock,
                 nearestBlock.x.value + nearestConX - (sourceDragBlock.x.value + sourceConX),
                 nearestBlock.y.value + nearestConY - (sourceDragBlock.y.value + sourceConY)
-            )
+            ))
+
             sourceDragBlock.connectedParent = nearestBlock
             sourceDragBlock.connectedParentConnectionView = nearestConnection
             nearestBlock.scope.add(sourceDragBlock)
@@ -250,11 +252,11 @@ object ConnectorManager {
                 val nearestConX = with(density) {sourceDragBlock.connectedParentConnectionView!!.positionX.toPx()}
                 val nearestConY = with(density) {sourceDragBlock.connectedParentConnectionView!!.positionY.toPx()}
 
-                viewModel.updateBlockPosition(
+                viewModel.handleAction(DraggableViewModel.BlocklyAction.MoveBlock(
                     sourceDragBlock,
                     sourceDragBlock.connectedParent!!.x.value + nearestConX - (sourceDragBlock.x.value + sourceConX),
                     sourceDragBlock.connectedParent!!.y.value + nearestConY - (sourceDragBlock.y.value + sourceConY)
-                )
+                ))
 
                 return false
             }

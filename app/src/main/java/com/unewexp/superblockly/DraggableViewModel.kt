@@ -46,7 +46,7 @@ class DraggableViewModel: ViewModel() {
         maxZIndex += 0.1f
     }
 
-    fun updateBlockPosition(currentBlock: DraggableBlock, offsetX: Float, offsetY: Float) {
+    private fun updateBlockPosition(currentBlock: DraggableBlock, offsetX: Float, offsetY: Float) {
         currentBlock.scope.forEach {
             updateBlockPosition(it, offsetX, offsetY)
         }
