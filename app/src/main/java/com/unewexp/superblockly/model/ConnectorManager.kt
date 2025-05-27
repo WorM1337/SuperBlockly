@@ -59,7 +59,7 @@ object ConnectorManager {
             sourceBlock.connectedParentConnectionView?.let{
                 disconnect(sourceBlock.outputConnectionView!!.connector, sourceBlock.connectedParentConnectionView!!.connector)
 
-                changeParentParams(sourceBlock, isPositive = false)
+                SizeManager.changeParentParams(sourceBlock, deltaHeight =  CalculationsManager.getSummaryHeight(sourceBlock), deltaWidth = sourceBlock.width.value, isPositive = false)
 
                 sourceBlock.connectedParent!!.scope.remove(sourceBlock)
 
@@ -104,7 +104,7 @@ object ConnectorManager {
         target.scope.add(connectable)
         Log.i("Connect", "${connectable.block.blockType}")
 
-        changeParentParams(connectable)
+        SizeManager.changeParentParams(connectable)
 
         // Для всех дочерних блоков нужно высчитать isInner. Для коннекторов кроме STRING_BOTTOM_OUTER isInner наследуется
         // (если после этого встретили OUTER, то его помечаем isInner для корректного удаления)
@@ -164,7 +164,7 @@ object ConnectorManager {
 
         if(nearestBlock == null || sourceDragBlock.outputConnectionView == null || nearestConnection == null) return
 
-        if(getLengthFromConnections(sourceDragBlock, nearestBlock, sourceDragBlock.outputConnectionView!!, nearestConnection, density) <= connetionLength){
+        if(CalculationsManager.getLengthFromConnections(sourceDragBlock, nearestBlock, sourceDragBlock.outputConnectionView!!, nearestConnection, density) <= connetionLength){
             safeConnect(sourceDragBlock.outputConnectionView!!.connector, nearestConnection.connector)
 
 
@@ -183,7 +183,7 @@ object ConnectorManager {
             nearestBlock.scope.add(sourceDragBlock)
             Log.i("Connect", "${sourceDragBlock.block.blockType}")
 
-            changeParentParams(sourceDragBlock)
+            SizeManager.changeParentParams(sourceDragBlock)
 
             // Для всех дочерних блоков нужно высчитать isInner. Для коннекторов кроме STRING_BOTTOM_OUTER isInner наследуется
             // (если после этого встретили OUTER, то его помечаем isInner для корректного удаления)
@@ -217,15 +217,13 @@ object ConnectorManager {
         }
     }
 
-
-
     private fun parentDisconnectOrNot(sourceDragBlock: DraggableBlock, viewModel: DraggableViewModel, density: Density): Boolean {
         sourceDragBlock.connectedParent?.let {
             if(sourceDragBlock.connectedParentConnectionView == null) {
                 sourceDragBlock.connectedParent = null
                 throw IllegalArgumentException("ConnectionView для ${sourceDragBlock.block.blockType} оказался null")
             }
-            else if(getLengthFromConnections(sourceDragBlock, sourceDragBlock.connectedParent!!, sourceDragBlock.outputConnectionView!!, sourceDragBlock.connectedParentConnectionView!!, density) > connetionLength){
+            else if(CalculationsManager.getLengthFromConnections(sourceDragBlock, sourceDragBlock.connectedParent!!, sourceDragBlock.outputConnectionView!!, sourceDragBlock.connectedParentConnectionView!!, density) > connetionLength){
                 DisconnectBlock(sourceDragBlock)
 
                 // Убираем isInner для всех прикреплённых нижних блоков
@@ -262,27 +260,8 @@ object ConnectorManager {
         return true
     }
 
-    private fun getLengthFromConnections(
-        dragBlock1: DraggableBlock,
-        dragBlock2: DraggableBlock,
-        connection1: ConnectionView,
-        connection2: ConnectionView,
-        density: Density
-    ): Double {
 
-        val con1x = with(density) {connection1.positionX.toPx()}
-        val con1y = with(density) {connection1.positionY.toPx()}
-        val con2x = with(density) {connection2.positionX.toPx()}
-        val con2y = with(density) {connection2.positionY.toPx()}
-
-        val x1 = (dragBlock1.x.value + con1x)
-        val y1 = (dragBlock1.y.value + con1y)
-        val x2 = (dragBlock2.x.value + con2x)
-        val y2 = (dragBlock2.y.value + con2y)
-
-        return sqrt((x1 - x2).toDouble().pow(2) + (y1 - y2).toDouble().pow(2))
-    }
-    fun getBlockWithNearestConnection(dragBlock: DraggableBlock, listBlocks: MutableList<DraggableBlock>, density: Density, connectionTypes: MutableList<ConnectorType>, requiresVoid: Boolean): DraggableBlock? {
+    private fun getBlockWithNearestConnection(dragBlock: DraggableBlock, listBlocks: MutableList<DraggableBlock>, density: Density, connectionTypes: MutableList<ConnectorType>, requiresVoid: Boolean): DraggableBlock? {
 
         var ans: DraggableBlock? = null
 
@@ -297,7 +276,7 @@ object ConnectorManager {
 
                     if(connection.connector.connectionType !in connectionTypes || connection.isConnected) continue // Проверка на то, что мы ищем именно тот тип коннектора, который нам нужен
 
-                    val length = getLengthFromConnections(dragBlock, block, dragBlock.outputConnectionView!!, connection, density)
+                    val length = CalculationsManager.getLengthFromConnections(dragBlock, block, dragBlock.outputConnectionView!!, connection, density)
                     if( length < r){
                         r = length
                         ans = block
@@ -313,7 +292,7 @@ object ConnectorManager {
 
                     if(connection.connector.connectionType !in connectionTypes || connection.isConnected) continue // Проверка на то, что мы ищем именно тот тип коннектора, который нам нужен
 
-                    val length = getLengthFromConnections(dragBlock, block, dragBlock.outputConnectionView!!, connection, density)
+                    val length = CalculationsManager.getLengthFromConnections(dragBlock, block, dragBlock.outputConnectionView!!, connection, density)
                     if( length < r){
                         r = length
                         ans = block
@@ -324,7 +303,7 @@ object ConnectorManager {
 
         return ans
     }
-    fun getNearestConnection(dragBlock: DraggableBlock,listBlocks: MutableList<DraggableBlock>, density: Density, connectionTypes:MutableList<ConnectorType>): ConnectionView? {
+    private fun getNearestConnection(dragBlock: DraggableBlock,listBlocks: MutableList<DraggableBlock>, density: Density, connectionTypes:MutableList<ConnectorType>): ConnectionView? {
 
         var ans: ConnectionView? = null
 
@@ -336,194 +315,12 @@ object ConnectorManager {
 
                 if(connection.connector.connectionType !in connectionTypes || connection.isConnected) continue // Проверка на то, что мы ищем именно тот тип коннектора, который нам нужен
 
-                val length = getLengthFromConnections(dragBlock, block, dragBlock.outputConnectionView!!, connection, density)
+                val length = CalculationsManager.getLengthFromConnections(dragBlock, block, dragBlock.outputConnectionView!!, connection, density)
                 if( length < r){
                     r = length
                     ans = connection
                 }
             }
-        }
-        return ans
-    }
-
-
-    fun changeParentParams(child: DraggableBlock, isPositive: Boolean = true){ // Вызывается при непосредственном добавлении блока в какой-то другой
-
-        val parent = child.connectedParent
-
-        if(parent == null) return
-
-        val plusOrMinus = if(isPositive) 1 else -1
-
-        val connectionView = child.connectedParentConnectionView
-
-
-
-        if(parent.isInner && connectionView!!.extendType == ExtendConnectionViewType.NONE){
-
-            var currentBlock = parent
-            while(currentBlock!!.connectedParentConnectionView!!.connector.connectionType != ConnectorType.STRING_BOTTOM_INNER){
-                Log.i("INFO_FOR_ME", "${child.block.blockType}")
-                currentBlock = currentBlock.connectedParent!!
-            }
-            currentBlock = currentBlock.connectedParent!!
-            val deltaHeight = getSummaryHeight(child)
-            currentBlock.inputConnectionViews.forEach{ connection ->
-                if(connection.positionY > connectionView.positionY){
-                    connection.positionY += deltaHeight * plusOrMinus
-                }
-            }
-            val oldHeight = currentBlock.height.value
-
-            currentBlock.height.value += deltaHeight * plusOrMinus
-
-            val diffrenceHeight = if(currentBlock.height.value - oldHeight < 0.dp) oldHeight - currentBlock.height.value else currentBlock.height.value - oldHeight
-
-            changeParentParams(currentBlock, deltaHeight = diffrenceHeight, isPositive = isPositive)
-            return
-        }
-
-        val oldHeight = parent.height.value
-        val oldWidth = parent.width.value
-
-
-        when(connectionView!!.extendType){
-            ExtendConnectionViewType.SIDE -> {
-                val delta = if(child.height.value - parent.height.value > 0.dp) child.height.value - parent.height.value else 0.dp
-                parent.inputConnectionViews.forEach{ connection ->
-                    if(connection.positionY > connectionView.positionY){
-                        connection.positionY += delta * plusOrMinus
-                    }
-                }
-
-                parent.height.value += delta * plusOrMinus
-
-                val diffrenceHeight = if(parent.height.value - oldHeight < 0.dp) oldHeight - parent.height.value else parent.height.value - oldHeight
-
-                changeParentParams(parent, deltaHeight = diffrenceHeight, isPositive = isPositive)
-            }
-            ExtendConnectionViewType.INNER -> {
-                val deltaWidth = child.width.value
-                val deltaHeight = child.height.value
-                parent.inputConnectionViews.forEach{ connection ->
-                    if(connection.positionX > connectionView.positionX && connection.positionY > connectionView.positionY){
-                        connection.positionX += deltaWidth * plusOrMinus
-                        connection.positionY += deltaHeight * plusOrMinus
-                    }
-                }
-
-                parent.height.value += deltaHeight * plusOrMinus
-                parent.width.value += deltaWidth * plusOrMinus
-
-                val diffrenceHeight = if(parent.height.value - oldHeight < 0.dp) oldHeight - parent.height.value else parent.height.value - oldHeight
-                val diffrenceWidth = if(parent.width.value - oldWidth < 0.dp) oldWidth - parent.width.value else parent.width.value - oldWidth
-
-                changeParentParams(parent, diffrenceWidth, diffrenceHeight, isPositive = isPositive)
-            }
-            ExtendConnectionViewType.INNER_BOTTOM -> {
-                val deltaHeight = getSummaryHeight(child)
-                parent.inputConnectionViews.forEach{ connection ->
-                    if(connection.positionY > connectionView.positionY){
-                        connection.positionY += deltaHeight * plusOrMinus
-                    }
-                }
-
-                parent.height.value += deltaHeight * plusOrMinus
-
-                val diffrenceHeight = if(parent.height.value - oldHeight < 0.dp) oldHeight - parent.height.value else parent.height.value - oldHeight
-
-                changeParentParams(parent, deltaHeight = diffrenceHeight, isPositive = isPositive)
-            }
-            ExtendConnectionViewType.NONE -> {}
-        }
-    }
-    fun changeParentParams(child: DraggableBlock, deltaWidth: Dp = 0.dp, deltaHeight: Dp = 0.dp, isPositive: Boolean = true){ // Вызывается рекурсивно из верхней
-        // перегрузки для пересчета размеров родительских блоков
-
-        val parent = child.connectedParent
-
-        if(parent == null) return
-
-        val plusOrMinus = if(isPositive) 1 else -1
-
-        val connectionView = child.connectedParentConnectionView
-
-        if(parent.isInner && connectionView!!.extendType == ExtendConnectionViewType.NONE){
-
-            var currentBlock = parent
-            while(currentBlock!!.connectedParentConnectionView!!.connector.connectionType != ConnectorType.STRING_BOTTOM_INNER){
-                currentBlock = currentBlock.connectedParent!!
-            }
-            currentBlock = currentBlock.connectedParent!!
-            currentBlock.inputConnectionViews.forEach{ connection ->
-                if(connection.positionY > connectionView.positionY){
-                    connection.positionY += deltaHeight * plusOrMinus
-                }
-            }
-            currentBlock.height.value += deltaHeight * plusOrMinus
-            changeParentParams(currentBlock, deltaWidth, deltaHeight, isPositive = isPositive)
-            return
-        }
-
-        when(connectionView!!.extendType){
-            ExtendConnectionViewType.SIDE -> {
-                val delta = if(child.height.value - parent.height.value > 0.dp) child.height.value - parent.height.value else 0.dp
-                parent.inputConnectionViews.forEach{ connection ->
-                    if(connection.positionY > connectionView.positionY){
-                        connection.positionY += delta * plusOrMinus
-                    }
-                }
-                parent.height.value += delta * plusOrMinus
-                changeParentParams(parent, deltaHeight = delta, isPositive = isPositive)
-            }
-            ExtendConnectionViewType.INNER -> {
-                parent.inputConnectionViews.forEach{ connection ->
-                    if(connection.positionX > connectionView.positionX && connection.positionY > connectionView.positionY){
-                        connection.positionX += deltaWidth * plusOrMinus
-                        connection.positionY += deltaHeight * plusOrMinus
-                    }
-                }
-                parent.height.value += deltaHeight * plusOrMinus
-                parent.width.value += deltaWidth * plusOrMinus
-                changeParentParams(parent, deltaWidth, deltaHeight, isPositive = isPositive)
-
-            }
-            ExtendConnectionViewType.INNER_BOTTOM -> {
-                parent.inputConnectionViews.forEach{ connection ->
-                    if(connection.positionY > connectionView.positionY){
-                        connection.positionY += deltaHeight * plusOrMinus
-                    }
-                }
-                parent.height.value += deltaHeight * plusOrMinus
-                changeParentParams(parent, deltaHeight = deltaHeight, isPositive = isPositive)
-            }
-            ExtendConnectionViewType.NONE -> {}
-        }
-    }
-
-    fun getSummaryHeight(block: DraggableBlock): Dp{
-        var ans: Dp = 0.dp
-
-        var current = block
-
-        val currentList: MutableList<DraggableBlock> = mutableListOf()
-
-        while(true){
-
-            currentList.add(current)
-
-            var flag = false
-
-            for(child in current.scope){
-                if(child.connectedParentConnectionView!!.connector.connectionType == ConnectorType.STRING_BOTTOM_OUTER){
-                    flag = true
-                    current = child
-                }
-            }
-            if(!flag) break
-        }
-        for(item in currentList){
-            ans += item.height.value
         }
         return ans
     }
@@ -648,7 +445,7 @@ object ConnectorManager {
                     ConnectionView(castedBlock.topConnector, cornerOffset, 0.dp),
                     ConnectionView(castedBlock.bottomConnector, cornerOffset, height),
                     ConnectionView(castedBlock.innerConnector, cornerOffset, 60.dp, ExtendConnectionViewType.INNER_BOTTOM),
-                    ConnectionView(castedBlock.conditionConnector, width, height/2, ExtendConnectionViewType.SIDE)
+                    ConnectionView(castedBlock.conditionConnector, width, 30.dp, ExtendConnectionViewType.SIDE)
                 )
             }
             BlockType.FOR_BLOCK -> {

@@ -14,7 +14,9 @@ import com.unewexp.superblockly.blocks.voidBlocks.SetValueVariableBlock
 import com.unewexp.superblockly.blocks.voidBlocks.VariableDeclarationBlock
 import com.unewexp.superblockly.enums.ConnectorType
 import com.unewexp.superblockly.DraggableBlock
+import com.unewexp.superblockly.model.CalculationsManager
 import com.unewexp.superblockly.model.ConnectorManager
+import com.unewexp.superblockly.model.SizeManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -63,7 +65,7 @@ class DraggableViewModel: ViewModel() {
 
         var summHeight = 0.dp
 
-        if(isFirst) summHeight = ConnectorManager.getSummaryHeight(block)
+        if(isFirst) summHeight = CalculationsManager.getSummaryHeight(block)
 
         for(i in block.scope.indices.reversed()){
 
@@ -81,12 +83,35 @@ class DraggableViewModel: ViewModel() {
         if(block.connectedParent != null && block.connectedParentConnectionView != null){
             disconnect(block.outputConnectionView!!.connector, block.connectedParentConnectionView!!.connector)
 
-            if(isFirst) ConnectorManager.changeParentParams(block, deltaHeight = summHeight,  isPositive = false)
+            
+            if(isFirst) {
+                SizeManager.changeParentParams(block, deltaHeight = summHeight,  isPositive = false)
 
-            block.connectedParent!!.scope.remove(block)
-            block.connectedParentConnectionView!!.isConnected = false
-            block.connectedParent = null
-            block.connectedParentConnectionView = null
+                val child = ConnectorManager.getStringBottomOuterConnectionChild(block)
+                if(child != null){
+                    if(block.connectedParent != null){
+
+                        val parent = block.connectedParent
+                        val connectionParent = block.connectedParentConnectionView
+
+                        ConnectorManager.tryConnectBlocks(child,parent,connectionParent,this,)
+
+
+                        block.connectedParent!!.scope.remove(block)
+                        block.connectedParentConnectionView!!.isConnected = false
+                        block.connectedParent = null
+                        block.connectedParentConnectionView = null
+                    }
+                }
+
+            }
+            else {
+                block.connectedParent!!.scope.remove(block)
+                block.connectedParentConnectionView!!.isConnected = false
+                block.connectedParent = null
+                block.connectedParentConnectionView = null
+            }
+
         }
 
         _blocks.update {
