@@ -147,18 +147,22 @@ fun CreateNewProject(
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
+    val gesturesEnabled = remember { mutableStateOf(false) }
     val globalOffset = remember { mutableStateOf(Offset.Zero) }
 
     ModalNavigationDrawer(
         drawerState = drawerState,
-        gesturesEnabled = false,
+        gesturesEnabled = gesturesEnabled.value,
         modifier = Modifier
             .fillMaxSize(),
         drawerContent = {
             Column(modifier = Modifier
                 .background(DrawerColor)
             ){
-                Button(onClick = { scope.launch { drawerState.close() } }) {
+                Button(onClick = {
+                    scope.launch { drawerState.close() }
+                    gesturesEnabled.value = false
+                }) {
                     Text("Закрыть")
                 }
                 LazyColumn(
@@ -471,9 +475,15 @@ fun CreateNewProject(
         }
     }
         Canvas(
-            { scope.launch { drawerState.open() } },
+            {
+                scope.launch { drawerState.open() }
+                gesturesEnabled.value = true
+            },
             {toHomeBtn(navController, { Logger.clearLogs()}) },
-            {newOffset -> globalOffset.value = newOffset }
+            {
+                newOffset -> globalOffset.value = newOffset
+                gesturesEnabled.value = false
+            }
         )
     }
 }
