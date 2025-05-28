@@ -110,8 +110,40 @@ fun Canvas(
                             Icon(Icons.Filled.List, null)
                         }
                     }
-                    Box {
-                        onHomeClick()
+                }
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Row{
+                        Box(
+                            Modifier
+                                .padding(2.dp)
+                        ){
+                            IconButton(
+                                onClick = { panelIsVisible = !panelIsVisible },
+                                modifier =
+                                    Modifier
+                                        .border(3.dp, Color.Black, CircleShape)
+                            ) {
+                                Icon(Icons.Filled.Info, null)
+                            }
+                        }
+                        Box(
+                            Modifier
+                                .padding(2.dp)
+                        ){
+                            IconButton(
+                                onClick = { blocks[0].block.execute() },
+                                modifier =
+                                    Modifier
+                                        .border(3.dp, Color.Green, CircleShape)
+                            ) {
+                                Icon(Icons.Filled.PlayArrow, null)
+                            }
+                        }
+
                     }
                 }
                 Box(
@@ -121,23 +153,7 @@ fun Canvas(
                     contentAlignment = Alignment.CenterEnd
                 ) {
                     Row{
-                        IconButton(
-                            onClick = { panelIsVisible = !panelIsVisible },
-                            modifier =
-                                Modifier
-                                    .border(3.dp, Color.Black, CircleShape)
-                        ) {
-                            Icon(Icons.Filled.Info, null)
-                        }
-
-                        IconButton(
-                            onClick = { blocks[0].block.execute() },
-                            modifier =
-                                Modifier
-                                    .border(3.dp, Color.Green, CircleShape)
-                        ) {
-                            Icon(Icons.Filled.PlayArrow, null)
-                        }
+                        onHomeClick()
                     }
                 }
             }
