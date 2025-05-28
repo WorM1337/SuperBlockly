@@ -1,10 +1,8 @@
 package com.unewexp.superblockly.viewBlocks
 
-import android.graphics.Paint
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,7 +36,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
@@ -46,9 +43,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
-import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.unewexp.superblockly.R
@@ -57,7 +51,6 @@ import com.unewexp.superblockly.enums.CompareType
 import com.unewexp.superblockly.enums.OperandType
 import com.unewexp.superblockly.enums.symbol
 import com.unewexp.superblockly.ui.theme.EmptySpace
-import kotlin.reflect.KClass
 
 @Composable
 fun StartBlockView() {
@@ -145,11 +138,11 @@ fun IntLiteralView(
             onValueChange = {
                 if (it.text.isEmpty()) {
                     value = TextFieldValue("0", TextRange(1))
-                } else if (it.text.matches(Regex("^\\d*\$"))) {
-                    if (it.text.length != 1 && it.text[0] == '0') {
-                        value = TextFieldValue(it.text.substring(1), TextRange(1))
+                } else if (it.text.matches(Regex("^\\d*$"))) {
+                    value = if (it.text.length != 1 && it.text[0] == '0') {
+                        TextFieldValue(it.text.substring(1), TextRange(1))
                     } else {
-                        value = it
+                        it
                     }
                 }
                 onNameChanged(value.text)
@@ -188,8 +181,6 @@ fun IntLiteralView(
 
 @Composable
 fun IntLiteralViewForCard(){
-
-    var value by remember { mutableStateOf(TextFieldValue("0")) }
 
     TextFieldLike(placeholder = "Num", modifier = Modifier.fillMaxWidth())
 }
@@ -325,8 +316,6 @@ fun VariableReferenceView(
 
 @Composable
 fun VariableReferenceViewForCard(){
-    var name by remember { mutableStateOf(TextFieldValue("")) }
-
     TextFieldLike(placeholder = "Var", modifier = Modifier.fillMaxWidth())
 }
 
