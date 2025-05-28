@@ -24,6 +24,7 @@ import com.unewexp.superblockly.viewBlocks.IfBlockViewForCard
 import com.unewexp.superblockly.viewBlocks.IntLiteralViewForCard
 import com.unewexp.superblockly.viewBlocks.OperandBlockForCard
 import com.unewexp.superblockly.viewBlocks.PrintBlockView
+import com.unewexp.superblockly.viewBlocks.RemoveValueByIndexViewForCard
 import com.unewexp.superblockly.viewBlocks.SetValueVariableViewForCard
 import com.unewexp.superblockly.viewBlocks.VariableReferenceViewForCard
 import com.unewexp.superblockly.viewBlocks.WhileBlockViewForCard
@@ -229,5 +230,17 @@ fun GetListSizeViewCard(){
             .padding(2.dp)
     ){
         GetListSizeViewForCard()
+    }
+}
+
+@Composable
+fun RemoveValueByIndexCard(){
+    Card(
+        modifier = Modifier
+            .width(200.dp)
+            .height(60.dp)
+            .padding(2.dp)
+    ){
+        RemoveValueByIndexViewForCard()
     }
 }
