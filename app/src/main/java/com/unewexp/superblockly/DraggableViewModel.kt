@@ -2,6 +2,7 @@ package com.unewexp.superblockly
 
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import com.example.myfirstapplicatioin.blocks.literals.IntLiteralBlock
@@ -29,6 +30,8 @@ class DraggableViewModel: ViewModel() {
     val blocks = _blocks.asStateFlow()
     var maxZIndex = 0f;
 
+    var density: Density = Density(0.0f)
+
     fun handleAction(action: BlocklyAction) {
         when(action) {
             is BlocklyAction.MoveBlock -> updateBlockPosition(
@@ -37,7 +40,7 @@ class DraggableViewModel: ViewModel() {
                 action.offsetX
             )
             is BlocklyAction.AddBlock -> addBlock(action.block)
-            is BlocklyAction.RemoveBlock -> removeBlock(action.block, action.isFirst)
+            is BlocklyAction.RemoveBlock -> removeBlock(action.block)
         }
     }
 
@@ -66,7 +69,11 @@ class DraggableViewModel: ViewModel() {
 
         var sumHeight = 0.dp
 
-        if(isFirst) summHeight = CalculationsManager.getSummaryHeight(block)
+        if(isFirst) sumHeight = CalculationsManager.getSummaryHeight(block)
+
+        val child = ConnectorManager.getStringBottomOuterConnectionChild(block)
+        val parent = block.connectedParent
+        val connectionParent = block.connectedParentConnectionView
 
         for(i in block.scope.indices.reversed()){
 
@@ -74,45 +81,29 @@ class DraggableViewModel: ViewModel() {
                 removeBlock(block.scope[i], false)
             }
             else {
+                disconnect(block.scope[i].outputConnectionView!!.connector, block.scope[i].connectedParentConnectionView!!.connector)
+
                 block.scope[i].connectedParentConnectionView!!.isConnected = false
                 block.scope[i].connectedParent = null
                 block.scope[i].connectedParentConnectionView = null
+                block.scope[i].outputConnectionView!!.isConnected = false
                 block.scope.removeAt(i)
             }
         }
 
         if(block.connectedParent != null && block.connectedParentConnectionView != null){
             disconnect(block.outputConnectionView!!.connector, block.connectedParentConnectionView!!.connector)
+            if(isFirst) SizeManager.changeParentParams(block, deltaHeight = sumHeight, deltaWidth = block.width.value,  isPositive = false)
 
-            
-            if(isFirst) {
-                SizeManager.changeParentParams(block, deltaHeight = summHeight,  isPositive = false)
+            block.connectedParent!!.scope.remove(block)
+            block.connectedParentConnectionView!!.isConnected = false
+            block.outputConnectionView!!.isConnected = false
+            block.connectedParent = null
+            block.connectedParentConnectionView = null
 
-                val child = ConnectorManager.getStringBottomOuterConnectionChild(block)
-                if(child != null){
-                    if(block.connectedParent != null){
-
-                        val parent = block.connectedParent
-                        val connectionParent = block.connectedParentConnectionView
-
-                        ConnectorManager.tryConnectBlocks(child,parent,connectionParent,this,)
-
-
-                        block.connectedParent!!.scope.remove(block)
-                        block.connectedParentConnectionView!!.isConnected = false
-                        block.connectedParent = null
-                        block.connectedParentConnectionView = null
-                    }
-                }
-
+            if(isFirst && child != null) {
+                ConnectorManager.tryConnectBlocks(child,parent!!,connectionParent!!,this, density)
             }
-            else {
-                block.connectedParent!!.scope.remove(block)
-                block.connectedParentConnectionView!!.isConnected = false
-                block.connectedParent = null
-                block.connectedParentConnectionView = null
-            }
-
         }
 
         _blocks.update {
@@ -191,6 +182,6 @@ class DraggableViewModel: ViewModel() {
     sealed class BlocklyAction{
         data class MoveBlock(var block: DraggableBlock, var offsetX: Float, var offsetY: Float): BlocklyAction()
         data class AddBlock(var block: DraggableBlock): BlocklyAction()
-        data class RemoveBlock(var block: DraggableBlock, var isFirst: Boolean = true): BlocklyAction()
+        data class RemoveBlock(var block: DraggableBlock): BlocklyAction()
     }
 }

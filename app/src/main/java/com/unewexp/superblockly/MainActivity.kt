@@ -58,6 +58,7 @@ import com.unewexp.superblockly.blocks.logic.ElseBlock
 import com.unewexp.superblockly.blocks.logic.ElseIfBlock
 import com.unewexp.superblockly.blocks.loops.ForBlock
 import com.unewexp.superblockly.blocks.loops.WhileBlock
+import com.unewexp.superblockly.debug.Logger
 import kotlinx.coroutines.launch
 
 
@@ -122,6 +123,9 @@ fun CreateNewProject(
 ){
 
     val density = LocalDensity.current
+
+    viewModel.density = density
+
     fun dpToPx(dp: Dp): Float {
         val pxValue = with(density) {dp.toPx()}  // Упрощённый расчёт
 
@@ -357,7 +361,7 @@ fun CreateNewProject(
     ) {
         Canvas(
             { scope.launch { drawerState.open() } },
-            { toHomeBtn(navController) },
+            {toHomeBtn(navController, {Logger.clearLogs()}) },
             {newOffset -> globalOffset.value = newOffset }
         )
     }

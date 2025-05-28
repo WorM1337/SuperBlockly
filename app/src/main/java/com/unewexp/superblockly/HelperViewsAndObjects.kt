@@ -51,9 +51,15 @@ object Modifiers{
 }
 
 @Composable
-fun toHomeBtn(navController: NavHostController){
+fun toHomeBtn(
+    navController: NavHostController,
+    onClick: () -> Unit = {}
+){
     Button(
-        { navController.navigate(Routes.Home.route) },
+        {
+            navController.navigate(Routes.Home.route)
+            onClick()
+        },
         Modifiers.toHomeBtnMod,
         shape = RectangleShape,
     ) {
