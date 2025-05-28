@@ -37,7 +37,7 @@ class DraggableViewModel: ViewModel() {
             is BlocklyAction.MoveBlock -> updateBlockPosition(
                 action.block,
                 action.offsetX,
-                action.offsetX
+                action.offsetY
             )
             is BlocklyAction.AddBlock -> addBlock(action.block)
             is BlocklyAction.RemoveBlock -> removeBlock(action.block)

@@ -62,6 +62,7 @@ import com.unewexp.superblockly.blocks.logic.ElseBlock
 import com.unewexp.superblockly.blocks.logic.ElseIfBlock
 import com.unewexp.superblockly.blocks.loops.ForBlock
 import com.unewexp.superblockly.blocks.loops.WhileBlock
+import com.unewexp.superblockly.debug.Logger
 import com.unewexp.superblockly.viewBlocks.AddElementByIndexView
 import com.unewexp.superblockly.viewBlocks.GetListSizeView
 import com.unewexp.superblockly.viewBlocks.GetValueByIndexView
@@ -435,7 +436,7 @@ fun CreateNewProject(
     ) {
         Canvas(
             { scope.launch { drawerState.open() } },
-            {toHomeBtn(navController, {Logger.clearLogs()}) },
+            {toHomeBtn(navController, { Logger.clearLogs()}) },
             {newOffset -> globalOffset.value = newOffset }
         )
     }
