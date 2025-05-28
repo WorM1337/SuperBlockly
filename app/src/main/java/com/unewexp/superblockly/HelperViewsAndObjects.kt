@@ -14,7 +14,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -118,10 +117,10 @@ fun getColorByBlockType(type: BlockType): Color {
         BlockType.FOR_BLOCK -> color = LoopColor
         BlockType.FOR_ELEMENT_IN_LIST -> color = LoopColor
         BlockType.FIXED_VALUE_AND_SIZE_LIST -> color = ListColor
-        BlockType.GET_VALUE_BY_INDEX -> TODO()
-        BlockType.REMOVE_VALUE_BY_INDEX -> TODO()
-        BlockType.ADD_VALUE_BY_INDEX -> TODO()
-        BlockType.GET_LIST_SIZE -> TODO()
+        BlockType.GET_VALUE_BY_INDEX -> color = ListColor
+        BlockType.REMOVE_VALUE_BY_INDEX -> color = ListColor
+        BlockType.ADD_VALUE_BY_INDEX -> color = ListColor
+        BlockType.GET_LIST_SIZE -> color = ListColor
     }
     return color
 }

@@ -8,3 +8,14 @@ enum class CompareType {
     GREATER,
     LESS
 }
+
+fun CompareType.symbol(): String {
+    return when (this) {
+        CompareType.GREATER_EQUAL -> ">="
+        CompareType.LESS_EQUAL -> "<="
+        CompareType.EQUAL -> "=="
+        CompareType.NOT_EQUAL -> "!="
+        CompareType.GREATER -> ">"
+        CompareType.LESS -> "<"
+    }
+}

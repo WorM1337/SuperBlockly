@@ -51,6 +51,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.unewexp.superblockly.R
 import com.unewexp.superblockly.Spinner
+import com.unewexp.superblockly.enums.CompareType
 import com.unewexp.superblockly.enums.OperandType
 import com.unewexp.superblockly.enums.symbol
 import com.unewexp.superblockly.ui.theme.EmptySpace
@@ -378,6 +379,147 @@ fun DeclarationVariableViewForCard(){
             modifier = Modifier.padding(end = 4.dp)
         )
         TextFieldLike(placeholder = "Var", modifier = Modifier.fillMaxWidth())
+    }
+}
+
+@Composable
+fun CompareNumbersBlockView(
+    onCompareSelected: (CompareType) -> Unit = {}
+) {
+    var selectedOperand by remember { mutableStateOf(CompareType.EQUAL) }
+    var expanded by remember { mutableStateOf(false) }
+
+    val box1Width = remember { mutableStateOf(70.dp) }
+    val box2Width = remember { mutableStateOf(70.dp) }
+
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.surfaceVariant,
+        shape = RoundedCornerShape(8.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .width(box1Width.value)
+                    .fillMaxHeight()
+                    .background(
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.1f),
+                        shape = RoundedCornerShape(4.dp)
+                    )
+            )
+
+            Box(
+                contentAlignment = Alignment.Center
+            ) {
+                Spinner(
+                    size = 50.dp,
+                    onClick = { expanded = true }
+                ) {
+                    Text(
+                        text = selectedOperand.symbol(),
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+
+                DropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false },
+                    modifier = Modifier.background(MaterialTheme.colorScheme.surface)
+                ) {
+                    CompareType.entries.forEach { operand ->
+                        DropdownMenuItem(
+                            text = {
+                                Text(
+                                    operand.name.lowercase().replaceFirstChar { it.uppercase() },
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                            },
+                            onClick = {
+                                selectedOperand = operand
+                                onCompareSelected(operand)
+                                expanded = false
+                            }
+                        )
+                    }
+                }
+            }
+
+            Box(
+                modifier = Modifier
+                    .width(box2Width.value)
+                    .fillMaxHeight()
+                    .background(
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.1f),
+                        shape = RoundedCornerShape(4.dp)
+                    )
+            )
+        }
+    }
+}
+
+@Composable
+fun CompareNumbersBlockForCard(
+    compareType: CompareType = CompareType.EQUAL,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        modifier = modifier,
+        shape = RoundedCornerShape(8.dp),
+        color = MaterialTheme.colorScheme.surfaceVariant,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+        shadowElevation = 1.dp
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .width(70.dp)
+                    .fillMaxHeight()
+                    .background(
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.1f),
+                        shape = RoundedCornerShape(4.dp)
+                    )
+            )
+
+            Surface(
+                shape = CircleShape,
+                color = MaterialTheme.colorScheme.primaryContainer,
+                modifier = Modifier.size(50.dp)
+            ) {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    Text(
+                        text = compareType.symbol(),
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+            }
+
+            Box(
+                modifier = Modifier
+                    .width(70.dp)
+                    .fillMaxHeight()
+                    .background(
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.1f),
+                        shape = RoundedCornerShape(4.dp)
+                    )
+            )
+        }
     }
 }
 
@@ -1006,6 +1148,155 @@ fun AddElementByIndexView(){
     Row(
         modifier = Modifier.fillMaxSize()
     ){
+        Text(
+            stringResource(R.string.in_list),
+            style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
+            modifier = Modifier.padding(4.dp)
+        )
 
+        Box(
+            modifier = Modifier
+                .width(60.dp)
+                .fillMaxHeight()
+                .padding(4.dp)
+                .background(EmptySpace)
+        ){}
+
+        Text(
+            stringResource(R.string.insert),
+            style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
+            modifier = Modifier.padding(4.dp)
+        )
+
+        Box(
+            modifier = Modifier
+                .width(60.dp)
+                .fillMaxHeight()
+                .padding(4.dp)
+                .background(EmptySpace)
+        ){
+            Text(
+                stringResource(R.string.id),
+                style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black.copy(alpha = 0.5f), fontSize = 14.sp),
+                modifier = Modifier.padding(4.dp)
+            )
+        }
+
+        Box(
+            modifier = Modifier
+                .width(60.dp)
+                .fillMaxHeight()
+                .padding(4.dp)
+                .background(EmptySpace)
+        ){
+            Text(
+                stringResource(R.string.value),
+                style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black.copy(alpha = 0.5f), fontSize = 14.sp),
+                modifier = Modifier.padding(4.dp)
+            )
+        }
+    }
+}
+
+@Composable
+fun AddElementByIndexViewForCard(){
+    Row(modifier = Modifier.fillMaxSize()) {
+        Text(
+            stringResource(R.string.in_list),
+            style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
+            modifier = Modifier.padding(4.dp)
+        )
+        Text(
+            stringResource(R.string.insert),
+            style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
+            modifier = Modifier.padding(4.dp)
+        )
+    }
+}
+
+@Composable
+fun GetValueByIndexView(){
+    Row(
+        modifier = Modifier.fillMaxSize()
+    ){
+        Text(
+            stringResource(R.string.in_list),
+            style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
+            modifier = Modifier.padding(4.dp)
+        )
+
+        Box(
+            modifier = Modifier
+                .width(60.dp)
+                .fillMaxHeight()
+                .padding(4.dp)
+                .background(EmptySpace)
+        ){}
+
+        Text(
+            stringResource(R.string.get),
+            style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
+            modifier = Modifier.padding(4.dp)
+        )
+
+        Box(
+            modifier = Modifier
+                .width(60.dp)
+                .fillMaxHeight()
+                .padding(4.dp)
+                .background(EmptySpace)
+        ){
+            Text(
+                stringResource(R.string.id),
+                style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black.copy(alpha = 0.5f), fontSize = 14.sp),
+                modifier = Modifier.padding(4.dp)
+            )
+        }
+    }
+}
+
+@Composable
+fun GetValueByIndexViewForCard(){
+    Row(
+        modifier = Modifier.fillMaxSize(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        Text(
+            stringResource(R.string.in_list),
+            style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
+            modifier = Modifier.padding(4.dp)
+        )
+        Text(
+            stringResource(R.string.get) + " " + stringResource(R.string.value),
+            style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
+            modifier = Modifier.padding(4.dp)
+        )
+    }
+}
+
+@Composable
+fun GetListSizeView(){
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ){
+        Text(
+            stringResource(R.string.length_of),
+            style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
+            modifier = Modifier.padding(4.dp)
+        )
+    }
+}
+
+@Composable
+fun GetListSizeViewForCard(){
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ){
+        Text(
+            stringResource(R.string.length_of)+ " " + stringResource(R.string.list),
+            style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
+            modifier = Modifier.padding(4.dp)
+        )
     }
 }
