@@ -94,7 +94,7 @@ fun DraggableBase(
                     }
                 )
             }
-            .padding(horizontal = 8.dp, vertical = 4.dp)
+            .padding(horizontal = 16.dp, vertical = 8.dp)
             .zIndex(currentBlock.zIndex.value)
     ) {
         content()

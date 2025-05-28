@@ -1,12 +1,11 @@
 package com.unewexp.superblockly
 
 import android.util.Log
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.times
 import androidx.lifecycle.ViewModel
 import com.example.myfirstapplicatioin.blocks.literals.IntLiteralBlock
-import com.example.myfirstapplicatioin.utils.connectTo
 import com.example.myfirstapplicatioin.utils.disconnect
 import com.unewexp.superblockly.blocks.StartBlock
 import com.unewexp.superblockly.blocks.loops.ForBlock
@@ -14,7 +13,6 @@ import com.unewexp.superblockly.blocks.returnBlocks.VariableReferenceBlock
 import com.unewexp.superblockly.blocks.voidBlocks.SetValueVariableBlock
 import com.unewexp.superblockly.blocks.voidBlocks.VariableDeclarationBlock
 import com.unewexp.superblockly.enums.ConnectorType
-import com.unewexp.superblockly.DraggableBlock
 import com.unewexp.superblockly.model.CalculationsManager
 import com.unewexp.superblockly.enums.BlockType
 import com.unewexp.superblockly.model.ConnectorManager
@@ -115,17 +113,20 @@ class DraggableViewModel: ViewModel() {
     }
 
     fun updateValue(block: DraggableBlock, newValue: String): Boolean{
-        val block = block.block
-        when(block.blockType){
+        val realBlock = block.block
+        when(realBlock.blockType){
             BlockType.SET_VARIABLE_VALUE -> {
-                (block as SetValueVariableBlock).selectedVariableName = newValue
+                (realBlock as SetValueVariableBlock).selectedVariableName = newValue
                 return newValue.matches(Regex("[_a-zA-Z]\\w*"))
             }
             BlockType.START -> TODO()
             BlockType.INT_LITERAL -> {
+                if(newValue.length > 5){
+                    block.width.value = 100.dp + (newValue.length - 5)*10.dp
+                }
                 val v = newValue.toFloatOrNull()
                 if(v != null){
-                    (block as IntLiteralBlock).value = v.toInt()
+                    (realBlock as IntLiteralBlock).value = v.toInt()
                     return true
                 }else{
                     return false
@@ -136,11 +137,11 @@ class DraggableViewModel: ViewModel() {
             BlockType.OPERAND -> TODO()
             BlockType.SHORTHAND_ARITHMETIC_BLOCK -> TODO()
             BlockType.VARIABLE_DECLARATION -> {
-                (block as VariableDeclarationBlock).name = newValue
+                (realBlock as VariableDeclarationBlock).name = newValue
                 return newValue.matches(Regex("[_a-zA-Z]\\w*"))
             }
             BlockType.VARIABLE_REFERENCE -> {
-                (block as VariableReferenceBlock).selectedVariableName = newValue
+                (realBlock as VariableReferenceBlock).selectedVariableName = newValue
                 return newValue.matches(Regex("[_a-zA-Z]\\w*"))
             }
             BlockType.STRING_CONCAT -> TODO()
@@ -155,7 +156,7 @@ class DraggableViewModel: ViewModel() {
             BlockType.REPEAT_N_TIMES -> TODO()
             BlockType.WHILE_BLOCK -> TODO()
             BlockType.FOR_BLOCK -> {
-                (block as ForBlock).variableName = newValue
+                (realBlock as ForBlock).variableName = newValue
                 return newValue.matches(Regex("[_a-zA-Z]\\w*"))
             }
             BlockType.FOR_ELEMENT_IN_LIST -> TODO()

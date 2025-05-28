@@ -1,5 +1,6 @@
 package com.unewexp.superblockly.viewBlocks
 
+import android.graphics.Paint
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -34,6 +35,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
@@ -132,41 +134,56 @@ fun IntLiteralView(
 ) {
     var value by remember { mutableStateOf(TextFieldValue("123")) }
 
-    TextField(
-        value = value,
-        onValueChange = {
-            if (it.text.isEmpty()) {
-                value = TextFieldValue("0", TextRange(1))
-            } else if (it.text.matches(Regex("^\\d*\$"))) {
-                if(it.text.length != 1 && it.text[0] == '0'){
-                    value = TextFieldValue(it.text.substring(1), TextRange(1))
-                }else{
-                    value = it
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(8.dp))
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surfaceVariant)
+    ) {
+        BasicTextField(
+            value = value,
+            onValueChange = {
+                if (it.text.isEmpty()) {
+                    value = TextFieldValue("0", TextRange(1))
+                } else if (it.text.matches(Regex("^\\d*\$"))) {
+                    if (it.text.length != 1 && it.text[0] == '0') {
+                        value = TextFieldValue(it.text.substring(1), TextRange(1))
+                    } else {
+                        value = it
+                    }
                 }
-            }
-            onNameChanged(value.text)
-        },
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Number,
-            imeAction = ImeAction.Done
-        ),
-        colors = TextFieldDefaults.colors(
-            focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-            disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent,
-            cursorColor = MaterialTheme.colorScheme.primary
-        ),
-        placeholder = { Text("0", color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)) },
-        singleLine = true,
-        modifier = Modifier.fillMaxSize(),
-        textStyle = MaterialTheme.typography.bodyLarge.copy(
-            color = MaterialTheme.colorScheme.onSurface,
-            textAlign = TextAlign.Center
-        ),
-        shape = RoundedCornerShape(8.dp)
-    )
+                onNameChanged(value.text)
+            },
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 12.dp, vertical = 12.dp),
+            singleLine = true,
+            textStyle = MaterialTheme.typography.bodyMedium.copy(
+                color = MaterialTheme.colorScheme.onSurface,
+                textAlign = TextAlign.Start
+            ),
+            decorationBox = { innerTextField ->
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.CenterStart
+                ) {
+                    if (value.text.isEmpty()) {
+                        Text(
+                            "Value",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                        )
+                    }
+                    innerTextField()
+                }
+            },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Number,
+                imeAction = ImeAction.Done
+            ),
+            cursorBrush = SolidColor(MaterialTheme.colorScheme.primary)
+        )
+    }
 }
 
 @Composable
@@ -280,7 +297,7 @@ fun VariableReferenceView(
             },
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 12.dp, vertical = 18.dp),
+                .padding(horizontal = 12.dp, vertical = 12.dp),
             singleLine = true,
             textStyle = MaterialTheme.typography.bodyMedium.copy(
                 color = MaterialTheme.colorScheme.onSurface,
@@ -571,10 +588,15 @@ fun IfBlockView() {
 @Composable
 fun IfBlockViewForCard(
 ){
-    Column {
-        Box{
-            Text(stringResource(R.string.If))
-        }
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            stringResource(R.string.If),
+            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black, fontSize = 14.sp),
+            modifier = Modifier.padding(2.dp)
+        )
     }
 }
 
@@ -626,10 +648,15 @@ fun ElseBlockView() {
 @Composable
 fun ElseBlockViewForCard(
 ){
-    Column {
-        Box{
-            Text(stringResource(R.string.Else))
-        }
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            stringResource(R.string.Else),
+            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black, fontSize = 14.sp),
+            modifier = Modifier.padding(2.dp)
+        )
     }
 }
 
@@ -681,10 +708,15 @@ fun ElseIfBlockView() {
 @Composable
 fun ElseIfBlockViewForCard(
 ){
-    Column {
-        Box{
-            Text(stringResource(R.string.else_if))
-        }
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            stringResource(R.string.else_if),
+            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black, fontSize = 14.sp),
+            modifier = Modifier.padding(2.dp)
+        )
     }
 }
 
@@ -902,10 +934,15 @@ fun WhileBlockView() {
 @Composable
 fun WhileBlockViewForCard(
 ){
-    Column {
-        Box{
-            Text(stringResource(R.string.While))
-        }
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            stringResource(R.string.While),
+            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black, fontSize = 14.sp),
+            modifier = Modifier.padding(2.dp)
+        )
     }
 }
 
@@ -1032,50 +1069,15 @@ fun ForBlockView(
 
 @Composable
 fun ForBlockViewForCard() {
-
-    val textHeight = 60.dp
-    val bottomLineHeight = 1.dp
-    val lineWidth = 1.dp
-    val bottomLineWidth = 60.dp
-
     Box(
-        modifier = Modifier
-            .width(60.dp)
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
     ) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Top
-        ) {
-            Row(
-                modifier = Modifier
-                    .height(textHeight)
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Start
-            ) {
-                Text(
-                    stringResource(R.string.For),
-                    style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 32.sp),
-                    modifier = Modifier.padding(bottom = 4.dp)
-                )
-
-                TextFieldLike(placeholder = "i", modifier = Modifier.width(50.dp))
-            }
-
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .width(lineWidth)
-                    .background(Color.White)
-            )
-
-            Box(
-                modifier = Modifier
-                    .height(bottomLineHeight)
-                    .width(bottomLineWidth)
-                    .background(Color.White)
-            )
-        }
+        Text(
+            stringResource(R.string.For),
+            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black, fontSize = 14.sp),
+            modifier = Modifier.padding(2.dp)
+        )
     }
 }
 
@@ -1121,24 +1123,28 @@ fun FixedValuesAndSizeListView(){
 
 @Composable
 fun FixedValuesAndSizeListViewForCard(){
-    Row(){
+    Row(
+        modifier = Modifier.fillMaxSize(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ){
 
         Text(
             stringResource(R.string.create_list_with),
-            style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
-            modifier = Modifier.padding(4.dp)
+            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black, fontSize = 14.sp),
+            modifier = Modifier.padding(2.dp)
         )
 
         Text(
             stringResource(R.string.repeated),
-            style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
-            modifier = Modifier.padding(4.dp)
+            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black, fontSize = 14.sp),
+            modifier = Modifier.padding(2.dp)
         )
 
         Text(
-            stringResource(R.string.times),
-            style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
-            modifier = Modifier.padding(4.dp)
+            "N",
+            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black, fontSize = 14.sp),
+            modifier = Modifier.padding(2.dp)
         )
     }
 }
@@ -1200,16 +1206,20 @@ fun AddElementByIndexView(){
 
 @Composable
 fun AddElementByIndexViewForCard(){
-    Row(modifier = Modifier.fillMaxSize()) {
+    Row(
+        modifier = Modifier.fillMaxSize(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
         Text(
             stringResource(R.string.in_list),
-            style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
-            modifier = Modifier.padding(4.dp)
+            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black, fontSize = 14.sp),
+            modifier = Modifier.padding(2.dp)
         )
         Text(
             stringResource(R.string.insert),
-            style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
-            modifier = Modifier.padding(4.dp)
+            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black, fontSize = 14.sp),
+            modifier = Modifier.padding(2.dp)
         )
     }
 }
@@ -1264,13 +1274,13 @@ fun GetValueByIndexViewForCard(){
     ) {
         Text(
             stringResource(R.string.in_list),
-            style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
-            modifier = Modifier.padding(4.dp)
+            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black, fontSize = 14.sp),
+            modifier = Modifier.padding(2.dp)
         )
         Text(
             stringResource(R.string.get) + " " + stringResource(R.string.value),
-            style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
-            modifier = Modifier.padding(4.dp)
+            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black, fontSize = 14.sp),
+            modifier = Modifier.padding(2.dp)
         )
     }
 }
@@ -1291,12 +1301,74 @@ fun GetListSizeView(){
 @Composable
 fun GetListSizeViewForCard(){
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
     ){
         Text(
             stringResource(R.string.length_of)+ " " + stringResource(R.string.list),
+            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black, fontSize = 14.sp),
+            modifier = Modifier.padding(2.dp)
+        )
+    }
+}
+
+@Composable
+fun RemoveValueByIndexView(){
+    Row(
+        modifier = Modifier.fillMaxSize()
+    ){
+        Text(
+            stringResource(R.string.in_list),
             style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
             modifier = Modifier.padding(4.dp)
+        )
+
+        Box(
+            modifier = Modifier
+                .width(60.dp)
+                .fillMaxHeight()
+                .padding(4.dp)
+                .background(EmptySpace)
+        ){}
+
+        Text(
+            stringResource(R.string.remove),
+            style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
+            modifier = Modifier.padding(4.dp)
+        )
+
+        Box(
+            modifier = Modifier
+                .width(60.dp)
+                .fillMaxHeight()
+                .padding(4.dp)
+                .background(EmptySpace)
+        ){
+            Text(
+                stringResource(R.string.id),
+                style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black.copy(alpha = 0.5f), fontSize = 14.sp),
+                modifier = Modifier.padding(4.dp)
+            )
+        }
+    }
+}
+
+@Composable
+fun RemoveValueByIndexViewForCard(){
+    Row(
+        modifier = Modifier.fillMaxSize(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        Text(
+            stringResource(R.string.in_list),
+            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black, fontSize = 14.sp),
+            modifier = Modifier.padding(2.dp)
+        )
+        Text(
+            stringResource(R.string.remove) + " " + stringResource(R.string.value),
+            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black, fontSize = 14.sp),
+            modifier = Modifier.padding(2.dp)
         )
     }
 }

@@ -62,6 +62,7 @@ import com.unewexp.superblockly.viewBlocks.IfBlockView
 import com.unewexp.superblockly.viewBlocks.IntLiteralView
 import com.unewexp.superblockly.viewBlocks.OperandBlockView
 import com.unewexp.superblockly.viewBlocks.PrintBlockView
+import com.unewexp.superblockly.viewBlocks.RemoveValueByIndexView
 import com.unewexp.superblockly.viewBlocks.SetValueVariableView
 import com.unewexp.superblockly.viewBlocks.StartBlockView
 import com.unewexp.superblockly.viewBlocks.TopConnector
@@ -297,7 +298,7 @@ fun TakeViewBlock (block: DraggableBlock, viewModel: DraggableViewModel = viewMo
         BlockType.FOR_ELEMENT_IN_LIST -> TODO()
         BlockType.FIXED_VALUE_AND_SIZE_LIST -> FixedValuesAndSizeListView()
         BlockType.GET_VALUE_BY_INDEX -> GetValueByIndexView()
-        BlockType.REMOVE_VALUE_BY_INDEX -> TODO()
+        BlockType.REMOVE_VALUE_BY_INDEX -> RemoveValueByIndexView()
         BlockType.ADD_VALUE_BY_INDEX -> AddElementByIndexView()
         BlockType.GET_LIST_SIZE -> GetListSizeView()
     }
