@@ -37,7 +37,7 @@ class BooleanLogicBlock : Block(UUID.randomUUID(), BlockType.BOOLEAN_LOGIC_BLOCK
         val leftValue = leftInputConnector.connectedTo?.evaluate() as? Boolean
             ?: throw IllegalStateException("Левое соединение отсутствует или не Boolean")
 
-        val rightValue = leftInputConnector.connectedTo?.evaluate() as? Boolean
+        val rightValue = rightInputConnector.connectedTo?.evaluate() as? Boolean
             ?: throw IllegalStateException("Правое соединение отсутствует или не Boolean")
 
         return compareElements(leftValue, rightValue)

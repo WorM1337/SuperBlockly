@@ -11,6 +11,7 @@ object ViewInitialSize {
     data class PairDp(var width: Dp, var height: Dp)
 
     val cornerOffset: Dp = 15.dp
+    val defaultHeight = 60.dp
 
     fun getInitialSizeByBlockType(blockType: BlockType) : PairDp?{
         return when(blockType){
@@ -27,7 +28,7 @@ object ViewInitialSize {
             BlockType.OPERAND ->
                 PairDp(width = 200.dp, height = 60.dp)
             BlockType.SHORTHAND_ARITHMETIC_BLOCK ->
-                PairDp(width = 200.dp, height = 60.dp)
+                PairDp(width = 150.dp, height = 60.dp)
             BlockType.VARIABLE_DECLARATION ->
                 PairDp(width = 200.dp, height = 60.dp)
             BlockType.VARIABLE_REFERENCE ->
@@ -55,9 +56,9 @@ object ViewInitialSize {
             BlockType.WHILE_BLOCK ->
                 PairDp(width = 200.dp, height = 60.dp)
             BlockType.FOR_BLOCK ->
-                PairDp(width = 400.dp, height = 100.dp)
+                PairDp(width = 400.dp, height = 140.dp)
             BlockType.FOR_ELEMENT_IN_LIST ->
-                PairDp(width = 200.dp, height = 60.dp)
+                PairDp(width = 200.dp, height = 140.dp)
             BlockType.FIXED_VALUE_AND_SIZE_LIST ->
                 PairDp(width = 400.dp, height = 60.dp)
             BlockType.GET_VALUE_BY_INDEX ->
@@ -67,7 +68,7 @@ object ViewInitialSize {
             BlockType.ADD_VALUE_BY_INDEX ->
                 PairDp(width = 200.dp, height = 60.dp)
             BlockType.GET_LIST_SIZE ->
-                PairDp(width = 200.dp, height = 60.dp)
+                PairDp(width = 100.dp, height = 60.dp)
             else -> null
         }
     }
