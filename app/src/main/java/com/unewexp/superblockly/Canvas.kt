@@ -312,5 +312,7 @@ fun TakeViewBlock (block: DraggableBlock, viewModel: DraggableViewModel = viewMo
         BlockType.REMOVE_VALUE_BY_INDEX -> RemoveValueByIndexView()
         BlockType.ADD_VALUE_BY_INDEX -> AddElementByIndexView()
         BlockType.GET_LIST_SIZE -> GetListSizeView()
+        BlockType.EDIT_VALUE_BY_INDEX -> TODO()
+        BlockType.PUSH_BACK_ELEMENT -> TODO()
     }
 }

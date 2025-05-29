@@ -164,6 +164,8 @@ class DraggableViewModel: ViewModel() {
             BlockType.REMOVE_VALUE_BY_INDEX -> TODO()
             BlockType.ADD_VALUE_BY_INDEX -> TODO()
             BlockType.GET_LIST_SIZE -> TODO()
+            BlockType.EDIT_VALUE_BY_INDEX -> TODO()
+            BlockType.PUSH_BACK_ELEMENT -> TODO()
         }
     }
 

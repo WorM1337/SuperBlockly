@@ -626,6 +626,8 @@ object ConnectorManager {
                     ConnectionView(castedBlock.listConnector, width/2, height/2),
                 )
             }
+            BlockType.EDIT_VALUE_BY_INDEX -> TODO()
+            BlockType.PUSH_BACK_ELEMENT -> TODO()
         }
         return ans
     }

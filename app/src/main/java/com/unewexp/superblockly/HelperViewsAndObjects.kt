@@ -121,6 +121,8 @@ fun getColorByBlockType(type: BlockType): Color {
         BlockType.REMOVE_VALUE_BY_INDEX -> color = ListColor
         BlockType.ADD_VALUE_BY_INDEX -> color = ListColor
         BlockType.GET_LIST_SIZE -> color = ListColor
+        BlockType.EDIT_VALUE_BY_INDEX -> TODO()
+        BlockType.PUSH_BACK_ELEMENT -> TODO()
     }
     return color
 }
