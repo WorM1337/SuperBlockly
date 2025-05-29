@@ -13,7 +13,7 @@
     <string name="print">Print</string>
     <string name="If">If</string>
     <string name="Else">else</string>
-    <string name="else_if">else if</string>
+    <string name="else_if">elif</string>
     <string name="While">While</string>
     <string name="For">For</string>
     <string name="logic">Логика</string>

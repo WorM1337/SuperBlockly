@@ -749,7 +749,7 @@ fun OperandBlockView(
     var expanded by remember { mutableStateOf(false) }
 
     fun determineBlocks(blocks: SnapshotStateList<DraggableBlock>): Pair<DraggableBlock?, DraggableBlock?> {
-        return when (blocks.size) {  // Используем параметр blocks, а не block.scope
+        return when (blocks.size) {
             0 -> Pair(null, null)
             1 -> {
                 val singleBlock = blocks.first()
@@ -767,8 +767,8 @@ fun OperandBlockView(
         determineBlocks(block.scope)
     }
 
-    val box1Width by derivedStateOf { leftBlock?.width?.value ?: 70.dp }
-    val box2Width by derivedStateOf { rightBlock?.width?.value ?: 70.dp }
+    val box1Width by derivedStateOf { leftBlock?.width?.value ?: 60.dp }
+    val box2Width by derivedStateOf { rightBlock?.width?.value ?: 60.dp }
 
     Surface(
         modifier = Modifier.fillMaxSize(),

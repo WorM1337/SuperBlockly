@@ -203,8 +203,8 @@ fun Canvas(
                                 TopConnector(
                                     modifier = Modifier
                                         .offset(
-                                            it.outputConnectionView!!.positionX - 10.dp - 8.dp,
-                                            it.outputConnectionView!!.positionY - 12.dp - 4.dp
+                                            it.outputConnectionView!!.positionX - 10.dp - 16.dp,
+                                            it.outputConnectionView!!.positionY - 12.dp - 8.dp
                                         ),
                                     color = if (it.connectedParent != null) getColorByBlockType(it.block.blockType) else Color.Gray.copy(
                                         alpha = 0.5f

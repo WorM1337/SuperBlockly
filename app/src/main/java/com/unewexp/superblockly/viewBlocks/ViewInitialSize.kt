@@ -27,7 +27,7 @@ object ViewInitialSize {
             BlockType.BOOLEAN_LITERAL ->
                 PairDp(width = 100.dp, height = 60.dp)
             BlockType.OPERAND ->
-                PairDp(width = 200.dp, height = 60.dp)
+                PairDp(width = 220.dp, height = 60.dp)
             BlockType.SHORTHAND_ARITHMETIC_BLOCK ->
                 PairDp(width = 150.dp, height = 60.dp)
             BlockType.VARIABLE_DECLARATION ->

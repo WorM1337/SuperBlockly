@@ -394,7 +394,7 @@ object ConnectorManager {
 
                 ans += mutableListOf(
                     ConnectionView(castedBlock.outputConnector, 0.dp, height/2),
-                    ConnectionView(castedBlock.leftInputConnector, width/4, height/2, ExtendConnectionViewType.INNER, height = defaultHeight-10.dp, width = defaultWidth),
+                    ConnectionView(castedBlock.leftInputConnector, width/10, height/2, ExtendConnectionViewType.INNER, height = defaultHeight-10.dp, width = defaultWidth),
                     ConnectionView(castedBlock.rightInputConnector, width*3/4, height/2, ExtendConnectionViewType.INNER, height = defaultHeight-10.dp, width = defaultWidth),
                 )
             }
