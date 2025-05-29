@@ -56,7 +56,6 @@ class DraggableViewModel: ViewModel() {
 
         currentBlock.x.value = currentBlock.x.value + offsetX
         currentBlock.y.value = currentBlock.y.value + offsetY
-        Log.i("${currentBlock.block.blockType}", "(${currentBlock.x.value} : ${currentBlock.y.value})")
     }
 
     private fun removeBlock(block: DraggableBlock, isFirst: Boolean = true) {

@@ -185,19 +185,10 @@ fun Canvas(
                     )
             ) {
                 blocks.forEach { it ->
-                    Log.i("render", "${it.block.blockType} with id: " + it.block.id)
                     DraggableBase(
                         content = {
 
                             TakeViewBlock(it, viewModel)
-
-                            it.inputConnectionViews.forEach { connector ->
-                                Box(modifier = Modifier
-                                    .offset (connector.positionX, connector.positionY)
-                                    .size(15.dp)
-                                    .background(Color(255,140,170))
-                                )
-                            }
 
                             if (it.block.blockType != BlockType.START) {
                                 TopConnector(
