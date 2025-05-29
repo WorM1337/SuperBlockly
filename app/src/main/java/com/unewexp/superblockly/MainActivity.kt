@@ -2,19 +2,19 @@
 
 package com.unewexp.superblockly
 
+import android.content.Context
 import android.os.Bundle
-import android.view.MotionEvent
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
@@ -36,22 +36,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.myfirstapplicatioin.blocks.Block
 import com.example.myfirstapplicatioin.blocks.literals.IntLiteralBlock
 import com.unewexp.superblockly.blocks.logic.IfBlock
 import com.unewexp.superblockly.blocks.returnBlocks.VariableReferenceBlock
@@ -60,9 +56,22 @@ import com.unewexp.superblockly.blocks.voidBlocks.SetValueVariableBlock
 import com.unewexp.superblockly.blocks.voidBlocks.VariableDeclarationBlock
 import com.unewexp.superblockly.ui.theme.DrawerColor
 import com.unewexp.superblockly.ui.theme.SuperBlocklyTheme
-import com.unewexp.superblockly.viewBlocks.DraggableBlock
+import com.unewexp.superblockly.blocks.arithmetic.OperandBlock
+import com.unewexp.superblockly.blocks.list.AddElementByIndex
+import com.unewexp.superblockly.blocks.list.FixedValuesAndSizeList
+import com.unewexp.superblockly.blocks.list.GetListSize
+import com.unewexp.superblockly.blocks.list.GetValueByIndex
+import com.unewexp.superblockly.blocks.list.RemoveValueByIndex
+import com.unewexp.superblockly.blocks.logic.CompareNumbers
+import com.unewexp.superblockly.blocks.logic.ElseBlock
+import com.unewexp.superblockly.blocks.logic.ElseIfBlock
+import com.unewexp.superblockly.blocks.loops.ForBlock
+import com.unewexp.superblockly.blocks.loops.WhileBlock
+import com.unewexp.superblockly.debug.Logger
+import com.unewexp.superblockly.viewBlocks.AddElementByIndexView
+import com.unewexp.superblockly.viewBlocks.GetListSizeView
+import com.unewexp.superblockly.viewBlocks.GetValueByIndexView
 import kotlinx.coroutines.launch
-import kotlin.math.roundToInt
 
 
 
@@ -80,7 +89,7 @@ class MainActivity : ComponentActivity() {
                     NavHost(navController = navController, startDestination = Routes.Home.route) {
 
                         composable(Routes.Home.route) { Home(navController) }
-                        composable(Routes.CreateProject.route) { CreateNewProject(navController)  }
+                        composable(Routes.CreateProject.route) { CreateNewProject(navController, this@MainActivity.applicationContext)  }
                         composable(Routes.MyProjects.route) { MyProjects(navController)  }
                         composable(Routes.About.route) { About(navController) }
                     }
@@ -122,117 +131,107 @@ fun Home(navController: NavHostController) {
 @Composable
 fun CreateNewProject(
     navController: NavHostController,
+    context: Context,
     viewModel: DraggableViewModel = viewModel()
 ){
 
+    val density = LocalDensity.current
+
+    viewModel.density = density
+
+    fun dpToPx(dp: Dp): Float {
+        val pxValue = with(density) {dp.toPx()}  // Упрощённый расчёт
+
+        return pxValue
+    }
+
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-
+    val gesturesEnabled = remember { mutableStateOf(false) }
     val globalOffset = remember { mutableStateOf(Offset.Zero) }
-
-    var ghostVisible by remember { mutableStateOf(false) }
-    var ghostPosition by remember { mutableStateOf(Offset.Zero) }
-    var ghostContent by remember { mutableStateOf<@Composable () -> Unit>({ }) }
 
     ModalNavigationDrawer(
         drawerState = drawerState,
-        gesturesEnabled = false,
+        gesturesEnabled = gesturesEnabled.value,
+        modifier = Modifier
+            .fillMaxSize(),
         drawerContent = {
-            Box(modifier = Modifier
+            Column(modifier = Modifier
                 .background(DrawerColor)
             ){
+                Button(onClick = {
+                    scope.launch { drawerState.close() }
+                    gesturesEnabled.value = false
+                }) {
+                    Text("Закрыть")
+                }
                 LazyColumn(
                     modifier = Modifier
                         .padding(5.dp, 5.dp)
-                ) {
-                    item{
-                        Button(onClick = { scope.launch { drawerState.close() } }) {
-                            Text("Закрыть")
-                        }
-                    }
+                ){
                     item{
                         ListItem(
-                            { dragStartPosition ->
-                                ghostContent = { PrintBlockCard() }
-                                ghostPosition = dragStartPosition
-                                ghostVisible = true
-                            },
-                            { dragAmount ->
-                                ghostPosition += dragAmount
-                            },
-                            {
-                                viewModel.addBlock(
-                                    DraggableBlock(
-                                        PrintBlock(),
-                                        mutableStateOf(ghostPosition.x - globalOffset.value.x),
-                                        mutableStateOf(ghostPosition.y - globalOffset.value.y),
-                                        width = mutableStateOf(100.dp)
-                                    )
+                            { offset ->
+                                val newBlock = DraggableBlock(
+                                    PrintBlock(),
+                                    mutableStateOf(offset.x + dpToPx(200.dp) - globalOffset.value.x),
+                                    mutableStateOf(offset.y - dpToPx(60.dp) - globalOffset.value.y),
+                                    width = mutableStateOf(100.dp)
                                 )
-                                ghostVisible = false
-                            },
-                            {
-                                ghostVisible = false
+                                viewModel.handleAction(DraggableViewModel.BlocklyAction.AddBlock(newBlock))
                             }
                         ){
                             PrintBlockCard()
                         }
                     }
-                        item{
-                            Text("Математика", color = Color.White)
-                        }
-                        item {
-                            ListItem(
-                                { dragStartPosition ->
-                                    ghostContent = { IntLiteralBlockCard() }
-                                    ghostPosition = dragStartPosition
-                                    ghostVisible = true
-                                },
-                                { dragAmount ->
-                                    ghostPosition += dragAmount
-                                },
-                                {
-                                    viewModel.addBlock(
-                                        DraggableBlock(
-                                            IntLiteralBlock(),
-                                            mutableStateOf(ghostPosition.x - globalOffset.value.x),
-                                            mutableStateOf(ghostPosition.y - globalOffset.value.y),
-                                            width = mutableStateOf(100.dp)
-                                        )
-                                    )
-                                    ghostVisible = false
-                                },
-                                {
-                                    ghostVisible = false
-                                }
-                            ){
-                                IntLiteralBlockCard()
-                            }
-                        }
-                        item { Text("Переменные", color = Color.White) }
+                    item{
+                        Text("Математика", color = Color.White)
+                    }
                     item {
                         ListItem(
-                            { dragStartPosition ->
-                                ghostContent = { SetValueVariableCard() }
-                                ghostPosition = dragStartPosition
-                                ghostVisible = true
-                            },
-                            { dragAmount ->
-                                ghostPosition += dragAmount
-                            },
-                            {
-                                viewModel.addBlock(
-                                    DraggableBlock(
-                                        SetValueVariableBlock(),
-                                        mutableStateOf(ghostPosition.x - globalOffset.value.x),
-                                        mutableStateOf(ghostPosition.y - globalOffset.value.y),
-                                        width = mutableStateOf(200.dp)
-                                    )
+                            { offset ->
+                                val newBlock = DraggableBlock(
+                                    IntLiteralBlock(),
+                                    mutableStateOf(offset.x + dpToPx(200.dp) - globalOffset.value.x),
+                                    mutableStateOf(offset.y - dpToPx(60.dp) - globalOffset.value.y),
+                                    width = mutableStateOf(200.dp)
                                 )
-                                ghostVisible = false
-                            },
-                            {
-                                ghostVisible = false
+                                viewModel.handleAction(
+                                    DraggableViewModel.BlocklyAction.AddBlock(newBlock)
+                                )
+                            }
+                        ){
+                            IntLiteralBlockCard()
+                        }
+                        ListItem(
+                            { offset ->
+                                val newBlock = DraggableBlock(
+                                    OperandBlock(),
+                                    mutableStateOf(offset.x + dpToPx(200.dp) - globalOffset.value.x),
+                                    mutableStateOf(offset.y - dpToPx(60.dp) - globalOffset.value.y),
+                                    width = mutableStateOf(200.dp)
+                                )
+                                viewModel.handleAction(
+                                    DraggableViewModel.BlocklyAction.AddBlock(newBlock)
+                                )
+                            }
+                        ){
+                            OperandBlockCard()
+                        }
+                    }
+                    item { Text("Переменные", color = Color.White) }
+                    item {
+                        ListItem(
+                            { offset ->
+                                val newBlock = DraggableBlock(
+                                    SetValueVariableBlock(),
+                                    mutableStateOf(offset.x + dpToPx(200.dp) - globalOffset.value.x),
+                                    mutableStateOf(offset.y - dpToPx(60.dp) - globalOffset.value.y),
+                                    width = mutableStateOf(200.dp)
+                                )
+                                viewModel.handleAction(
+                                    DraggableViewModel.BlocklyAction.AddBlock(newBlock)
+                                )
                             }
                         ){
                             SetValueVariableCard()
@@ -240,27 +239,16 @@ fun CreateNewProject(
                     }
                     item {
                         ListItem(
-                            { dragStartPosition ->
-                                ghostContent = { DeclarationVariableCard() }
-                                ghostPosition = dragStartPosition
-                                ghostVisible = true
-                            },
-                            { dragAmount ->
-                                ghostPosition += dragAmount
-                            },
-                            {
-                                viewModel.addBlock(
-                                    DraggableBlock(
-                                        VariableDeclarationBlock(),
-                                        mutableStateOf(ghostPosition.x - globalOffset.value.x),
-                                        mutableStateOf(ghostPosition.y - globalOffset.value.y),
-                                        width = mutableStateOf(200.dp)
-                                    )
+                            { offset ->
+                                val newBlock = DraggableBlock(
+                                    VariableDeclarationBlock(),
+                                    mutableStateOf(offset.x + dpToPx(200.dp) - globalOffset.value.x),
+                                    mutableStateOf(offset.y - dpToPx(60.dp) - globalOffset.value.y),
+                                    width = mutableStateOf(200.dp)
                                 )
-                                ghostVisible = false
-                            },
-                            {
-                                ghostVisible = false
+                                viewModel.handleAction(
+                                    DraggableViewModel.BlocklyAction.AddBlock(newBlock)
+                                )
                             }
                         ){
                             DeclarationVariableCard()
@@ -268,121 +256,255 @@ fun CreateNewProject(
                     }
                     item {
                         ListItem(
-                            { dragStartPosition ->
-                                ghostContent = { ReferenceVariableCard() }
-                                ghostPosition = dragStartPosition
-                                ghostVisible = true
-                            },
-                            { dragAmount ->
-                                ghostPosition += dragAmount
-                            },
-                            {
-                                viewModel.addBlock(
-                                    DraggableBlock(
-                                        VariableReferenceBlock(),
-                                        mutableStateOf(ghostPosition.x - globalOffset.value.x),
-                                        mutableStateOf(ghostPosition.y - globalOffset.value.y),
-                                        width = mutableStateOf(100.dp)
-                                    )
+                            { offset ->
+                                val newBlock = DraggableBlock(
+                                    VariableReferenceBlock(),
+                                    mutableStateOf(offset.x + dpToPx(200.dp) - globalOffset.value.x),
+                                    mutableStateOf(offset.y - dpToPx(60.dp) - globalOffset.value.y),
+                                    width = mutableStateOf(150.dp)
                                 )
-                                ghostVisible = false
-                            },
-                            {
-                                ghostVisible = false
+                                viewModel.handleAction(
+                                    DraggableViewModel.BlocklyAction.AddBlock(newBlock)
+                                )
                             }
                         ){
                             ReferenceVariableCard()
                         }
                     }
                     item {
-                        Text("Логика", color = Color.White)
+                        Text(stringResource(R.string.logic), color = Color.White)
                     }
                     item {
                         ListItem(
-                            { dragStartPosition ->
-                                ghostContent = { IfBlockCard() }
-                                ghostPosition = dragStartPosition
-                                ghostVisible = true
-                            },
-                            { dragAmount ->
-                                ghostPosition += dragAmount
-                            },
-                            {
-                                viewModel.addBlock(
-                                    DraggableBlock(
-                                        IfBlock(),
-                                        mutableStateOf(ghostPosition.x - globalOffset.value.x),
-                                        mutableStateOf(ghostPosition.y - globalOffset.value.y),
-                                        width = mutableStateOf(100.dp)
-                                    )
+                            { offset ->
+                                val newBlock = DraggableBlock(
+                                    CompareNumbers(),
+                                    mutableStateOf(offset.x + dpToPx(200.dp) - globalOffset.value.x),
+                                    mutableStateOf(offset.y - dpToPx(60.dp) - globalOffset.value.y),
+                                    width = mutableStateOf(100.dp)
                                 )
-                                ghostVisible = false
-                            },
-                            {
-                                ghostVisible = false
+                                viewModel.handleAction(
+                                    DraggableViewModel.BlocklyAction.AddBlock(newBlock)
+                                )
+                            }
+                        ) {
+                            CompareNumbersBlockCard()
+                        }
+                    }
+                    item {
+                        ListItem(
+                            { offset ->
+                                val newBlock = DraggableBlock(
+                                    IfBlock(),
+                                    mutableStateOf(offset.x + dpToPx(200.dp) - globalOffset.value.x),
+                                    mutableStateOf(offset.y - dpToPx(60.dp) - globalOffset.value.y),
+                                    width = mutableStateOf(100.dp)
+                                )
+                                viewModel.handleAction(
+                                    DraggableViewModel.BlocklyAction.AddBlock(newBlock)
+                                )
                             }
                         ){
                             IfBlockCard()
                         }
+                        ListItem(
+                            { offset ->
+                                val newBlock = DraggableBlock(
+                                    ElseBlock(),
+                                    mutableStateOf(offset.x + dpToPx(200.dp) - globalOffset.value.x),
+                                    mutableStateOf(offset.y - dpToPx(60.dp) - globalOffset.value.y),
+                                    width = mutableStateOf(100.dp)
+                                )
+                                viewModel.handleAction(
+                                    DraggableViewModel.BlocklyAction.AddBlock(newBlock)
+                                )
+                            }
+                        ){
+                            ElseBlockCard()
+                        }
+                        ListItem(
+                            { offset ->
+                                val newBlock = DraggableBlock(
+                                    ElseIfBlock(),
+                                    mutableStateOf(offset.x + dpToPx(200.dp) - globalOffset.value.x),
+                                    mutableStateOf(offset.y - dpToPx(60.dp) - globalOffset.value.y),
+                                    width = mutableStateOf(100.dp)
+                                )
+                                viewModel.handleAction(
+                                    DraggableViewModel.BlocklyAction.AddBlock(newBlock)
+                                )
+                            }
+                        ){
+                            ElseIfBlockCard()
+                        }
                     }
-                }
-                if (ghostVisible) {
-                    Box(
-                        modifier = Modifier
-                            .offset { IntOffset(ghostPosition.x.roundToInt(), ghostPosition.y.roundToInt()) }
-                            .pointerInput(Unit) { }
-                    ) {
-                        ghostContent()
+                    item { Text(stringResource(R.string.loops), color = Color.White) }
+                    item{
+                        ListItem(
+                            { offset ->
+                                val newBlock = DraggableBlock(
+                                    WhileBlock(),
+                                    mutableStateOf(offset.x + dpToPx(200.dp) - globalOffset.value.x),
+                                    mutableStateOf(offset.y - dpToPx(60.dp) - globalOffset.value.y),
+                                    width = mutableStateOf(300.dp)
+                                )
+                                viewModel.handleAction(
+                                    DraggableViewModel.BlocklyAction.AddBlock(newBlock)
+                                )
+                            }
+                        ){
+                            WhileBlockCard()
+                        }
+                    }
+                    item {
+                        ListItem(
+                            { offset ->
+                                val newBlock = DraggableBlock(
+                                    ForBlock(),
+                                    mutableStateOf(offset.x + dpToPx(200.dp) - globalOffset.value.x),
+                                    mutableStateOf(offset.y - dpToPx(60.dp) - globalOffset.value.y),
+                                    width = mutableStateOf(100.dp)
+                                )
+                                viewModel.handleAction(
+                                    DraggableViewModel.BlocklyAction.AddBlock(newBlock)
+                                )
+                            }
+                        ){
+                            ForBlockCard()
+                        }
+                    }
+                    item { Text(stringResource(R.string.lists), color = Color.White) }
+                    item {
+                        ListItem(
+                            { offset ->
+                                val newBlock = DraggableBlock(
+                                    FixedValuesAndSizeList(),
+                                    mutableStateOf(offset.x + dpToPx(200.dp) - globalOffset.value.x),
+                                    mutableStateOf(offset.y - dpToPx(60.dp) - globalOffset.value.y),
+                                    width = mutableStateOf(400.dp)
+                                )
+                                viewModel.handleAction(
+                                    DraggableViewModel.BlocklyAction.AddBlock(newBlock)
+                                )
+                            }
+                        ){
+                            FixedValuesAndSizeListViewCard()
+                        }
+                    }
+                    item {
+                        ListItem(
+                            { offset ->
+                                val newBlock = DraggableBlock(
+                                    AddElementByIndex(),
+                                    mutableStateOf(offset.x + dpToPx(200.dp) - globalOffset.value.x),
+                                    mutableStateOf(offset.y - dpToPx(60.dp) - globalOffset.value.y),
+                                    width = mutableStateOf(400.dp)
+                                )
+                                viewModel.handleAction(
+                                    DraggableViewModel.BlocklyAction.AddBlock(newBlock)
+                                )
+                            }
+                        ){
+                            AddElementByIndexViewCard()
+                        }
+                    }
+                    item {
+                        ListItem(
+                            { offset ->
+                                val newBlock = DraggableBlock(
+                                    GetValueByIndex(),
+                                    mutableStateOf(offset.x + dpToPx(200.dp) - globalOffset.value.x),
+                                    mutableStateOf(offset.y - dpToPx(60.dp) - globalOffset.value.y),
+                                    width = mutableStateOf(400.dp)
+                                )
+                                viewModel.handleAction(
+                                    DraggableViewModel.BlocklyAction.AddBlock(newBlock)
+                                )
+                            }
+                        ){
+                            GetValueByIndexViewCard()
+                        }
+                    }
+                    item {
+                        ListItem(
+                            { offset ->
+                                val newBlock = DraggableBlock(
+                                    GetListSize(),
+                                    mutableStateOf(offset.x + dpToPx(200.dp) - globalOffset.value.x),
+                                    mutableStateOf(offset.y - dpToPx(60.dp) - globalOffset.value.y),
+                                    width = mutableStateOf(400.dp)
+                                )
+                                viewModel.handleAction(
+                                    DraggableViewModel.BlocklyAction.AddBlock(newBlock)
+                                )
+                            }
+                        ){
+                            GetListSizeViewCard()
+                        }
+                    }
+                    item {
+                        ListItem(
+                            { offset ->
+                                val newBlock = DraggableBlock(
+                                    RemoveValueByIndex(),
+                                    mutableStateOf(offset.x + dpToPx(200.dp) - globalOffset.value.x),
+                                    mutableStateOf(offset.y - dpToPx(60.dp) - globalOffset.value.y),
+                                    width = mutableStateOf(400.dp)
+                                )
+                                viewModel.handleAction(
+                                    DraggableViewModel.BlocklyAction.AddBlock(newBlock)
+                                )
+                            }
+                        ){
+                            RemoveValueByIndexCard()
+                        }
                     }
                 }
             }
         }
     ) {
+        var backPressedTime: Long = 0
+        BackHandler(enabled = true) {
+        val currentTime = System.currentTimeMillis()
+        val doubleBackPressInterval = 2000
+        if (currentTime - backPressedTime < doubleBackPressInterval) {
+            navController.popBackStack()
+        } else {
+            backPressedTime = currentTime
+            Toast.makeText(context, "Нажмите ещё раз для выхода", Toast.LENGTH_SHORT).show()
+        }
+    }
         Canvas(
-            { scope.launch { drawerState.open() } },
-            { toHomeBtn(navController) },
-            {newOffset -> globalOffset.value = newOffset }
+            {
+                scope.launch { drawerState.open() }
+                gesturesEnabled.value = true
+            },
+            {toHomeBtn(navController, { Logger.clearLogs()}) },
+            {
+                newOffset -> globalOffset.value = newOffset
+                gesturesEnabled.value = false
+            }
         )
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ListItem(
-    onDragStart: (dragStartPosition: Offset) -> Unit,
-    onDrag: (dragAmount: Offset) -> Unit,
-    onDragEnd: () -> Unit,
-    onDragCancel: () -> Unit,
+    onDoubleClick: (offset: Offset) -> Unit,
     content: @Composable () -> Unit
 ){
 
     var dragStartPosition by remember { mutableStateOf(Offset.Zero) }
-    var isDragging by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
             .onGloballyPositioned { coordinates ->
                 dragStartPosition = coordinates.positionInRoot()
             }
-            .pointerInput(Unit) {
-                detectDragGesturesAfterLongPress(
-                    onDragStart = { offset ->
-                        onDragStart(dragStartPosition)
-                        isDragging = true
-                    },
-                    onDrag = { change, dragAmount ->
-                        if (isDragging) {
-                            change.consume()
-                            onDrag(dragAmount)
-                        }
-                    },
-                    onDragEnd = {
-                        isDragging = false
-                        onDragEnd()
-                                },
-                    onDragCancel = {
-                        isDragging = false
-                        onDragCancel()
+            .pointerInput(Unit){
+                detectTapGestures(
+                    onDoubleTap = {
+                        onDoubleClick(dragStartPosition)
                     }
                 )
             }
@@ -450,108 +572,3 @@ fun About(navController: NavHostController){
         }
     }
 }
-
-/*
-@OptIn(ExperimentalComposeUiApi::class)
-@Composable
-fun DraggableListItem(
-    viewModel: DraggableViewModel,
-    createBlock: () -> Block,
-    defaultWidth: Dp,
-    ghostContent: @Composable () -> Unit,
-    content: @Composable () -> Unit
-) {
-
-    val dragState = rememberDragState()
-    var dragStartPosition by remember { mutableStateOf(Offset.Zero) }
-
-    Box(
-        modifier = Modifier
-            .onGloballyPositioned { coordinates ->
-                dragStartPosition = coordinates.positionInRoot()
-            }
-            .pointerInput(Unit) {
-                detectDragGestures(
-                    onDragStart = { offset ->
-                        dragState.onDragStart(dragStartPosition)
-                    },
-                    onDrag = { change, dragAmount ->
-                        change.consume()
-                        dragState.onDrag(dragAmount)
-                    },
-                    onDragEnd = {
-                        val newBlock = createBlock()
-                        viewModel.addBlock(
-                            DraggableBlock(
-                                newBlock.id.toString(),
-                                newBlock,
-                                x = mutableStateOf(dragState.ghostPosition.x - dragState.globalOffset.x),
-                                y = mutableStateOf(dragState.ghostPosition.y - dragState.globalOffset.y),
-                                width = mutableStateOf(defaultWidth)
-                            )
-                        )
-                        dragState.onDragEnd()
-                    },
-                    onDragCancel = { dragState.onDragCancel() }
-                )
-            }
-    ) {
-        content()
-    }
-
-    if (dragState.isGhostVisible) {
-        Box(
-            modifier = Modifier
-                .offset { dragState.ghostPosition.round() }
-                .pointerInput(Unit) { }
-                .zIndex(1f) // Поверх других элементов
-        ) {
-            ghostContent()
-        }
-    }
-}
-
- */
-
-/*
-@Composable
-fun CreateNewProject(
-    navController: NavHostController,
-    viewModel: DraggableViewModel = viewModel()
-) {
-    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-    val scope = rememberCoroutineScope()
-    val dragState = rememberDragState()
-
-    ModalNavigationDrawer(
-        drawerState = drawerState,
-        drawerContent = {
-            Box(Modifier.background(DrawerColor)) {
-                LazyColumn(Modifier.padding(5.dp)) {
-                    item { Button(onClick = { scope.launch { drawerState.close() } }) { Text("Закрыть") } }
-
-                    // Пример элемента
-                    item {
-                        DraggableListItem(
-                            viewModel = viewModel,
-                            createBlock = { IntLiteralBlock() },
-                            defaultWidth = 100.dp,
-                            ghostContent = { IntLiteralBlockCard(Modifier.alpha(0.7f)) }
-                        ) {
-                            IntLiteralBlockCard()
-                        }
-                    }
-
-                    // Другие элементы...
-                }
-            }
-        }
-    ) {
-        Canvas(
-            onOpenDrawer = { scope.launch { drawerState.open() } },
-            onHomeClick = { toHomeBtn(navController) },
-            onGlobalOffsetChange = { dragState.globalOffset = it }
-        )
-    }
-}
- */

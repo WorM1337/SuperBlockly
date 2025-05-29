@@ -2,8 +2,8 @@ package com.unewexp.superblockly.blocks.logic
 
 import com.example.myfirstapplicatioin.blocks.Block
 import com.example.myfirstapplicatioin.model.Connector
-import com.unewexp.superblockly.blocks.ErrorHandler
-import com.unewexp.superblockly.blocks.ExecutionContext
+import com.unewexp.superblockly.debug.ErrorHandler
+import com.unewexp.superblockly.debug.ExecutionContext
 import com.unewexp.superblockly.blocks.voidBlocks.VoidBlock
 import com.unewexp.superblockly.enums.BlockType
 import com.unewexp.superblockly.enums.ConnectorType
@@ -33,7 +33,7 @@ open class ConditionBlock(
     )
 
     val innerConnector = Connector( // соединение для внутреннего блока в условии
-        connectionType = ConnectorType.INPUT,
+        connectionType = ConnectorType.STRING_BOTTOM_INNER,
         sourceBlock = this,
         allowedBlockTypes = setOf(
             BlockType.IF_BLOCK,
@@ -52,7 +52,7 @@ open class ConditionBlock(
     )
 
     override val bottomConnector = Connector( // переход на следующий блок условия или дальше в программу
-        connectionType = ConnectorType.OUTPUT,
+        connectionType = ConnectorType.STRING_BOTTOM_OUTER,
         sourceBlock = this,
         allowedBlockTypes = setOf(
             BlockType.STRING_APPEND,

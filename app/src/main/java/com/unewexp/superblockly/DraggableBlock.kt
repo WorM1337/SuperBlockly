@@ -1,13 +1,16 @@
-package com.unewexp.superblockly.viewBlocks
+package com.unewexp.superblockly
 
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.myfirstapplicatioin.blocks.Block
 import com.example.myfirstapplicatioin.model.ConnectionView
 import com.unewexp.superblockly.enums.ConnectorType
 import com.unewexp.superblockly.model.ConnectorManager
+import com.unewexp.superblockly.viewBlocks.ViewInitialSize
 
 data class DraggableBlock(
     val block: Block,
@@ -15,12 +18,13 @@ data class DraggableBlock(
     var y: MutableState<Float>,
     var outputConnectionView: ConnectionView? = null,
     var inputConnectionViews: MutableList<ConnectionView> = mutableListOf(),
-    val scope: MutableList<DraggableBlock> = mutableListOf(),
+    val scope: SnapshotStateList<DraggableBlock> = mutableStateListOf(),
     var width: MutableState<Dp> = mutableStateOf(100.dp),
     var height: MutableState<Dp> = mutableStateOf(60.dp),
     var connectedParent: DraggableBlock? = null,
     var connectedParentConnectionView: ConnectionView? = null,
-    var isInner: Boolean = false // Показывает, находится ли блок внутри другого блока. Например, параметры для OperandBlock, либо поле для void-блоков для if
+    var isInner: Boolean = false, // Показывает, находится ли блок внутри другого блока. Например, параметры для OperandBlock, либо поле для void-блоков для if
+    var zIndex: MutableState<Float> = mutableStateOf(0f)
 ){
     init {
 

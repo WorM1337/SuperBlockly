@@ -1,9 +1,8 @@
 package com.unewexp.superblockly.blocks.voidBlocks
 
 import com.example.myfirstapplicatioin.model.Connector
-import com.unewexp.superblockly.blocks.ExecutionContext
-import com.unewexp.superblockly.blocks.Logger
-import com.unewexp.superblockly.blocks.Logger.LogType
+import com.unewexp.superblockly.debug.Logger
+import com.unewexp.superblockly.debug.Logger.LogType
 import com.unewexp.superblockly.enums.BlockType
 import com.unewexp.superblockly.enums.ConnectorType
 import java.lang.IllegalStateException

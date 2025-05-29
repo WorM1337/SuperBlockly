@@ -36,8 +36,8 @@ fun TopConnector(
     color: Color = Color(0xFF2069B8),
     isConnected: Boolean = false
 ) {
-    val connectorWidth = 48.dp
-    val connectorHeight = 24.dp
+    val connectorWidth = 20.dp
+    val connectorHeight = 16.dp
 
     Box(
         modifier = modifier
@@ -47,51 +47,13 @@ fun TopConnector(
         Canvas(
             modifier = Modifier.size(connectorWidth, connectorHeight)
         ) {
-            val width = size.width
-            val height = size.height
-            val cornerRadius = height / 2
 
-            val mainPath = Path().apply {
-                arcTo(
-                    rect = Rect(Offset(0f, -cornerRadius), Size(cornerRadius * 2, height)),
-                    startAngleDegrees = 0f,
-                    sweepAngleDegrees = 180f,
-                    forceMoveTo = false
-                )
-                arcTo(
-                    rect = Rect(Offset(2*cornerRadius, -cornerRadius), Size(cornerRadius * 2, height)),
-                    startAngleDegrees = 0f,
-                    sweepAngleDegrees = 180f,
-                    forceMoveTo = false
-                )
-                close()
-            }
-
-            val maskPath = Path().apply {
+            val path = Path().apply {
                 addRect(Rect(Offset.Zero, size))
             }
 
-            var invertedPath = Path.combine(
-                operation = PathOperation.Difference,
-                path1 = maskPath,
-                path2 = mainPath
-            )
-
-            val path2 = Path().apply {
-                moveTo(0f, 0f)
-                lineTo(0f, height)
-                moveTo(width, 0f)
-                lineTo(width, height)
-            }
-
-            invertedPath = Path.combine(
-                operation = PathOperation.Difference,
-                path1 = invertedPath,
-                path2 = path2
-            )
-
             drawPath(
-                path = invertedPath,
+                path = path,
                 color = color,
                 style = Fill
             )

@@ -2,10 +2,8 @@ package com.example.myfirstapplicatioin.utils
 
 import com.example.myfirstapplicatioin.model.ConnectionView
 import com.example.myfirstapplicatioin.model.Connector
-import com.unewexp.superblockly.blocks.ErrorHandler
+import com.unewexp.superblockly.debug.ErrorHandler
 import com.unewexp.superblockly.enums.ConnectorType
-import java.lang.Math.pow
-import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -28,8 +26,8 @@ fun checkTypeConnector(source: Connector, target: Connector): Boolean{
         return when (source.connectionType) {
                 ConnectorType.INPUT -> target.connectionType == ConnectorType.OUTPUT
                 ConnectorType.OUTPUT -> target.connectionType == ConnectorType.INPUT
-                ConnectorType.STRING_TOP -> target.connectionType == ConnectorType.STRING_BOTTOM
-                ConnectorType.STRING_BOTTOM -> target.connectionType == ConnectorType.STRING_TOP
+                ConnectorType.STRING_TOP -> target.connectionType == ConnectorType.STRING_BOTTOM_OUTER || target.connectionType == ConnectorType.STRING_BOTTOM_INNER
+                ConnectorType.STRING_BOTTOM_OUTER, ConnectorType.STRING_BOTTOM_INNER -> target.connectionType == ConnectorType.STRING_TOP
         }
 }
 

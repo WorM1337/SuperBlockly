@@ -1,11 +1,11 @@
 package com.unewexp.superblockly.blocks
 
 import com.example.myfirstapplicatioin.blocks.Block
-import com.example.myfirstapplicatioin.model.Connector
 import com.unewexp.superblockly.blocks.voidBlocks.VoidBlock
+import com.unewexp.superblockly.debug.ErrorHandler
+import com.unewexp.superblockly.debug.ExecutionContext
+import com.unewexp.superblockly.debug.Logger
 import com.unewexp.superblockly.enums.BlockType
-import com.unewexp.superblockly.enums.ConnectorType
-import java.lang.IllegalStateException
 import java.util.UUID
 
 class StartBlock : VoidBlock(UUID.randomUUID(), BlockType.START) {
@@ -13,6 +13,7 @@ class StartBlock : VoidBlock(UUID.randomUUID(), BlockType.START) {
     override fun execute() {
 
         Logger.clearLogs()
+
         ExecutionContext.clearVariables()
 
         getNextBlock()?.let { firstBlock ->
@@ -31,6 +32,7 @@ class StartBlock : VoidBlock(UUID.randomUUID(), BlockType.START) {
                 }
             } finally {
                 ExecutionContext.exitCurrentScope()
+                Logger.markFinished()
             }
         }
     }
