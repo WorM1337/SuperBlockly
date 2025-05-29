@@ -16,7 +16,7 @@ open class LoopBlock(
 
 
     val innerConnector = Connector(
-        connectionType = ConnectorType.INPUT,
+        connectionType = ConnectorType.STRING_BOTTOM_INNER,
         sourceBlock = this,
         allowedBlockTypes = setOf(
             BlockType.IF_BLOCK,
