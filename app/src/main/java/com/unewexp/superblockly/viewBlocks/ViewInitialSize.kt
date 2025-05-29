@@ -12,6 +12,7 @@ object ViewInitialSize {
 
     val cornerOffset: Dp = 15.dp
     val defaultHeight = 60.dp
+    val defaultWidth = 20.dp
 
     fun getInitialSizeByBlockType(blockType: BlockType) : PairDp?{
         return when(blockType){
@@ -48,7 +49,7 @@ object ViewInitialSize {
             BlockType.IF_BLOCK ->
                 PairDp(width = 100.dp, height = 140.dp)
             BlockType.ELSE_BLOCK ->
-                PairDp(width = 200.dp, height = 60.dp)
+                PairDp(width = 100.dp, height = 140.dp)
             BlockType.IF_ELSE_BLOCK ->
                 PairDp(width = 200.dp, height = 60.dp)
             BlockType.REPEAT_N_TIMES ->

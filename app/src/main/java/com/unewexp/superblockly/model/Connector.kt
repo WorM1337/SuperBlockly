@@ -1,6 +1,7 @@
 package com.example.myfirstapplicatioin.model
 
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.example.myfirstapplicatioin.blocks.Block
 
 import com.unewexp.superblockly.blocks.list.GetValueByIndex
@@ -16,7 +17,9 @@ data class ConnectionView(
     var positionX: Dp,
     var positionY: Dp,
     val extendType: ExtendConnectionViewType = ExtendConnectionViewType.NONE,
-    var isConnected: Boolean = false
+    var isConnected: Boolean = false,
+    var width: Dp = 0.dp,
+    var height: Dp = 0.dp,
 )
 
 data class Connector(

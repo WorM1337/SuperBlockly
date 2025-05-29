@@ -33,6 +33,7 @@ import com.unewexp.superblockly.blocks.list.GetValueByIndex
 import com.unewexp.superblockly.blocks.list.RemoveValueByIndex
 import com.unewexp.superblockly.blocks.logic.BooleanLogicBlock
 import com.unewexp.superblockly.blocks.logic.CompareNumbers
+import com.unewexp.superblockly.blocks.logic.ElseBlock
 import com.unewexp.superblockly.blocks.logic.ElseIfBlock
 import com.unewexp.superblockly.blocks.logic.NotBlock
 import com.unewexp.superblockly.blocks.loops.ForBlock
@@ -65,13 +66,13 @@ object ConnectorManager {
             else -> throw IllegalArgumentException("Коннектор типа ${connectable.outputConnectionView!!.connector.connectionType} выступил как получатель")
         }
     }
-    fun DisconnectBlock(sourceBlock: DraggableBlock){
+    fun DisconnectBlock(sourceBlock: DraggableBlock, viewModel: DraggableViewModel){
 
         sourceBlock.connectedParent?.let{
             sourceBlock.connectedParentConnectionView?.let{
                 disconnect(sourceBlock.outputConnectionView!!.connector, sourceBlock.connectedParentConnectionView!!.connector)
 
-                SizeManager.changeParentParams(sourceBlock, deltaHeight =  CalculationsManager.getSummaryHeight(sourceBlock), deltaWidth = sourceBlock.width.value, isPositive = false)
+                SizeManager.changeParentParams(sourceBlock, viewModel, isPositive = false)
 
                 sourceBlock.connectedParent!!.scope.remove(sourceBlock)
 
@@ -117,7 +118,7 @@ object ConnectorManager {
         target.scope.add(connectable)
         Log.i("Connect", "${connectable.block.blockType}")
 
-        SizeManager.changeParentParams(connectable)
+        SizeManager.changeParentParams(connectable, viewModel)
 
         // Для всех дочерних блоков нужно высчитать isInner. Для коннекторов кроме STRING_BOTTOM_OUTER isInner наследуется
         // (если после этого встретили OUTER, то его помечаем isInner для корректного удаления)
@@ -197,7 +198,7 @@ object ConnectorManager {
             nearestBlock.scope.add(sourceDragBlock)
             Log.i("Connect", "${sourceDragBlock.block.blockType}")
 
-            SizeManager.changeParentParams(sourceDragBlock)
+            SizeManager.changeParentParams(sourceDragBlock, viewModel)
 
             // Для всех дочерних блоков нужно высчитать isInner. Для коннекторов кроме STRING_BOTTOM_OUTER isInner наследуется
             // (если после этого встретили OUTER, то его помечаем isInner для корректного удаления)
@@ -238,7 +239,7 @@ object ConnectorManager {
                 throw IllegalArgumentException("ConnectionView для ${sourceDragBlock.block.blockType} оказался null")
             }
             else if(CalculationsManager.getLengthFromConnections(sourceDragBlock, sourceDragBlock.connectedParent!!, sourceDragBlock.outputConnectionView!!, sourceDragBlock.connectedParentConnectionView!!, density) > connetionLength){
-                DisconnectBlock(sourceDragBlock)
+                DisconnectBlock(sourceDragBlock, viewModel)
 
                 // Убираем isInner для всех прикреплённых нижних блоков
 
@@ -274,6 +275,23 @@ object ConnectorManager {
         return true
     }
 
+    fun normalizeConnectorsPositions(block: DraggableBlock, viewModel: DraggableViewModel, besides: DraggableBlock? = null){
+        val density = viewModel.density
+        block.scope.forEach{ child ->
+            if(besides == null || child != besides) {
+                val childConX = with(density) {child.outputConnectionView!!.positionX.toPx()}
+                val childConY = with(density) {child.outputConnectionView!!.positionY.toPx()}
+                val ConX = with(density) {child.connectedParentConnectionView!!.positionX.toPx()}
+                val ConY = with(density) {child.connectedParentConnectionView!!.positionY.toPx()}
+
+                viewModel.handleAction(DraggableViewModel.BlocklyAction.MoveBlock(
+                    child,
+                    child.connectedParent!!.x.value + ConX - (child.x.value + childConX),
+                    child.connectedParent!!.y.value + ConY - (child.y.value + childConY)
+                ))
+            }
+        }
+    }
 
     private fun getBlockWithNearestConnection(dragBlock: DraggableBlock, listBlocks: MutableList<DraggableBlock>, density: Density, connectionTypes: MutableList<ConnectorType>, requiresVoid: Boolean): DraggableBlock? {
 
@@ -355,7 +373,7 @@ object ConnectorManager {
 
         val cornerOffset = ViewInitialSize.cornerOffset
         val defaultHeight = ViewInitialSize.defaultHeight
-
+        val defaultWidth = ViewInitialSize.defaultWidth
         val sizeOfBlock = ViewInitialSize.getInitialSizeByBlockType(block.blockType)
             ?: throw IllegalArgumentException("Для блока типа ${block.blockType} не заданы размеры")
 
@@ -376,8 +394,8 @@ object ConnectorManager {
 
                 ans += mutableListOf(
                     ConnectionView(castedBlock.outputConnector, 0.dp, height/2),
-                    ConnectionView(castedBlock.leftInputConnector, width/4, height/2, ExtendConnectionViewType.INNER),
-                    ConnectionView(castedBlock.rightInputConnector, width*3/4, height/2, ExtendConnectionViewType.INNER),
+                    ConnectionView(castedBlock.leftInputConnector, width/4, height/2, ExtendConnectionViewType.INNER, height = defaultHeight-10.dp, width = defaultWidth),
+                    ConnectionView(castedBlock.rightInputConnector, width*3/4, height/2, ExtendConnectionViewType.INNER, height = defaultHeight-10.dp, width = defaultWidth),
                 )
             }
             BlockType.SET_VARIABLE_VALUE -> {
@@ -460,7 +478,7 @@ object ConnectorManager {
                     ConnectionView(castedBlock.topConnector, cornerOffset, 0.dp),
                     ConnectionView(castedBlock.bottomConnector, cornerOffset, height),
                     ConnectionView(castedBlock.innerConnector, cornerOffset, defaultHeight, ExtendConnectionViewType.INNER_BOTTOM),
-                    ConnectionView(castedBlock.conditionConnector, width, defaultHeight/2, ExtendConnectionViewType.SIDE)
+                    ConnectionView(castedBlock.conditionConnector, width, defaultHeight/2, ExtendConnectionViewType.SIDE, height = defaultHeight)
                 )
             }
             BlockType.FOR_BLOCK -> {
@@ -512,12 +530,12 @@ object ConnectorManager {
                 )
             }
             BlockType.ELSE_BLOCK -> {
-                val castedBlock = (block as ElseIfBlock)
+                val castedBlock = (block as ElseBlock)
 
                 ans += mutableListOf(
                     ConnectionView(castedBlock.topConnector, cornerOffset, 0.dp),
                     ConnectionView(castedBlock.bottomConnector, cornerOffset, height),
-                    ConnectionView(castedBlock.innerConnector, cornerOffset, 60.dp, ExtendConnectionViewType.INNER_BOTTOM),
+                    ConnectionView(castedBlock.innerConnector, cornerOffset, defaultHeight, ExtendConnectionViewType.INNER_BOTTOM),
                 )
             }
             BlockType.IF_ELSE_BLOCK -> {
