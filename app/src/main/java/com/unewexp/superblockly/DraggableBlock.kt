@@ -1,7 +1,9 @@
 package com.unewexp.superblockly
 
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.myfirstapplicatioin.blocks.Block
@@ -16,7 +18,7 @@ data class DraggableBlock(
     var y: MutableState<Float>,
     var outputConnectionView: ConnectionView? = null,
     var inputConnectionViews: MutableList<ConnectionView> = mutableListOf(),
-    val scope: MutableList<DraggableBlock> = mutableListOf(),
+    val scope: SnapshotStateList<DraggableBlock> = mutableStateListOf(),
     var width: MutableState<Dp> = mutableStateOf(100.dp),
     var height: MutableState<Dp> = mutableStateOf(60.dp),
     var connectedParent: DraggableBlock? = null,

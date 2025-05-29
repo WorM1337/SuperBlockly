@@ -274,9 +274,13 @@ fun Canvas(
 fun TakeViewBlock (block: DraggableBlock, viewModel: DraggableViewModel = viewModel()){
     val blockType = block.block.blockType
     when(blockType){
-        BlockType.OPERAND -> OperandBlockView { type ->
+        BlockType.OPERAND -> OperandBlockView (
+            { type ->
             (block.block as OperandBlock).operand = type
-        }
+
+        },
+            block
+        )
         BlockType.SET_VARIABLE_VALUE -> SetValueVariableView { newValue ->
             viewModel.updateValue(block, newValue)
         }

@@ -1,5 +1,6 @@
 package com.unewexp.superblockly.viewBlocks
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -27,10 +28,14 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,6 +50,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.unewexp.superblockly.DraggableBlock
 import com.unewexp.superblockly.R
 import com.unewexp.superblockly.Spinner
 import com.unewexp.superblockly.enums.CompareType
@@ -736,13 +742,33 @@ fun PrintBlockView() {
 
 @Composable
 fun OperandBlockView(
-    onOperandSelected: (OperandType) -> Unit = {}
+    onOperandSelected: (OperandType) -> Unit,
+    block: DraggableBlock
 ) {
     var selectedOperand by remember { mutableStateOf(OperandType.PLUS) }
     var expanded by remember { mutableStateOf(false) }
 
-    val box1Width = remember { mutableStateOf(70.dp) }
-    val box2Width = remember { mutableStateOf(70.dp) }
+    fun determineBlocks(blocks: SnapshotStateList<DraggableBlock>): Pair<DraggableBlock?, DraggableBlock?> {
+        return when (blocks.size) {  // Используем параметр blocks, а не block.scope
+            0 -> Pair(null, null)
+            1 -> {
+                val singleBlock = blocks.first()
+                val isLeft = singleBlock.x.value < block.x.value + block.width.value.value / 2
+                if (isLeft) Pair(singleBlock, null) else Pair(null, singleBlock)
+            }
+            else -> {
+                val sortedBlocks = blocks.sortedBy { it.x.value }
+                Pair(sortedBlocks.first(), sortedBlocks.last())
+            }
+        }
+    }
+
+    val (leftBlock, rightBlock) = remember(block.scope, block.scope.map { it.x.value }) {
+        determineBlocks(block.scope)
+    }
+
+    val box1Width by derivedStateOf { leftBlock?.width?.value ?: 70.dp }
+    val box2Width by derivedStateOf { rightBlock?.width?.value ?: 70.dp }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -758,7 +784,7 @@ fun OperandBlockView(
         ) {
             Box(
                 modifier = Modifier
-                    .width(box1Width.value)
+                    .width(box1Width)
                     .fillMaxHeight()
                     .background(
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.1f),
@@ -805,7 +831,7 @@ fun OperandBlockView(
 
             Box(
                 modifier = Modifier
-                    .width(box2Width.value)
+                    .width(box2Width)
                     .fillMaxHeight()
                     .background(
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.1f),
@@ -884,7 +910,7 @@ fun WhileBlockView() {
 
     Box(
         modifier = Modifier
-            .width(60.dp)
+            .width(80.dp)
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
