@@ -55,9 +55,7 @@ object SizeManager {
 
             currentBlock.height.value += deltaHeight * plusOrMinus
 
-            val diffrenceHeight = if(currentBlock.height.value - oldHeight < 0.dp) oldHeight - currentBlock.height.value else currentBlock.height.value - oldHeight
-
-            changeParentParams(currentBlock,viewModel, deltaHeight = diffrenceHeight, isPositive = isPositive)
+            changeParentParams(currentBlock,viewModel, deltaHeight = deltaHeight, isPositive = isPositive)
             ConnectorManager.normalizeConnectorsPositions(parent,viewModel, besides = child)
             return
         }
