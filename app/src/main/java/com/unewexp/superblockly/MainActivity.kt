@@ -2,8 +2,12 @@
 
 package com.unewexp.superblockly
 
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -85,7 +89,7 @@ class MainActivity : ComponentActivity() {
                     NavHost(navController = navController, startDestination = Routes.Home.route) {
 
                         composable(Routes.Home.route) { Home(navController) }
-                        composable(Routes.CreateProject.route) { CreateNewProject(navController)  }
+                        composable(Routes.CreateProject.route) { CreateNewProject(navController, this@MainActivity.applicationContext)  }
                         composable(Routes.MyProjects.route) { MyProjects(navController)  }
                         composable(Routes.About.route) { About(navController) }
                     }
@@ -127,6 +131,7 @@ fun Home(navController: NavHostController) {
 @Composable
 fun CreateNewProject(
     navController: NavHostController,
+    context: Context,
     viewModel: DraggableViewModel = viewModel()
 ){
 
@@ -142,16 +147,22 @@ fun CreateNewProject(
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
+    val gesturesEnabled = remember { mutableStateOf(false) }
     val globalOffset = remember { mutableStateOf(Offset.Zero) }
 
     ModalNavigationDrawer(
         drawerState = drawerState,
-        gesturesEnabled = false,
+        gesturesEnabled = gesturesEnabled.value,
+        modifier = Modifier
+            .fillMaxSize(),
         drawerContent = {
             Column(modifier = Modifier
                 .background(DrawerColor)
             ){
-                Button(onClick = { scope.launch { drawerState.close() } }) {
+                Button(onClick = {
+                    scope.launch { drawerState.close() }
+                    gesturesEnabled.value = false
+                }) {
                     Text("Закрыть")
                 }
                 LazyColumn(
@@ -452,10 +463,27 @@ fun CreateNewProject(
             }
         }
     ) {
+        var backPressedTime: Long = 0
+        BackHandler(enabled = true) {
+        val currentTime = System.currentTimeMillis()
+        val doubleBackPressInterval = 2000
+        if (currentTime - backPressedTime < doubleBackPressInterval) {
+            navController.popBackStack()
+        } else {
+            backPressedTime = currentTime
+            Toast.makeText(context, "Нажмите ещё раз для выхода", Toast.LENGTH_SHORT).show()
+        }
+    }
         Canvas(
-            { scope.launch { drawerState.open() } },
+            {
+                scope.launch { drawerState.open() }
+                gesturesEnabled.value = true
+            },
             {toHomeBtn(navController, { Logger.clearLogs()}) },
-            {newOffset -> globalOffset.value = newOffset }
+            {
+                newOffset -> globalOffset.value = newOffset
+                gesturesEnabled.value = false
+            }
         )
     }
 }
