@@ -36,4 +36,6 @@
     <string name="length_of">length of</string>
     <string name="list">list</string>
     <string name="remove">remove</string>
+    <string name="edit">edit</string>
+    <string name="count">count</string>
 </resources>

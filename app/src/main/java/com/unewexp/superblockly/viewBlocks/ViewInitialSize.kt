@@ -66,7 +66,7 @@ object ViewInitialSize {
             BlockType.GET_VALUE_BY_INDEX ->
                 PairDp(width = 200.dp, height = 60.dp)
             BlockType.REMOVE_VALUE_BY_INDEX ->
-                PairDp(width = 200.dp, height = 60.dp)
+                PairDp(width = 260.dp, height = 60.dp)
             BlockType.ADD_VALUE_BY_INDEX ->
                 PairDp(width = 300.dp, height = 60.dp)
             BlockType.GET_LIST_SIZE ->

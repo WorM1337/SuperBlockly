@@ -1097,7 +1097,7 @@ fun ForBlockViewForCard() {
 }
 
 @Composable
-fun FixedValuesAndSizeListView(){
+fun FixedValuesAndSizeListView(block: DraggableBlock){
     Row{
 
         Text(
@@ -1112,7 +1112,13 @@ fun FixedValuesAndSizeListView(){
                 .fillMaxHeight()
                 .padding(4.dp)
                 .background(EmptySpace)
-        ){}
+        ){
+            Text(
+                stringResource(R.string.list),
+                style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black.copy(alpha = 0.5f), fontSize = 14.sp),
+                modifier = Modifier.padding(4.dp)
+            )
+        }
 
         Text(
             stringResource(R.string.repeated),
@@ -1126,7 +1132,13 @@ fun FixedValuesAndSizeListView(){
                 .fillMaxHeight()
                 .padding(4.dp)
                 .background(EmptySpace)
-        ){}
+        ){
+            Text(
+                stringResource(R.string.count),
+                style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black.copy(alpha = 0.5f), fontSize = 14.sp),
+                modifier = Modifier.padding(4.dp)
+            )
+        }
 
         Text(
             stringResource(R.string.times),
@@ -1165,7 +1177,46 @@ fun FixedValuesAndSizeListViewForCard(){
 }
 
 @Composable
-fun AddElementByIndexView(){
+fun AddElementByIndexView(block: DraggableBlock){
+
+    fun determineBlocks(blocks: SnapshotStateList<DraggableBlock>): Pair<DraggableBlock?, DraggableBlock?> {
+        return when (blocks.size) {
+            0 -> Pair(null, null)
+            1 -> {
+                val singleBlock = blocks.first()
+                if(singleBlock.y.value > block.y.value + block.height.value.value / 2){
+                    Pair(null, null)
+                }
+                else {
+                    val isLeft = singleBlock.x.value < block.x.value + block.width.value.value / 2
+                    if (isLeft) Pair(singleBlock, null) else Pair(null, singleBlock)
+                }
+            }
+            2 -> {
+                var sortedBlocks = blocks.sortedBy { it.y.value }
+                if(sortedBlocks.first().y.value != sortedBlocks.last().y.value){
+                    Pair(sortedBlocks.first(), null)
+                }else{
+                    sortedBlocks = blocks.sortedBy { it.x.value }
+                    Pair(sortedBlocks.first(), sortedBlocks.last())
+                }
+            }
+            else -> {
+                var sortedBlocks = blocks.sortedBy { it.y.value }
+                sortedBlocks = listOf(sortedBlocks.first(), sortedBlocks[1])
+                sortedBlocks = sortedBlocks.sortedBy { it.x.value }
+                Pair(sortedBlocks.first(), sortedBlocks.last())
+            }
+        }
+    }
+
+    val (leftBlock, rightBlock) = remember(block.scope, block.scope.map { it.x.value }) {
+        determineBlocks(block.scope)
+    }
+
+    val box1Width by derivedStateOf { leftBlock?.width?.value ?: 60.dp }
+    val box2Width by derivedStateOf { rightBlock?.width?.value ?: 60.dp }
+
     Row(
         modifier = Modifier.fillMaxSize()
     ){
@@ -1177,11 +1228,17 @@ fun AddElementByIndexView(){
 
         Box(
             modifier = Modifier
-                .width(60.dp)
+                .width(box1Width)
                 .fillMaxHeight()
                 .padding(4.dp)
                 .background(EmptySpace)
-        ){}
+        ){
+            Text(
+                stringResource(R.string.list),
+                style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black.copy(alpha = 0.5f), fontSize = 14.sp),
+                modifier = Modifier.padding(4.dp)
+            )
+        }
 
         Text(
             stringResource(R.string.insert),
@@ -1191,7 +1248,7 @@ fun AddElementByIndexView(){
 
         Box(
             modifier = Modifier
-                .width(60.dp)
+                .width(box2Width)
                 .fillMaxHeight()
                 .padding(4.dp)
                 .background(EmptySpace)
@@ -1203,19 +1260,11 @@ fun AddElementByIndexView(){
             )
         }
 
-        Box(
-            modifier = Modifier
-                .width(60.dp)
-                .fillMaxHeight()
-                .padding(4.dp)
-                .background(EmptySpace)
-        ){
-            Text(
-                stringResource(R.string.value),
-                style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black.copy(alpha = 0.5f), fontSize = 14.sp),
-                modifier = Modifier.padding(4.dp)
-            )
-        }
+        Text(
+            stringResource(R.string.value),
+            style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
+            modifier = Modifier.padding(4.dp)
+        )
     }
 }
 
@@ -1240,7 +1289,7 @@ fun AddElementByIndexViewForCard(){
 }
 
 @Composable
-fun GetValueByIndexView(){
+fun GetValueByIndexView(block: DraggableBlock){
     Row(
         modifier = Modifier.fillMaxSize()
     ){
@@ -1256,7 +1305,13 @@ fun GetValueByIndexView(){
                 .fillMaxHeight()
                 .padding(4.dp)
                 .background(EmptySpace)
-        ){}
+        ){
+            Text(
+                stringResource(R.string.list),
+                style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black.copy(alpha = 0.5f), fontSize = 14.sp),
+                modifier = Modifier.padding(4.dp)
+            )
+        }
 
         Text(
             stringResource(R.string.get),
@@ -1328,7 +1383,46 @@ fun GetListSizeViewForCard(){
 }
 
 @Composable
-fun RemoveValueByIndexView(){
+fun RemoveValueByIndexView(block: DraggableBlock){
+
+    fun determineBlocks(blocks: SnapshotStateList<DraggableBlock>): Pair<DraggableBlock?, DraggableBlock?> {
+        return when (blocks.size) {
+            0 -> Pair(null, null)
+            1 -> {
+                val singleBlock = blocks.first()
+                if(singleBlock.y.value > block.y.value + block.height.value.value / 2){
+                    Pair(null, null)
+                }
+                else {
+                    val isLeft = singleBlock.x.value < block.x.value + block.width.value.value / 2
+                    if (isLeft) Pair(singleBlock, null) else Pair(null, singleBlock)
+                }
+            }
+            2 -> {
+                var sortedBlocks = blocks.sortedBy { it.y.value }
+                if(sortedBlocks.first().y.value != sortedBlocks.last().y.value){
+                    Pair(sortedBlocks.first(), null)
+                }else{
+                    sortedBlocks = blocks.sortedBy { it.x.value }
+                    Pair(sortedBlocks.first(), sortedBlocks.last())
+                }
+            }
+            else -> {
+                var sortedBlocks = blocks.sortedBy { it.y.value }
+                sortedBlocks = listOf(sortedBlocks.first(), sortedBlocks[1])
+                sortedBlocks = sortedBlocks.sortedBy { it.x.value }
+                Pair(sortedBlocks.first(), sortedBlocks.last())
+            }
+        }
+    }
+
+    val (leftBlock, rightBlock) = remember(block.scope, block.scope.map { it.x.value }) {
+        determineBlocks(block.scope)
+    }
+
+    val box1Width by derivedStateOf { leftBlock?.width?.value ?: 60.dp }
+    val box2Width by derivedStateOf { rightBlock?.width?.value ?: 60.dp }
+
     Row(
         modifier = Modifier.fillMaxSize()
     ){
@@ -1340,11 +1434,17 @@ fun RemoveValueByIndexView(){
 
         Box(
             modifier = Modifier
-                .width(60.dp)
+                .width(box1Width)
                 .fillMaxHeight()
                 .padding(4.dp)
                 .background(EmptySpace)
-        ){}
+        ){
+            Text(
+                stringResource(R.string.list),
+                style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black.copy(alpha = 0.5f), fontSize = 14.sp),
+                modifier = Modifier.padding(4.dp)
+            )
+        }
 
         Text(
             stringResource(R.string.remove),
@@ -1354,7 +1454,7 @@ fun RemoveValueByIndexView(){
 
         Box(
             modifier = Modifier
-                .width(60.dp)
+                .width(box2Width)
                 .fillMaxHeight()
                 .padding(4.dp)
                 .background(EmptySpace)
@@ -1382,6 +1482,72 @@ fun RemoveValueByIndexViewForCard(){
         )
         Text(
             stringResource(R.string.remove) + " " + stringResource(R.string.value),
+            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black, fontSize = 14.sp),
+            modifier = Modifier.padding(2.dp)
+        )
+    }
+}
+
+@Composable
+fun EditValueByIndexView(block: DraggableBlock){
+    Row(
+        modifier = Modifier.fillMaxSize()
+    ){
+        Text(
+            stringResource(R.string.in_list),
+            style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
+            modifier = Modifier.padding(4.dp)
+        )
+
+        Box(
+            modifier = Modifier
+                .width(60.dp)
+                .fillMaxHeight()
+                .padding(4.dp)
+                .background(EmptySpace)
+        ){}
+
+        Text(
+            stringResource(R.string.edit),
+            style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
+            modifier = Modifier.padding(4.dp)
+        )
+
+        Box(
+            modifier = Modifier
+                .width(60.dp)
+                .fillMaxHeight()
+                .padding(4.dp)
+                .background(EmptySpace)
+        ){
+            Text(
+                stringResource(R.string.id),
+                style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black.copy(alpha = 0.5f), fontSize = 14.sp),
+                modifier = Modifier.padding(4.dp)
+            )
+        }
+        Text(
+            stringResource(R.string.value),
+            style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
+            modifier = Modifier.padding(4.dp)
+        )
+    }
+}
+
+@Composable
+fun EditValueByIndexViewForCard(){
+    Row(
+        modifier = Modifier.fillMaxSize(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        Text(
+            stringResource(R.string.in_list),
+            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black, fontSize = 14.sp),
+            modifier = Modifier.padding(2.dp)
+        )
+        Text(
+            stringResource(R.string.edit),
             style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black, fontSize = 14.sp),
             modifier = Modifier.padding(2.dp)
         )

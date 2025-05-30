@@ -6,6 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.rememberTransformableState
 import androidx.compose.foundation.gestures.transformable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -39,6 +40,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.unewexp.superblockly.blocks.StartBlock
 import com.unewexp.superblockly.debug.ConsolePanel
@@ -99,67 +101,64 @@ fun Canvas(
         )
     }
 
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        topBar = {
-            Box(
-                modifier = Modifier.fillMaxWidth().height(50.dp).background(Color.White)
-            ) {
-                Row {
-                    Box {
-                        IconButton(onClick = openDrawer) {
-                            Icon(Icons.Filled.List, null)
-                        }
-                    }
-                }
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Row{
-                        Box(
-                            Modifier
-                                .padding(2.dp)
-                        ){
-                            IconButton(
-                                onClick = { panelIsVisible = !panelIsVisible },
-                                modifier =
-                                    Modifier
-                                        .border(3.dp, Color.Black, CircleShape)
-                            ) {
-                                Icon(Icons.Filled.Info, null)
-                            }
-                        }
-                        Box(
-                            Modifier
-                                .padding(2.dp)
-                        ){
-                            IconButton(
-                                onClick = { blocks[0].block.execute() },
-                                modifier =
-                                    Modifier
-                                        .border(3.dp, Color.Green, CircleShape)
-                            ) {
-                                Icon(Icons.Filled.PlayArrow, null)
-                            }
-                        }
-
-                    }
-                }
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(0.dp, 0.dp, 5.dp, 0.dp),
-                    contentAlignment = Alignment.CenterEnd
-                ) {
-                    Row{
-                        onHomeClick()
+    Column(modifier = Modifier.fillMaxSize()) {
+        Box(
+            modifier = Modifier.fillMaxWidth().height(50.dp).background(Color.White).zIndex(100000f)
+        ) {
+            Row {
+                Box {
+                    IconButton(onClick = openDrawer) {
+                        Icon(Icons.Filled.List, null)
                     }
                 }
             }
-        },
-        content = { paddingValues ->
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                Row{
+                    Box(
+                        Modifier
+                            .padding(2.dp)
+                    ){
+                        IconButton(
+                            onClick = { panelIsVisible = !panelIsVisible },
+                            modifier =
+                                Modifier
+                                    .border(3.dp, Color.Black, CircleShape)
+                        ) {
+                            Icon(Icons.Filled.Info, null)
+                        }
+                    }
+                    Box(
+                        Modifier
+                            .padding(2.dp)
+                    ){
+                        IconButton(
+                            onClick = { blocks[0].block.execute() },
+                            modifier =
+                                Modifier
+                                    .border(3.dp, Color.Green, CircleShape)
+                        ) {
+                            Icon(Icons.Filled.PlayArrow, null)
+                        }
+                    }
+
+                }
+            }
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(0.dp, 0.dp, 5.dp, 0.dp),
+                contentAlignment = Alignment.CenterEnd
+            ) {
+                Row{
+                    onHomeClick()
+                }
+            }
+        }
+        Box(modifier = Modifier.fillMaxWidth()){
             val scale = remember { mutableFloatStateOf(1f) }
             val currentScale = remember{ mutableStateOf(1f) }
 
@@ -167,7 +166,6 @@ fun Canvas(
                 modifier = Modifier
                     .width(4000.dp)
                     .height(2000.dp)
-                    .padding(paddingValues)
                     .background(Color.LightGray)
 
                     .transformable(
@@ -252,13 +250,11 @@ fun Canvas(
                 contentAlignment = Alignment.BottomEnd
             ){
                 if(panelIsVisible){
-                    ConsolePanel(
-                        height = LocalConfiguration.current.screenHeightDp.dp - 50.dp
-                    )
+                    ConsolePanel()
                 }
             }
         }
-    )
+    }
 }
 
 
@@ -312,10 +308,10 @@ fun TakeViewBlock (block: DraggableBlock, viewModel: DraggableViewModel = viewMo
             viewModel.updateValue(block, newValue)
         }
         BlockType.FOR_ELEMENT_IN_LIST -> TODO()
-        BlockType.FIXED_VALUE_AND_SIZE_LIST -> FixedValuesAndSizeListView()
-        BlockType.GET_VALUE_BY_INDEX -> GetValueByIndexView()
-        BlockType.REMOVE_VALUE_BY_INDEX -> RemoveValueByIndexView()
-        BlockType.ADD_VALUE_BY_INDEX -> AddElementByIndexView()
+        BlockType.FIXED_VALUE_AND_SIZE_LIST -> FixedValuesAndSizeListView(block)
+        BlockType.GET_VALUE_BY_INDEX -> GetValueByIndexView(block)
+        BlockType.REMOVE_VALUE_BY_INDEX -> RemoveValueByIndexView(block)
+        BlockType.ADD_VALUE_BY_INDEX -> AddElementByIndexView(block)
         BlockType.GET_LIST_SIZE -> GetListSizeView()
         BlockType.EDIT_VALUE_BY_INDEX -> TODO()
         BlockType.PUSH_BACK_ELEMENT -> TODO()

@@ -39,9 +39,7 @@ import androidx.compose.ui.unit.min
 
 
 @Composable
-fun ConsolePanel(
-    height: Dp
-){
+fun ConsolePanel(){
     val logs = Logger.logs
     var isExpanded by remember{ mutableStateOf(true) }
     var widthDp by remember { mutableStateOf(200.dp) }
@@ -66,7 +64,7 @@ fun ConsolePanel(
 
     Box(
         modifier = Modifier
-            .height(height)
+            .fillMaxHeight()
             .wrapContentWidth(Alignment.End)
             .width( if (isExpanded) widthDp else rolledUp)
             .background(
