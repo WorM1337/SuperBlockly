@@ -19,7 +19,7 @@ open class ConditionBlock(
         BlockType.IF_ELSE_BLOCK
     )
 
-    val conditionConnector = Connector( // условие выполнения блока
+    val conditionConnector = Connector(
         connectionType = ConnectorType.INPUT,
         sourceBlock = this,
         allowedBlockTypes = setOf(
@@ -32,7 +32,7 @@ open class ConditionBlock(
         allowedDataTypes = setOf(Boolean::class.java)
     )
 
-    val innerConnector = Connector( // соединение для внутреннего блока в условии
+    val innerConnector = Connector(
         connectionType = ConnectorType.STRING_BOTTOM_INNER,
         sourceBlock = this,
         allowedBlockTypes = setOf(
@@ -48,10 +48,12 @@ open class ConditionBlock(
             BlockType.FOR_ELEMENT_IN_LIST,
             BlockType.ADD_VALUE_BY_INDEX,
             BlockType.REMOVE_VALUE_BY_INDEX,
+            BlockType.PUSH_BACK_ELEMENT,
+            BlockType.EDIT_VALUE_BY_INDEX,
         )
     )
 
-    override val bottomConnector = Connector( // переход на следующий блок условия или дальше в программу
+    override val bottomConnector = Connector(
         connectionType = ConnectorType.STRING_BOTTOM_OUTER,
         sourceBlock = this,
         allowedBlockTypes = setOf(
@@ -69,6 +71,9 @@ open class ConditionBlock(
             BlockType.FOR_ELEMENT_IN_LIST,
             BlockType.ADD_VALUE_BY_INDEX,
             BlockType.REMOVE_VALUE_BY_INDEX,
+            BlockType.PUSH_BACK_ELEMENT,
+            BlockType.EDIT_VALUE_BY_INDEX,
+
         )
     )
 
@@ -89,11 +94,7 @@ open class ConditionBlock(
             try {
                 var current: Block? = firstBlock
                 while (current != null){
-                    try{
-                        current.execute()
-                    } catch (ex: Exception){
-                        ErrorHandler.setBlockError(current, ex.message ?: "Неизвестная ошибка")
-                    }
+                    current.execute()
                     current = ExecutionContext.getNextBlockInScope()
                 }
             } finally{

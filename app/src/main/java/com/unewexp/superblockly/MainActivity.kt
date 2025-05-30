@@ -148,7 +148,7 @@ fun CreateNewProject(
     viewModel.density = density
 
     fun dpToPx(dp: Dp): Float {
-        val pxValue = with(density) {dp.toPx()}  // Упрощённый расчёт
+        val pxValue = with(density) {dp.toPx()}
 
         return pxValue
     }
@@ -171,7 +171,7 @@ fun CreateNewProject(
                     scope.launch { drawerState.close() }
                     gesturesEnabled.value = false
                 }) {
-                    Text("Закрыть")
+                    Text(stringResource(R.string.close))
                 }
                 LazyColumn(
                     modifier = Modifier
@@ -616,7 +616,7 @@ fun CreateNewProject(
             navController.popBackStack()
         } else {
             backPressedTime = currentTime
-            Toast.makeText(context, "Нажмите ещё раз для выхода", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, R.string.toast_message, Toast.LENGTH_SHORT).show()
         }
     }
         Canvas(

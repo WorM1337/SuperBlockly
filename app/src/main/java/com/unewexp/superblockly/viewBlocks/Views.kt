@@ -75,6 +75,8 @@ import com.unewexp.superblockly.enums.OperandType
 import com.unewexp.superblockly.enums.symbol
 import com.unewexp.superblockly.ui.theme.EmptySpace
 import com.unewexp.superblockly.ui.theme.Pink40
+import com.unewexp.superblockly.ui.theme.innerColor
+import com.unewexp.superblockly.ui.theme.textColor
 
 @Composable
 fun StartBlockView() {
@@ -85,8 +87,10 @@ fun StartBlockView() {
         shadowElevation = 8.dp
     ) {
         Box(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize()
+                .background(innerColor),
             contentAlignment = Alignment.Center
+
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -97,7 +101,7 @@ fun StartBlockView() {
                     style = MaterialTheme.typography.headlineLarge.copy(
                         fontSize = 32.sp,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                        color = textColor
                     ),
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(horizontal = 24.dp)
@@ -208,7 +212,7 @@ fun IntLiteralView(
 
 @Composable
 fun IntLiteralViewForCard(){
-    TextFieldLike(placeholder = "Num", modifier = Modifier.fillMaxWidth())
+    TextFieldLike(placeholder = stringResource(R.string.Num), modifier = Modifier.fillMaxWidth())
 }
 
 @Composable
@@ -245,7 +249,7 @@ fun BooleanLiteralBlockView(
                 ) {
                     if (value.text.isEmpty()) {
                         Text(
-                            "Value",
+                            stringResource(R.string.value),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
                         )
@@ -263,7 +267,7 @@ fun BooleanLiteralBlockView(
 
 @Composable
 fun BooleanLiteralBlockViewForCard(){
-    TextFieldLike(placeholder = "Boolean", modifier = Modifier.fillMaxWidth())
+    TextFieldLike(placeholder = stringResource(R.string.Boolean), modifier = Modifier.fillMaxWidth())
 }
 
 @Composable
@@ -509,7 +513,7 @@ fun SetValueVariableView(
             )
 
             Text(
-                "to",
+                stringResource(R.string.to),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(start = 8.dp)

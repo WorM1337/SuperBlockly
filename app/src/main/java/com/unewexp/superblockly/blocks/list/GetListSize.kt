@@ -2,6 +2,7 @@ package com.unewexp.superblockly.blocks.list
 
 import com.example.myfirstapplicatioin.blocks.Block
 import com.example.myfirstapplicatioin.model.Connector
+import com.unewexp.superblockly.debug.BlockIllegalStateException
 import com.unewexp.superblockly.enums.BlockType
 import com.unewexp.superblockly.enums.ConnectorType
 import java.util.UUID
@@ -25,7 +26,7 @@ class GetListSize : Block(UUID.randomUUID(), BlockType.GET_LIST_SIZE) {
         checkDebugPause()
 
         val list = listConnector.connectedTo?.evaluate() as? List<*>
-            ?: throw IllegalStateException("Переданная переменная не содержит список")
+            ?: throw BlockIllegalStateException(this, "Переданная переменная не содержит список")
 
         return list.size
     }

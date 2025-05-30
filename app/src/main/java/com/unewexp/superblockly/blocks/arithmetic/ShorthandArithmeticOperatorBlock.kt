@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import com.example.myfirstapplicatioin.model.Connector
 import com.unewexp.superblockly.debug.ExecutionContext
 import com.unewexp.superblockly.blocks.voidBlocks.VoidBlock
+import com.unewexp.superblockly.debug.BlockIllegalStateException
 import com.unewexp.superblockly.enums.BlockType
 import com.unewexp.superblockly.enums.ConnectorType
 import com.unewexp.superblockly.enums.OperandType
@@ -29,14 +30,14 @@ class ShorthandArithmeticOperatorBlock(var initialVariableName: String = "Undefi
         checkDebugPause()
 
         if (!ExecutionContext.hasVariable(selectedVariableName)){
-            throw IllegalStateException("Переменная $selectedVariableName не существует")
+            throw BlockIllegalStateException(this, "Переменная $selectedVariableName не существует")
         }
 
         val currentValue = ExecutionContext.getVariable(selectedVariableName) as? Int
-            ?: throw IllegalStateException("Значение переменной не является числом Int")
+            ?: throw BlockIllegalStateException(this, "Значение переменной не является числом Int")
 
         val additionalValue = inputConnector.connectedTo?.evaluate() as? Int
-            ?: throw java.lang.IllegalStateException("Значение справа не является числом Int")
+            ?: throw BlockIllegalStateException(this, "Значение справа не является числом Int")
 
         ExecutionContext.changeVariableValue(selectedVariableName, performOperation(currentValue, additionalValue))
     }

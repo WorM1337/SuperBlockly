@@ -56,7 +56,9 @@ import com.unewexp.superblockly.debug.ExecutionContext
 import com.unewexp.superblockly.debug.RunProgram
 import com.unewexp.superblockly.ui.theme.ActiveRunProgram
 import com.unewexp.superblockly.ui.theme.ConnectorColor
+import com.unewexp.superblockly.ui.theme.canvasBackground
 import com.unewexp.superblockly.ui.theme.stopProgram
+import com.unewexp.superblockly.ui.theme.topBarBackground
 import com.unewexp.superblockly.viewBlocks.AddElementByIndexView
 import com.unewexp.superblockly.viewBlocks.BooleanLiteralBlockView
 import com.unewexp.superblockly.viewBlocks.BooleanLogicBlockView
@@ -93,7 +95,7 @@ fun Canvas(
     openDrawer: () -> Unit,
     onHomeClick: @Composable () -> Unit,
     updateOffset: (newOffset: Offset) -> Unit,
-    viewModel: DraggableViewModel = viewModel()
+    viewModel: DraggableViewModel = viewModel(),
 ) {
     val density = LocalDensity.current
     val zoomFactor = 0.7f
@@ -141,7 +143,8 @@ fun Canvas(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(55.dp)
-                .background(Color.White)
+                .background(topBarBackground)
+
                 .zIndex(100000f)
         ) {
             Box(
@@ -199,7 +202,7 @@ fun Canvas(
                             }
                         }
 
-                        Spacer(modifier = Modifier.size(16.dp))
+                        Spacer(modifier = Modifier.size(22.dp))
 
                         Box(
                             contentAlignment = Alignment.Center
@@ -243,7 +246,7 @@ fun Canvas(
                         }
 
                         if (ExecutionContext.programProgress != RunProgram.NONE) {
-                            Spacer(modifier = Modifier.size(16.dp))
+                            Spacer(modifier = Modifier.size(22.dp))
                             Box(
 
                             ) {
@@ -266,7 +269,7 @@ fun Canvas(
 
 
                     }
-                    Spacer(modifier = Modifier.size(16.dp))
+                    Spacer(modifier = Modifier.size(22.dp))
                     Row {
                         Box(
                             Modifier
@@ -285,7 +288,7 @@ fun Canvas(
                         }
 
                         if (ExecutionContext.programProgress == RunProgram.DEBUG) {
-                            Spacer(modifier = Modifier.size(16.dp))
+                            Spacer(modifier = Modifier.size(22.dp))
                             Box() {
                                 IconButton(
                                     onClick = {
@@ -323,7 +326,7 @@ fun Canvas(
                 modifier = Modifier
                     .width(4000.dp)
                     .height(2000.dp)
-                    .background(Color.LightGray)
+                    .background(canvasBackground)
 
                     .transformable(
                         state = rememberTransformableState { zoomChange, offsetChange, _ ->

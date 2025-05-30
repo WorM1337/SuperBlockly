@@ -48,4 +48,8 @@
     <string name="not">not</string>
     <string name="math">Математика</string>
     <string name="plus">+</string>
+    <string name="Boolean">Boolean</string>
+    <string name="Num">Num</string>
+    <string name="close">Закрыть</string>
+    <string name="toast_message">Нажмите ещё раз для выхода</string>
 </resources>

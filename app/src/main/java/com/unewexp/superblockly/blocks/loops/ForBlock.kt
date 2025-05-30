@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import com.example.myfirstapplicatioin.model.Connector
 import com.unewexp.superblockly.debug.ExecutionContext
 import com.unewexp.superblockly.blocks.voidBlocks.VoidBlock
+import com.unewexp.superblockly.debug.BlockIllegalStateException
 import com.unewexp.superblockly.enums.BlockType
 import com.unewexp.superblockly.enums.ConnectorType
 import java.lang.IllegalStateException
@@ -37,13 +38,13 @@ class ForBlock(var initialName: String = "i") : LoopBlock(UUID.randomUUID(), Blo
     override suspend fun execute() {
         checkDebugPause()
         val currentValueVariable = initialValueBlock.connectedTo?.evaluate() as? Int
-            ?: throw IllegalStateException("Переменная в цикле должна быть Int")
+            ?: throw BlockIllegalStateException(this, "Начальное значение переменной должно быть типа Int")
 
         val lastValue = maxValueBlock.connectedTo?.evaluate() as? Int
-            ?: throw IllegalStateException("Последнее значение в цикле должно быть Int")
+            ?: throw BlockIllegalStateException(this, "Последнее значение в цикле должно быть Int")
 
         val stepValue = abs(stepBlock.connectedTo?.evaluate() as? Int
-            ?: throw IllegalStateException("Шаг в цикле должен быть Int"))
+            ?: throw BlockIllegalStateException(this, "Шаг в цикле должен быть Int"))
 
         if (lastValue >= currentValueVariable){
             for (i in currentValueVariable..lastValue step stepValue){
