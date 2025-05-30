@@ -55,6 +55,7 @@ import com.unewexp.superblockly.blocks.logic.CompareNumbers
 import com.unewexp.superblockly.enums.symbol
 import com.unewexp.superblockly.viewBlocks.AddElementByIndexView
 import com.unewexp.superblockly.viewBlocks.CompareNumbersBlockView
+import com.unewexp.superblockly.viewBlocks.EditValueByIndexView
 import com.unewexp.superblockly.viewBlocks.ElseBlockView
 import com.unewexp.superblockly.viewBlocks.ElseIfBlockView
 import com.unewexp.superblockly.viewBlocks.FixedValuesAndSizeListView
@@ -65,6 +66,7 @@ import com.unewexp.superblockly.viewBlocks.IfBlockView
 import com.unewexp.superblockly.viewBlocks.IntLiteralView
 import com.unewexp.superblockly.viewBlocks.OperandBlockView
 import com.unewexp.superblockly.viewBlocks.PrintBlockView
+import com.unewexp.superblockly.viewBlocks.PushBackElementView
 import com.unewexp.superblockly.viewBlocks.RemoveValueByIndexView
 import com.unewexp.superblockly.viewBlocks.SetValueVariableView
 import com.unewexp.superblockly.viewBlocks.StartBlockView
@@ -318,7 +320,7 @@ fun TakeViewBlock (block: DraggableBlock, viewModel: DraggableViewModel = viewMo
         BlockType.REMOVE_VALUE_BY_INDEX -> RemoveValueByIndexView(block)
         BlockType.ADD_VALUE_BY_INDEX -> AddElementByIndexView(block)
         BlockType.GET_LIST_SIZE -> GetListSizeView()
-        BlockType.EDIT_VALUE_BY_INDEX -> TODO()
-        BlockType.PUSH_BACK_ELEMENT -> TODO()
+        BlockType.EDIT_VALUE_BY_INDEX -> EditValueByIndexView(block)
+        BlockType.PUSH_BACK_ELEMENT -> PushBackElementView(block)
     }
 }

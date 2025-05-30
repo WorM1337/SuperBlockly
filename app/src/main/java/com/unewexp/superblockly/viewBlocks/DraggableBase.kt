@@ -9,6 +9,7 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -55,7 +56,7 @@ fun DraggableBase(
     Box(
         modifier = Modifier
             .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
-            .size(currentBlock.width.value, currentBlock.height.value)
+            .requiredSize(currentBlock.width.value, currentBlock.height.value)
             .background(color, shape = MaterialTheme.shapes.small)
             .border(border, MaterialTheme.shapes.small)
             .pointerInput(Unit) {

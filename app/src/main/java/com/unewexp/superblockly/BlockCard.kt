@@ -13,6 +13,7 @@ import com.unewexp.superblockly.blocks.logic.CompareNumbers
 import com.unewexp.superblockly.viewBlocks.AddElementByIndexViewForCard
 import com.unewexp.superblockly.viewBlocks.CompareNumbersBlockForCard
 import com.unewexp.superblockly.viewBlocks.DeclarationVariableViewForCard
+import com.unewexp.superblockly.viewBlocks.EditValueByIndexViewForCard
 import com.unewexp.superblockly.viewBlocks.ElseBlockViewForCard
 import com.unewexp.superblockly.viewBlocks.ElseIfBlockViewForCard
 import com.unewexp.superblockly.viewBlocks.FixedValuesAndSizeListViewForCard
@@ -24,6 +25,7 @@ import com.unewexp.superblockly.viewBlocks.IfBlockViewForCard
 import com.unewexp.superblockly.viewBlocks.IntLiteralViewForCard
 import com.unewexp.superblockly.viewBlocks.OperandBlockForCard
 import com.unewexp.superblockly.viewBlocks.PrintBlockView
+import com.unewexp.superblockly.viewBlocks.PushBackElementViewForCard
 import com.unewexp.superblockly.viewBlocks.RemoveValueByIndexViewForCard
 import com.unewexp.superblockly.viewBlocks.SetValueVariableViewForCard
 import com.unewexp.superblockly.viewBlocks.VariableReferenceViewForCard
@@ -242,5 +244,29 @@ fun RemoveValueByIndexCard(){
             .padding(2.dp)
     ){
         RemoveValueByIndexViewForCard()
+    }
+}
+
+@Composable
+fun EditValueByIndexCard(){
+    Card(
+        modifier = Modifier
+            .width(200.dp)
+            .height(60.dp)
+            .padding(2.dp)
+    ){
+        EditValueByIndexViewForCard()
+    }
+}
+
+@Composable
+fun PushBackElementCard(){
+    Card(
+        modifier = Modifier
+            .width(200.dp)
+            .height(60.dp)
+            .padding(2.dp)
+    ){
+        PushBackElementViewForCard()
     }
 }

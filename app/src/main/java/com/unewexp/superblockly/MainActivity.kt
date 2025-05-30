@@ -58,9 +58,11 @@ import com.unewexp.superblockly.ui.theme.DrawerColor
 import com.unewexp.superblockly.ui.theme.SuperBlocklyTheme
 import com.unewexp.superblockly.blocks.arithmetic.OperandBlock
 import com.unewexp.superblockly.blocks.list.AddElementByIndex
+import com.unewexp.superblockly.blocks.list.EditValueByIndex
 import com.unewexp.superblockly.blocks.list.FixedValuesAndSizeList
 import com.unewexp.superblockly.blocks.list.GetListSize
 import com.unewexp.superblockly.blocks.list.GetValueByIndex
+import com.unewexp.superblockly.blocks.list.PushBackElement
 import com.unewexp.superblockly.blocks.list.RemoveValueByIndex
 import com.unewexp.superblockly.blocks.logic.CompareNumbers
 import com.unewexp.superblockly.blocks.logic.ElseBlock
@@ -457,6 +459,40 @@ fun CreateNewProject(
                             }
                         ){
                             RemoveValueByIndexCard()
+                        }
+                    }
+                    item {
+                        ListItem(
+                            { offset ->
+                                val newBlock = DraggableBlock(
+                                    EditValueByIndex(),
+                                    mutableStateOf(offset.x + dpToPx(200.dp) - globalOffset.value.x),
+                                    mutableStateOf(offset.y - dpToPx(60.dp) - globalOffset.value.y),
+                                    width = mutableStateOf(400.dp)
+                                )
+                                viewModel.handleAction(
+                                    DraggableViewModel.BlocklyAction.AddBlock(newBlock)
+                                )
+                            }
+                        ){
+                            EditValueByIndexCard()
+                        }
+                    }
+                    item {
+                        ListItem(
+                            { offset ->
+                                val newBlock = DraggableBlock(
+                                    PushBackElement(),
+                                    mutableStateOf(offset.x + dpToPx(200.dp) - globalOffset.value.x),
+                                    mutableStateOf(offset.y - dpToPx(60.dp) - globalOffset.value.y),
+                                    width = mutableStateOf(400.dp)
+                                )
+                                viewModel.handleAction(
+                                    DraggableViewModel.BlocklyAction.AddBlock(newBlock)
+                                )
+                            }
+                        ){
+                            PushBackElementCard()
                         }
                     }
                 }

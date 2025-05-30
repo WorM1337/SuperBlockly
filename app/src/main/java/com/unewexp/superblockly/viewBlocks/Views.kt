@@ -55,6 +55,7 @@ import com.unewexp.superblockly.blocks.list.AddElementByIndex
 import com.unewexp.superblockly.blocks.list.EditValueByIndex
 import com.unewexp.superblockly.blocks.list.FixedValuesAndSizeList
 import com.unewexp.superblockly.blocks.list.GetValueByIndex
+import com.unewexp.superblockly.blocks.list.PushBackElement
 import com.unewexp.superblockly.blocks.list.RemoveValueByIndex
 import com.unewexp.superblockly.blocks.logic.CompareNumbers
 import com.unewexp.superblockly.blocks.loops.ForBlock
@@ -1176,7 +1177,7 @@ fun FixedValuesAndSizeListView(block: DraggableBlock){
     val box1Width by derivedStateOf { leftBlock?.width?.value ?: 60.dp }
     val box2Width by derivedStateOf { rightBlock?.width?.value ?: 60.dp }
 
-    Row{
+    Row(verticalAlignment = Alignment.CenterVertically){
         Text(
             stringResource(R.string.create_list_with),
             style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
@@ -1279,7 +1280,8 @@ fun AddElementByIndexView(block: DraggableBlock){
     val box2Width by derivedStateOf { rightBlock?.width?.value ?: 60.dp }
 
     Row(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
+        verticalAlignment = Alignment.CenterVertically
     ){
         Text(
             stringResource(R.string.in_list),
@@ -1375,7 +1377,8 @@ fun GetValueByIndexView(block: DraggableBlock){
     val box2Width by derivedStateOf { rightBlock?.width?.value ?: 60.dp }
 
     Row(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
+        verticalAlignment = Alignment.CenterVertically
     ){
         Text(
             stringResource(R.string.in_list),
@@ -1442,7 +1445,8 @@ fun GetValueByIndexViewForCard(){
 @Composable
 fun GetListSizeView(){
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
     ){
         Text(
             stringResource(R.string.length_of),
@@ -1492,7 +1496,8 @@ fun RemoveValueByIndexView(block: DraggableBlock){
     val box2Width by derivedStateOf { rightBlock?.width?.value ?: 60.dp }
 
     Row(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
+        verticalAlignment = Alignment.CenterVertically
     ){
         Text(
             stringResource(R.string.in_list),
@@ -1582,7 +1587,8 @@ fun EditValueByIndexView(block: DraggableBlock){
     val box2Width by derivedStateOf { rightBlock?.width?.value ?: 60.dp }
 
     Row(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
+        verticalAlignment = Alignment.CenterVertically
     ){
         Text(
             stringResource(R.string.in_list),
@@ -1596,7 +1602,13 @@ fun EditValueByIndexView(block: DraggableBlock){
                 .fillMaxHeight()
                 .padding(4.dp)
                 .background(EmptySpace)
-        ){}
+        ){
+            Text(
+                stringResource(R.string.list),
+                style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black.copy(alpha = 0.5f), fontSize = 14.sp),
+                modifier = Modifier.padding(4.dp)
+            )
+        }
 
         Text(
             stringResource(R.string.edit),
@@ -1639,6 +1651,75 @@ fun EditValueByIndexViewForCard(){
         )
         Text(
             stringResource(R.string.edit),
+            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black, fontSize = 14.sp),
+            modifier = Modifier.padding(2.dp)
+        )
+    }
+}
+
+@Composable
+fun PushBackElementView(block: DraggableBlock){
+    fun determineBlocks(blocks: SnapshotStateList<DraggableBlock>): DraggableBlock? {
+        blocks.forEach { it ->
+            if (it.block == (block.block as PushBackElement).listConnector.connectedTo){
+                return it
+            }
+        }
+        return null
+    }
+
+    val leftBlock = remember(block.scope, block.scope.map { it.x.value }) {
+        determineBlocks(block.scope)
+    }
+
+    val box1Width by derivedStateOf { leftBlock?.width?.value ?: 60.dp }
+
+    Row(
+        modifier = Modifier.fillMaxSize(),
+        verticalAlignment = Alignment.CenterVertically
+    ){
+        Text(
+            stringResource(R.string.in_list),
+            style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
+            modifier = Modifier.padding(4.dp)
+        )
+
+        Box(
+            modifier = Modifier
+                .width(box1Width)
+                .fillMaxHeight()
+                .padding(4.dp)
+                .background(EmptySpace)
+        ){
+            Text(
+                stringResource(R.string.list),
+                style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black.copy(alpha = 0.5f), fontSize = 14.sp),
+                modifier = Modifier.padding(4.dp)
+            )
+        }
+
+        Text(
+            stringResource(R.string.push_back),
+            style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
+            modifier = Modifier.padding(4.dp)
+        )
+    }
+}
+
+@Composable
+fun PushBackElementViewForCard(){
+    Row(
+        modifier = Modifier.fillMaxSize(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        Text(
+            stringResource(R.string.in_list),
+            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black, fontSize = 14.sp),
+            modifier = Modifier.padding(2.dp)
+        )
+        Text(
+            stringResource(R.string.push_back) + " " + stringResource(R.string.value),
             style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black, fontSize = 14.sp),
             modifier = Modifier.padding(2.dp)
         )
