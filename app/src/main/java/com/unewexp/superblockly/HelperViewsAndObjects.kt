@@ -30,6 +30,7 @@ import com.unewexp.superblockly.ui.theme.LoopColor
 import com.unewexp.superblockly.ui.theme.MathColor
 import com.unewexp.superblockly.ui.theme.PrintColor
 import com.unewexp.superblockly.ui.theme.StartColor
+import com.unewexp.superblockly.ui.theme.StringColor
 import com.unewexp.superblockly.ui.theme.VariablesColor
 
 sealed class Routes(val route: String) {
@@ -66,30 +67,6 @@ fun toHomeBtn(
     }
 }
 
-
-class DragState {
-    var isGhostVisible by mutableStateOf(false)
-    var ghostPosition by mutableStateOf(Offset.Zero)
-    var globalOffset by mutableStateOf(Offset.Zero)
-
-    fun onDragStart(dragStartPosition: Offset) {
-        ghostPosition = dragStartPosition
-        isGhostVisible = true
-    }
-
-    fun onDrag(dragAmount: Offset) {
-        ghostPosition += dragAmount
-    }
-
-    fun onDragEnd() {
-        isGhostVisible = false
-    }
-
-    fun onDragCancel() {
-        isGhostVisible = false
-    }
-}
-
 @Composable
 fun getColorByBlockType(type: BlockType): Color {
     var color: Color = Color(0xFFE0E0E0)
@@ -102,9 +79,9 @@ fun getColorByBlockType(type: BlockType): Color {
         BlockType.SHORTHAND_ARITHMETIC_BLOCK -> color = MathColor
         BlockType.VARIABLE_DECLARATION -> color = VariablesColor
         BlockType.VARIABLE_REFERENCE -> color = VariablesColor
-        BlockType.STRING_CONCAT -> TODO()
-        BlockType.STRING_APPEND -> TODO()
-        BlockType.STRING_LITERAL -> TODO()
+        BlockType.STRING_CONCAT -> color = StringColor
+        BlockType.STRING_APPEND -> color = StringColor
+        BlockType.STRING_LITERAL -> color = StringColor
         BlockType.PRINT_BLOCK -> color = PrintColor
         BlockType.COMPARE_NUMBERS_BLOCK -> color = BooleanColor
         BlockType.BOOLEAN_LOGIC_BLOCK -> color = BooleanColor

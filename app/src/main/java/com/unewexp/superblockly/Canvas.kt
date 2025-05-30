@@ -1,6 +1,5 @@
 package com.unewexp.superblockly
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.rememberTransformableState
@@ -13,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -22,7 +20,6 @@ import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -35,10 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -46,14 +40,13 @@ import com.unewexp.superblockly.blocks.StartBlock
 import com.unewexp.superblockly.debug.ConsolePanel
 import com.unewexp.superblockly.enums.BlockType
 import com.unewexp.superblockly.model.ConnectorManager
-import com.unewexp.superblockly.viewBlocks.BottomConnector
-import com.unewexp.superblockly.viewBlocks.DeclarationVariableView
+import com.unewexp.superblockly.viewBlocks.VariableDeclarationBlockView
 import com.unewexp.superblockly.viewBlocks.DraggableBase
-import com.unewexp.superblockly.DraggableBlock
 import com.unewexp.superblockly.blocks.arithmetic.OperandBlock
 import com.unewexp.superblockly.blocks.logic.CompareNumbers
-import com.unewexp.superblockly.enums.symbol
+import com.unewexp.superblockly.ui.theme.ConnectorColor
 import com.unewexp.superblockly.viewBlocks.AddElementByIndexView
+import com.unewexp.superblockly.viewBlocks.BooleanLiteralBlockView
 import com.unewexp.superblockly.viewBlocks.CompareNumbersBlockView
 import com.unewexp.superblockly.viewBlocks.EditValueByIndexView
 import com.unewexp.superblockly.viewBlocks.ElseBlockView
@@ -70,12 +63,11 @@ import com.unewexp.superblockly.viewBlocks.PushBackElementView
 import com.unewexp.superblockly.viewBlocks.RemoveValueByIndexView
 import com.unewexp.superblockly.viewBlocks.SetValueVariableView
 import com.unewexp.superblockly.viewBlocks.StartBlockView
+import com.unewexp.superblockly.viewBlocks.StringLiteralBlockView
 import com.unewexp.superblockly.viewBlocks.TopConnector
 import com.unewexp.superblockly.viewBlocks.VariableReferenceView
 import com.unewexp.superblockly.viewBlocks.WhileBlockView
-import java.util.Queue
 import kotlin.math.max
-import kotlin.math.roundToInt
 
 @Composable
 fun Canvas(
@@ -198,7 +190,7 @@ fun Canvas(
                                             it.outputConnectionView!!.positionX - 10.dp - 16.dp,
                                             it.outputConnectionView!!.positionY - 12.dp - 8.dp
                                         ),
-                                    color = if (it.connectedParent != null) getColorByBlockType(it.block.blockType) else Color.Gray.copy(
+                                    color = if (it.connectedParent != null) ConnectorColor else Color.Gray.copy(
                                         alpha = 0.5f
                                     )
                                 )
@@ -275,24 +267,16 @@ fun TakeViewBlock (block: DraggableBlock, viewModel: DraggableViewModel = viewMo
         },
             block
         )
-        BlockType.SET_VARIABLE_VALUE -> SetValueVariableView { newValue ->
-            viewModel.updateValue(block, newValue)
-        }
+        BlockType.SET_VARIABLE_VALUE -> SetValueVariableView(block)
 
         BlockType.START -> StartBlockView()
-        BlockType.VARIABLE_DECLARATION -> DeclarationVariableView { newValue ->
-            viewModel.updateValue(block, newValue)
-        }
+        BlockType.VARIABLE_DECLARATION -> VariableDeclarationBlockView(block)
 
-        BlockType.INT_LITERAL -> IntLiteralView { newValue ->
-            viewModel.updateValue(block, newValue)
-        }
+        BlockType.INT_LITERAL -> IntLiteralView(block)
 
-        BlockType.STRING_LITERAL -> TODO()
-        BlockType.BOOLEAN_LITERAL -> TODO()
-        BlockType.VARIABLE_REFERENCE -> VariableReferenceView { newValue ->
-            viewModel.updateValue(block, newValue)
-        }
+        BlockType.STRING_LITERAL -> StringLiteralBlockView(block)
+        BlockType.BOOLEAN_LITERAL -> BooleanLiteralBlockView(block)
+        BlockType.VARIABLE_REFERENCE -> VariableReferenceView(block)
 
         BlockType.STRING_CONCAT -> TODO()
         BlockType.STRING_APPEND -> TODO()
@@ -311,9 +295,7 @@ fun TakeViewBlock (block: DraggableBlock, viewModel: DraggableViewModel = viewMo
         BlockType.IF_ELSE_BLOCK -> ElseIfBlockView()
         BlockType.REPEAT_N_TIMES -> TODO()
         BlockType.WHILE_BLOCK -> WhileBlockView()
-        BlockType.FOR_BLOCK -> ForBlockView(block) { newValue ->
-            viewModel.updateValue(block, newValue)
-        }
+        BlockType.FOR_BLOCK -> ForBlockView(block)
         BlockType.FOR_ELEMENT_IN_LIST -> TODO()
         BlockType.FIXED_VALUE_AND_SIZE_LIST -> FixedValuesAndSizeListView(block)
         BlockType.GET_VALUE_BY_INDEX -> GetValueByIndexView(block)

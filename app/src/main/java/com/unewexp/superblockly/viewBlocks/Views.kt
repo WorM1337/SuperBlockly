@@ -31,6 +31,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
@@ -47,6 +48,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.myfirstapplicatioin.blocks.literals.IntLiteralBlock
 import com.unewexp.superblockly.DraggableBlock
 import com.unewexp.superblockly.R
 import com.unewexp.superblockly.Spinner
@@ -57,12 +59,18 @@ import com.unewexp.superblockly.blocks.list.FixedValuesAndSizeList
 import com.unewexp.superblockly.blocks.list.GetValueByIndex
 import com.unewexp.superblockly.blocks.list.PushBackElement
 import com.unewexp.superblockly.blocks.list.RemoveValueByIndex
+import com.unewexp.superblockly.blocks.literals.BooleanLiteralBlock
+import com.unewexp.superblockly.blocks.literals.StringLiteralBlock
 import com.unewexp.superblockly.blocks.logic.CompareNumbers
 import com.unewexp.superblockly.blocks.loops.ForBlock
+import com.unewexp.superblockly.blocks.returnBlocks.VariableReferenceBlock
+import com.unewexp.superblockly.blocks.voidBlocks.SetValueVariableBlock
+import com.unewexp.superblockly.blocks.voidBlocks.VariableDeclarationBlock
 import com.unewexp.superblockly.enums.CompareType
 import com.unewexp.superblockly.enums.OperandType
 import com.unewexp.superblockly.enums.symbol
 import com.unewexp.superblockly.ui.theme.EmptySpace
+import com.unewexp.superblockly.ui.theme.Pink40
 
 @Composable
 fun StartBlockView() {
@@ -135,9 +143,10 @@ fun TextFieldLike(
 
 @Composable
 fun IntLiteralView(
-    onNameChanged: (String) -> Unit
+    block: DraggableBlock
 ) {
-    var value by remember { mutableStateOf(TextFieldValue("123")) }
+    val currentBlock by rememberUpdatedState(block.block as IntLiteralBlock)
+    var value by remember { mutableStateOf(TextFieldValue(currentBlock.value.toString())) }
 
     Box(
         modifier = Modifier
@@ -149,15 +158,73 @@ fun IntLiteralView(
             value = value,
             onValueChange = {
                 if (it.text.isEmpty()) {
+                    currentBlock.value = 0
                     value = TextFieldValue("0", TextRange(1))
                 } else if (it.text.matches(Regex("^\\d*$"))) {
-                    value = if (it.text.length != 1 && it.text[0] == '0') {
-                        TextFieldValue(it.text.substring(1), TextRange(1))
+                    if (it.text.length != 1 && it.text[0] == '0') {
+                        currentBlock.value = it.text.substring(1).toInt()
+                        value = it.copy(currentBlock.value.toString(), TextRange(1))
                     } else {
-                        it
+                        currentBlock.value = it.text.toInt()
+                        value = it.copy(currentBlock.value.toString())
                     }
                 }
-                onNameChanged(value.text)
+            },
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 12.dp, vertical = 12.dp),
+            singleLine = true,
+            textStyle = MaterialTheme.typography.bodyMedium.copy(
+                color = MaterialTheme.colorScheme.onSurface,
+                textAlign = TextAlign.Start
+            ),
+            decorationBox = { innerTextField ->
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.CenterStart
+                ) {
+                    if (value.text.isEmpty()) {
+                        Text(
+                            stringResource(R.string.value),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                        )
+                    }
+                    innerTextField()
+                }
+            },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Number,
+                imeAction = ImeAction.Done
+            ),
+            cursorBrush = SolidColor(MaterialTheme.colorScheme.primary)
+        )
+    }
+}
+
+@Composable
+fun IntLiteralViewForCard(){
+    TextFieldLike(placeholder = "Num", modifier = Modifier.fillMaxWidth())
+}
+
+@Composable
+fun BooleanLiteralBlockView(
+    block: DraggableBlock
+) {
+    val currentBlock by rememberUpdatedState(block.block as BooleanLiteralBlock)
+    var value by remember { mutableStateOf(TextFieldValue(currentBlock.value.toString())) }
+
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(8.dp))
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surfaceVariant)
+    ) {
+        BasicTextField(
+            value = value,
+            onValueChange = {
+                currentBlock.value = it.text.trim().toBoolean()
+                value = it
             },
             modifier = Modifier
                 .fillMaxSize()
@@ -183,7 +250,6 @@ fun IntLiteralView(
                 }
             },
             keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Number,
                 imeAction = ImeAction.Done
             ),
             cursorBrush = SolidColor(MaterialTheme.colorScheme.primary)
@@ -192,16 +258,71 @@ fun IntLiteralView(
 }
 
 @Composable
-fun IntLiteralViewForCard(){
+fun BooleanLiteralBlockViewForCard(){
+    TextFieldLike(placeholder = "Boolean", modifier = Modifier.fillMaxWidth())
+}
 
-    TextFieldLike(placeholder = "Num", modifier = Modifier.fillMaxWidth())
+@Composable
+fun StringLiteralBlockView(
+    block: DraggableBlock
+) {
+    val currentBlock by rememberUpdatedState(block.block as StringLiteralBlock)
+    var value by remember { mutableStateOf(TextFieldValue(currentBlock.value)) }
+
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(8.dp))
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surfaceVariant)
+    ) {
+        BasicTextField(
+            value = value,
+            onValueChange = {
+                currentBlock.value = it.text
+                value = it.copy(currentBlock.value)
+            },
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 12.dp, vertical = 12.dp),
+            singleLine = true,
+            textStyle = MaterialTheme.typography.bodyMedium.copy(
+                color = MaterialTheme.colorScheme.onSurface,
+                textAlign = TextAlign.Start
+            ),
+            decorationBox = { innerTextField ->
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.CenterStart
+                ) {
+                    if (value.text.isEmpty()) {
+                        Text(
+                            stringResource(R.string.text),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                        )
+                    }
+                    innerTextField()
+                }
+            },
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Done
+            ),
+            cursorBrush = SolidColor(MaterialTheme.colorScheme.primary)
+        )
+    }
+}
+
+@Composable
+fun StringLiteralBlockViewForCard(){
+    TextFieldLike(placeholder = stringResource(R.string.text), modifier = Modifier.fillMaxWidth())
 }
 
 @Composable
 fun SetValueVariableView(
-    onNameChanged: (String) -> Unit
+    block: DraggableBlock
 ) {
-    var name by remember { mutableStateOf(TextFieldValue("")) }
+    val currentBlock by rememberUpdatedState(block.block as SetValueVariableBlock)
+    var name by remember { mutableStateOf(TextFieldValue(currentBlock.selectedVariableName)) }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -215,7 +336,7 @@ fun SetValueVariableView(
                 .padding(horizontal = 12.dp)
         ) {
             Text(
-                "Set",
+                stringResource(R.string.set),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(end = 8.dp)
@@ -224,8 +345,8 @@ fun SetValueVariableView(
             BasicTextField(
                 value = name,
                 onValueChange = {
-                    name = it
-                    onNameChanged(name.text)
+                    currentBlock.selectedVariableName = it.text.trim()
+                    name = it.copy(currentBlock.selectedVariableName)
                 },
                 modifier = Modifier
                     .weight(1f)
@@ -243,7 +364,7 @@ fun SetValueVariableView(
                     ) {
                         if (name.text.isEmpty()) {
                             Text(
-                                "Var",
+                                stringResource(R.string.Var),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
                             )
@@ -268,11 +389,11 @@ fun SetValueVariableViewForCard(){
 
     Row(verticalAlignment = Alignment.CenterVertically){
         Text(
-            "Set",
+            stringResource(R.string.set),
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.padding(end = 4.dp)
         )
-        TextFieldLike(placeholder = "Var", modifier = Modifier.width(150.dp))
+        TextFieldLike(placeholder = stringResource(R.string.Var), modifier = Modifier.width(150.dp))
         Text(
             stringResource(R.string.to),
             style = MaterialTheme.typography.bodyMedium,
@@ -283,9 +404,10 @@ fun SetValueVariableViewForCard(){
 
 @Composable
 fun VariableReferenceView(
-    onNameChanged: (String) -> Unit
+    block: DraggableBlock
 ) {
-    var name by remember { mutableStateOf(TextFieldValue("")) }
+    val currentBlock by rememberUpdatedState( block.block as VariableReferenceBlock)
+    var name by remember { mutableStateOf(TextFieldValue(currentBlock.selectedVariableName)) }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -295,8 +417,8 @@ fun VariableReferenceView(
         BasicTextField(
             value = name,
             onValueChange = {
-                name = if (it.text.isEmpty()) TextFieldValue("") else it
-                onNameChanged(name.text)
+                currentBlock.selectedVariableName = it.text.trim()
+                name = it.copy(currentBlock.selectedVariableName)
             },
             modifier = Modifier
                 .fillMaxSize()
@@ -313,7 +435,7 @@ fun VariableReferenceView(
                 ) {
                     if (name.text.isEmpty()) {
                         Text(
-                            "Var",
+                            stringResource(R.string.Var),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
                         )
@@ -328,14 +450,15 @@ fun VariableReferenceView(
 
 @Composable
 fun VariableReferenceViewForCard(){
-    TextFieldLike(placeholder = "Var", modifier = Modifier.fillMaxWidth())
+    TextFieldLike(placeholder = stringResource(R.string.Var), modifier = Modifier.fillMaxWidth())
 }
 
 @Composable
-fun DeclarationVariableView(
-    onNameChanged: (String) -> Unit
+fun VariableDeclarationBlockView(
+    block: DraggableBlock
 ) {
-    var name by remember { mutableStateOf(TextFieldValue("")) }
+    val currentBlock by rememberUpdatedState( block.block as VariableDeclarationBlock)
+    var name by remember { mutableStateOf(TextFieldValue(currentBlock.name)) }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -349,40 +472,42 @@ fun DeclarationVariableView(
                 .padding(horizontal = 12.dp)
         ) {
             Text(
-                "Init",
+                stringResource(R.string.init),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(end = 8.dp)
             )
 
-            TextField(
+            BasicTextField(
                 value = name,
                 onValueChange = {
-                    name = it
-                    onNameChanged(name.text)
+                    currentBlock.name = it.text.trim()
+                    name = it.copy(currentBlock.name)
                 },
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = Color.Transparent,
-                    unfocusedContainerColor = Color.Transparent,
-                    disabledContainerColor = Color.Transparent,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    cursorColor = MaterialTheme.colorScheme.primary
-                ),
-                placeholder = {
-                    Text(
-                        "Var",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
-                    )
-                },
-                singleLine = true,
                 modifier = Modifier
                     .weight(1f)
-                    .heightIn(min = 48.dp),
+                    .height(24.dp)
+                    .align(Alignment.CenterVertically),
+                singleLine = true,
                 textStyle = MaterialTheme.typography.bodyMedium.copy(
-                    color = MaterialTheme.colorScheme.onSurface
-                )
+                    color = MaterialTheme.colorScheme.onSurface,
+                    textAlign = TextAlign.Start
+                ),
+                decorationBox = { innerTextField ->
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.CenterStart
+                    ) {
+                        if (name.text.isEmpty()) {
+                            Text(
+                                stringResource(R.string.Var),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                            )
+                        }
+                        innerTextField()
+                    }
+                }
             )
         }
     }
@@ -392,11 +517,11 @@ fun DeclarationVariableView(
 fun DeclarationVariableViewForCard(){
     Row(verticalAlignment = Alignment.CenterVertically){
         Text(
-            "Init",
+            stringResource(R.string.init),
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.padding(end = 4.dp)
         )
-        TextFieldLike(placeholder = "Var", modifier = Modifier.fillMaxWidth())
+        TextFieldLike(placeholder = stringResource(R.string.Var), modifier = Modifier.fillMaxWidth())
     }
 }
 
@@ -990,8 +1115,7 @@ fun WhileBlockViewForCard(
 
 @Composable
 fun ForBlockView(
-    block: DraggableBlock,
-    onNameChanged: (String) -> Unit
+    block: DraggableBlock
 ) {
 
     fun determineBlocks(blocks: SnapshotStateList<DraggableBlock>): List<DraggableBlock?> {
@@ -1022,7 +1146,8 @@ fun ForBlockView(
     val box2Width by derivedStateOf { centerBlock?.width?.value ?: 60.dp }
     val box3Width by derivedStateOf { rightBlock?.width?.value ?: 60.dp }
 
-    var name by remember { mutableStateOf(TextFieldValue("i")) }
+    val currentBlock by rememberUpdatedState(block.block as ForBlock)
+    var name by remember { mutableStateOf(TextFieldValue(currentBlock.variableName)) }
 
     val textHeight = 60.dp
     val bottomLineHeight = 1.dp
@@ -1049,8 +1174,8 @@ fun ForBlockView(
             BasicTextField(
                 value = name,
                 onValueChange = {
-                    name = it
-                    onNameChanged(name.text)
+                    currentBlock.variableName = it.text.trim()
+                    name = it.copy(currentBlock.variableName)
                 },
                 modifier = Modifier
                     .weight(1f)
@@ -1064,12 +1189,12 @@ fun ForBlockView(
                 ),
                 decorationBox = { innerTextField ->
                     Box(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth().border(1.dp, EmptySpace, RoundedCornerShape(8.dp)).padding(2.dp),
                         contentAlignment = Alignment.CenterStart
                     ) {
                         if (name.text.isEmpty()) {
                             Text(
-                                "Var",
+                                stringResource(R.string.Var),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
                             )
@@ -1089,9 +1214,16 @@ fun ForBlockView(
                 modifier = Modifier
                     .width(box1Width)
                     .height(50.dp)
-                    .padding(4.dp, 0.dp)
-                    .background(EmptySpace)
-            ){}
+                    .padding(10.dp, 0.dp)
+                    .background(EmptySpace),
+                contentAlignment = Alignment.Center
+            ){
+                Text(
+                    stringResource(R.string.from),
+                    style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black.copy(alpha = 0.5f), fontSize = 14.sp),
+                    modifier = Modifier.padding(bottom = 4.dp)
+                )
+            }
 
             Text(
                 stringResource(R.string.to),
@@ -1103,9 +1235,16 @@ fun ForBlockView(
                 modifier = Modifier
                     .width(box2Width)
                     .height(50.dp)
-                    .padding(4.dp, 0.dp)
-                    .background(EmptySpace)
-            ){}
+                    .padding(10.dp, 0.dp)
+                    .background(EmptySpace),
+                contentAlignment = Alignment.Center
+            ){
+                Text(
+                    stringResource(R.string.to),
+                    style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black.copy(alpha = 0.5f), fontSize = 14.sp),
+                    modifier = Modifier.padding(bottom = 4.dp)
+                )
+            }
 
             Text(
                 stringResource(R.string.step),
@@ -1117,9 +1256,16 @@ fun ForBlockView(
                 modifier = Modifier
                     .width(box3Width)
                     .height(50.dp)
-                    .padding(4.dp, 0.dp)
-                    .background(EmptySpace)
-            ){}
+                    .padding(10.dp, 0.dp)
+                    .background(EmptySpace),
+                contentAlignment = Alignment.Center
+            ){
+                Text(
+                    stringResource(R.string.step),
+                    style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black.copy(alpha = 0.5f), fontSize = 14.sp),
+                    modifier = Modifier.padding(bottom = 4.dp)
+                )
+            }
         }
 
         Box(

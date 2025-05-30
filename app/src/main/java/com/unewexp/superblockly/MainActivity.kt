@@ -64,6 +64,8 @@ import com.unewexp.superblockly.blocks.list.GetListSize
 import com.unewexp.superblockly.blocks.list.GetValueByIndex
 import com.unewexp.superblockly.blocks.list.PushBackElement
 import com.unewexp.superblockly.blocks.list.RemoveValueByIndex
+import com.unewexp.superblockly.blocks.literals.BooleanLiteralBlock
+import com.unewexp.superblockly.blocks.literals.StringLiteralBlock
 import com.unewexp.superblockly.blocks.logic.CompareNumbers
 import com.unewexp.superblockly.blocks.logic.ElseBlock
 import com.unewexp.superblockly.blocks.logic.ElseIfBlock
@@ -221,7 +223,7 @@ fun CreateNewProject(
                             OperandBlockCard()
                         }
                     }
-                    item { Text("Переменные", color = Color.White) }
+                    item { Text(stringResource(R.string.variables), color = Color.White) }
                     item {
                         ListItem(
                             { offset ->
@@ -275,6 +277,23 @@ fun CreateNewProject(
                     }
                     item {
                         Text(stringResource(R.string.logic), color = Color.White)
+                    }
+                    item {
+                        ListItem(
+                            { offset ->
+                                val newBlock = DraggableBlock(
+                                    BooleanLiteralBlock(),
+                                    mutableStateOf(offset.x + dpToPx(200.dp) - globalOffset.value.x),
+                                    mutableStateOf(offset.y - dpToPx(60.dp) - globalOffset.value.y),
+                                    width = mutableStateOf(100.dp)
+                                )
+                                viewModel.handleAction(
+                                    DraggableViewModel.BlocklyAction.AddBlock(newBlock)
+                                )
+                            }
+                        ) {
+                            BooleanLiteralBlockCard()
+                        }
                     }
                     item {
                         ListItem(
@@ -338,6 +357,24 @@ fun CreateNewProject(
                             }
                         ){
                             ElseIfBlockCard()
+                        }
+                    }
+                    item { Text(stringResource(R.string.strings), color = Color.White) }
+                    item{
+                        ListItem(
+                            { offset ->
+                                val newBlock = DraggableBlock(
+                                    StringLiteralBlock(),
+                                    mutableStateOf(offset.x + dpToPx(200.dp) - globalOffset.value.x),
+                                    mutableStateOf(offset.y - dpToPx(60.dp) - globalOffset.value.y),
+                                    width = mutableStateOf(300.dp)
+                                )
+                                viewModel.handleAction(
+                                    DraggableViewModel.BlocklyAction.AddBlock(newBlock)
+                                )
+                            }
+                        ){
+                            StringLiteralBlockCard()
                         }
                     }
                     item { Text(stringResource(R.string.loops), color = Color.White) }

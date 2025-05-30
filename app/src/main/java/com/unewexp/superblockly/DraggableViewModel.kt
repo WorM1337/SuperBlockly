@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import com.example.myfirstapplicatioin.blocks.literals.IntLiteralBlock
 import com.example.myfirstapplicatioin.utils.disconnect
 import com.unewexp.superblockly.blocks.StartBlock
+import com.unewexp.superblockly.blocks.literals.BooleanLiteralBlock
 import com.unewexp.superblockly.blocks.loops.ForBlock
 import com.unewexp.superblockly.blocks.returnBlocks.VariableReferenceBlock
 import com.unewexp.superblockly.blocks.voidBlocks.SetValueVariableBlock
@@ -143,7 +144,10 @@ class DraggableViewModel: ViewModel() {
                 }
             }
             BlockType.STRING_LITERAL -> TODO()
-            BlockType.BOOLEAN_LITERAL -> TODO()
+            BlockType.BOOLEAN_LITERAL -> {
+                (realBlock as BooleanLiteralBlock).value = newValue.trim().toBoolean()
+                return true
+            }
             BlockType.OPERAND -> TODO()
             BlockType.SHORTHAND_ARITHMETIC_BLOCK -> TODO()
             BlockType.VARIABLE_DECLARATION -> {

@@ -39,4 +39,10 @@
     <string name="edit">edit</string>
     <string name="count">count</string>
     <string name="push_back">push_back</string>
+    <string name="Var">var</string>
+    <string name="set">Set</string>
+    <string name="init">init</string>
+    <string name="text">text</string>
+    <string name="variables">Переменные</string>
+    <string name="strings">Строки</string>
 </resources>

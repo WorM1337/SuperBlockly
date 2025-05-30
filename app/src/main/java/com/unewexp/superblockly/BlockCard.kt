@@ -11,6 +11,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
 import com.unewexp.superblockly.blocks.logic.CompareNumbers
 import com.unewexp.superblockly.viewBlocks.AddElementByIndexViewForCard
+import com.unewexp.superblockly.viewBlocks.BooleanLiteralBlockViewForCard
 import com.unewexp.superblockly.viewBlocks.CompareNumbersBlockForCard
 import com.unewexp.superblockly.viewBlocks.DeclarationVariableViewForCard
 import com.unewexp.superblockly.viewBlocks.EditValueByIndexViewForCard
@@ -28,6 +29,7 @@ import com.unewexp.superblockly.viewBlocks.PrintBlockView
 import com.unewexp.superblockly.viewBlocks.PushBackElementViewForCard
 import com.unewexp.superblockly.viewBlocks.RemoveValueByIndexViewForCard
 import com.unewexp.superblockly.viewBlocks.SetValueVariableViewForCard
+import com.unewexp.superblockly.viewBlocks.StringLiteralBlockViewForCard
 import com.unewexp.superblockly.viewBlocks.VariableReferenceViewForCard
 import com.unewexp.superblockly.viewBlocks.WhileBlockViewForCard
 
@@ -52,6 +54,30 @@ fun IntLiteralBlockCard(alpha: Float = 1f){
             .alpha(alpha)
     ){
         IntLiteralViewForCard()
+    }
+}
+
+@Composable
+fun BooleanLiteralBlockCard(){
+    Card(
+        modifier = Modifier
+            .width(200.dp)
+            .height(60.dp)
+            .padding(2.dp)
+    ){
+        BooleanLiteralBlockViewForCard()
+    }
+}
+
+@Composable
+fun StringLiteralBlockCard(){
+    Card(
+        modifier = Modifier
+            .width(200.dp)
+            .height(60.dp)
+            .padding(2.dp)
+    ){
+        StringLiteralBlockViewForCard()
     }
 }
 
