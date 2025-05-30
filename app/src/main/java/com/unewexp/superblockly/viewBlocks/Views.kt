@@ -76,6 +76,7 @@ import com.unewexp.superblockly.ui.theme.innerBlockField
 import com.unewexp.superblockly.ui.theme.textColor
 import com.unewexp.superblockly.ui.theme.textFieldColorForCard
 import com.unewexp.superblockly.ui.theme.backgoundForCard
+import com.unewexp.superblockly.ui.theme.cornerColor
 import com.unewexp.superblockly.ui.theme.spinnerColor
 
 @Composable
@@ -159,7 +160,7 @@ fun IntLiteralView(
         modifier = Modifier
             .clip(RoundedCornerShape(8.dp))
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surfaceVariant)
+            .background(innerBlockField)
     ) {
         BasicTextField(
             value = value,
@@ -182,7 +183,7 @@ fun IntLiteralView(
                 .padding(horizontal = 12.dp, vertical = 12.dp),
             singleLine = true,
             textStyle = MaterialTheme.typography.bodyMedium.copy(
-                color = MaterialTheme.colorScheme.onSurface,
+                color = textColor,
                 textAlign = TextAlign.Start
             ),
             decorationBox = { innerTextField ->
@@ -225,7 +226,7 @@ fun BooleanLiteralBlockView(
         modifier = Modifier
             .clip(RoundedCornerShape(8.dp))
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surfaceVariant)
+            .background(innerBlockField)
     ) {
         BasicTextField(
             value = value,
@@ -238,7 +239,7 @@ fun BooleanLiteralBlockView(
                 .padding(horizontal = 12.dp, vertical = 12.dp),
             singleLine = true,
             textStyle = MaterialTheme.typography.bodyMedium.copy(
-                color = MaterialTheme.colorScheme.onSurface,
+                color = textColor,
                 textAlign = TextAlign.Start
             ),
             decorationBox = { innerTextField ->
@@ -280,7 +281,7 @@ fun StringLiteralBlockView(
         modifier = Modifier
             .clip(RoundedCornerShape(8.dp))
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surfaceVariant)
+            .background(innerBlockField)
     ) {
         BasicTextField(
             value = value,
@@ -293,7 +294,7 @@ fun StringLiteralBlockView(
                 .padding(horizontal = 12.dp, vertical = 12.dp),
             singleLine = true,
             textStyle = MaterialTheme.typography.bodyMedium.copy(
-                color = MaterialTheme.colorScheme.onSurface,
+                color = textColor,
                 textAlign = TextAlign.Start
             ),
             decorationBox = { innerTextField ->
@@ -355,7 +356,7 @@ fun StringConcatenationBlockView(
 
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.surfaceVariant,
+        color = innerBlockField,
         shape = RoundedCornerShape(8.dp)
     ) {
         Row(
@@ -463,7 +464,7 @@ fun SetValueVariableView(
 
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.surfaceVariant,
+        color = innerBlockField,
         shape = RoundedCornerShape(8.dp)
     ) {
         Row(
@@ -475,7 +476,7 @@ fun SetValueVariableView(
             Text(
                 stringResource(R.string.set),
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = textColor,
                 modifier = Modifier.padding(end = 8.dp)
             )
 
@@ -503,7 +504,7 @@ fun SetValueVariableView(
                             Text(
                                 stringResource(R.string.Var),
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                                color = textColor.copy(alpha = 0.5f)
                             )
                         }
                         innerTextField()
@@ -514,7 +515,7 @@ fun SetValueVariableView(
             Text(
                 stringResource(R.string.to),
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = textColor,
                 modifier = Modifier.padding(start = 8.dp)
             )
         }
@@ -548,7 +549,7 @@ fun VariableReferenceView(
 
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.surfaceVariant,
+        color = innerBlockField,
         shape = RoundedCornerShape(8.dp)
     ) {
         BasicTextField(
@@ -574,7 +575,7 @@ fun VariableReferenceView(
                         Text(
                             stringResource(R.string.Var),
                             style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                            color = textColor.copy(alpha = 0.5f)
                         )
                     }
                     innerTextField()
@@ -599,7 +600,7 @@ fun VariableDeclarationBlockView(
 
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.surfaceVariant,
+        color = innerBlockField,
         shape = RoundedCornerShape(8.dp)
     ) {
         Row(
@@ -695,7 +696,7 @@ fun BooleanLogicBlockView(
 
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.surfaceVariant,
+        color = innerBlockField,
         shape = RoundedCornerShape(8.dp)
     ) {
         Row(
@@ -725,21 +726,22 @@ fun BooleanLogicBlockView(
                     Text(
                         text = selectedLogicType.symbol(),
                         style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = textColor
                     )
                 }
 
                 DropdownMenu(
                     expanded = expanded,
                     onDismissRequest = { expanded = false },
-                    modifier = Modifier.background(MaterialTheme.colorScheme.surface)
+                    modifier = Modifier.background(spinnerColor)
                 ) {
                     BooleanLogicType.entries.forEach { type ->
                         DropdownMenuItem(
                             text = {
                                 Text(
                                     type.name.lowercase().replaceFirstChar { it.uppercase() },
-                                    style = MaterialTheme.typography.bodyMedium
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = textColor
                                 )
                             },
                             onClick = {
@@ -857,7 +859,7 @@ fun CompareNumbersBlockView(
 
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.surfaceVariant,
+        color = innerBlockField,
         shape = RoundedCornerShape(8.dp)
     ) {
         Row(
@@ -887,21 +889,22 @@ fun CompareNumbersBlockView(
                     Text(
                         text = selectedOperand.symbol(),
                         style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = textColor
                     )
                 }
 
                 DropdownMenu(
                     expanded = expanded,
                     onDismissRequest = { expanded = false },
-                    modifier = Modifier.background(MaterialTheme.colorScheme.surface)
+                    modifier = Modifier.background(spinnerColor)
                 ) {
                     CompareType.entries.forEach { operand ->
                         DropdownMenuItem(
                             text = {
                                 Text(
                                     operand.name.lowercase().replaceFirstChar { it.uppercase() },
-                                    style = MaterialTheme.typography.bodyMedium
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = textColor
                                 )
                             },
                             onClick = {
@@ -994,7 +997,7 @@ fun NotBlockView(){
     ){
         Text(
             stringResource(R.string.not),
-            style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
+            style = MaterialTheme.typography.bodyMedium.copy(color = textColor, fontSize = 14.sp),
             modifier = Modifier.padding(4.dp)
         )
     }
@@ -1003,12 +1006,12 @@ fun NotBlockView(){
 @Composable
 fun NotBlockViewForCard(){
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().background(innerBlockField),
         contentAlignment = Alignment.Center
     ){
         Text(
             stringResource(R.string.not) + " " + stringResource(R.string.value),
-            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black, fontSize = 14.sp),
+            style = MaterialTheme.typography.bodyMedium.copy(color = textColor, fontSize = 14.sp),
             modifier = Modifier.padding(2.dp)
         )
     }
@@ -1037,7 +1040,7 @@ fun IfBlockView() {
             ) {
                 Text(
                     stringResource(R.string.If),
-                    style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 32.sp),
+                    style = MaterialTheme.typography.bodyMedium.copy(color = textColor, fontSize = 32.sp),
                     modifier = Modifier.padding(bottom = 4.dp)
                 )
             }
@@ -1046,14 +1049,14 @@ fun IfBlockView() {
                 modifier = Modifier
                     .weight(1f)
                     .width(lineWidth)
-                    .background(Color.White)
+                    .background(cornerColor)
             )
 
             Box(
                 modifier = Modifier
                     .height(bottomLineHeight)
                     .width(bottomLineWidth)
-                    .background(Color.White)
+                    .background(cornerColor)
             )
         }
     }
@@ -1063,12 +1066,12 @@ fun IfBlockView() {
 fun IfBlockViewForCard(
 ){
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().background(innerBlockField),
         contentAlignment = Alignment.Center
     ) {
         Text(
             stringResource(R.string.If),
-            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black, fontSize = 14.sp),
+            style = MaterialTheme.typography.bodyMedium.copy(color = textColor, fontSize = 14.sp),
             modifier = Modifier.padding(2.dp)
         )
     }
@@ -1097,7 +1100,7 @@ fun ElseBlockView() {
             ) {
                 Text(
                     stringResource(R.string.Else),
-                    style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 32.sp),
+                    style = MaterialTheme.typography.bodyMedium.copy(color = textColor, fontSize = 32.sp),
                     modifier = Modifier.padding(bottom = 4.dp)
                 )
             }
@@ -1106,14 +1109,14 @@ fun ElseBlockView() {
                 modifier = Modifier
                     .weight(1f)
                     .width(lineWidth)
-                    .background(Color.White)
+                    .background(cornerColor)
             )
 
             Box(
                 modifier = Modifier
                     .height(bottomLineHeight)
                     .width(bottomLineWidth)
-                    .background(Color.White)
+                    .background(cornerColor)
             )
         }
     }
@@ -1123,12 +1126,12 @@ fun ElseBlockView() {
 fun ElseBlockViewForCard(
 ){
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().background(innerBlockField),
         contentAlignment = Alignment.Center
     ) {
         Text(
             stringResource(R.string.Else),
-            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black, fontSize = 14.sp),
+            style = MaterialTheme.typography.bodyMedium.copy(color = textColor, fontSize = 14.sp),
             modifier = Modifier.padding(2.dp)
         )
     }
@@ -1157,7 +1160,7 @@ fun ElseIfBlockView() {
             ) {
                 Text(
                     stringResource(R.string.else_if),
-                    style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 32.sp),
+                    style = MaterialTheme.typography.bodyMedium.copy(color = textColor, fontSize = 32.sp),
                     modifier = Modifier.padding(bottom = 4.dp)
                 )
             }
@@ -1166,14 +1169,14 @@ fun ElseIfBlockView() {
                 modifier = Modifier
                     .weight(1f)
                     .width(lineWidth)
-                    .background(Color.White)
+                    .background(cornerColor)
             )
 
             Box(
                 modifier = Modifier
                     .height(bottomLineHeight)
                     .width(bottomLineWidth)
-                    .background(Color.White)
+                    .background(cornerColor)
             )
         }
     }
@@ -1183,12 +1186,12 @@ fun ElseIfBlockView() {
 fun ElseIfBlockViewForCard(
 ){
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().background(innerBlockField),
         contentAlignment = Alignment.Center
     ) {
         Text(
             stringResource(R.string.else_if),
-            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black, fontSize = 14.sp),
+            style = MaterialTheme.typography.bodyMedium.copy(color = textColor, fontSize = 14.sp),
             modifier = Modifier.padding(2.dp)
         )
     }
@@ -1199,7 +1202,7 @@ fun PrintBlockView() {
     Surface(
         modifier = Modifier.fillMaxSize(),
         shape = RoundedCornerShape(8.dp),
-        color = MaterialTheme.colorScheme.surfaceVariant
+        color = innerBlockField
     ) {
         Row(
             modifier = Modifier.fillMaxSize(),
@@ -1209,7 +1212,7 @@ fun PrintBlockView() {
             Text(
                 text = stringResource(R.string.print),
                 style = MaterialTheme.typography.titleMedium.copy(
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = textColor,
                     fontWeight = FontWeight.Medium,
                     fontSize = 20.sp
                 ),
@@ -1251,7 +1254,7 @@ fun OperandBlockView(
 
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.surfaceVariant,
+        color = innerBlockField,
         shape = RoundedCornerShape(8.dp)
     ) {
         Row(
@@ -1276,7 +1279,7 @@ fun OperandBlockView(
             ) {
                 Spinner(
                     size = 50.dp,
-                    onClick = { expanded = true }
+                    onClick = { expanded = true },
                 ) {
                     Text(
                         text = selectedOperand.symbol(),
@@ -1295,7 +1298,8 @@ fun OperandBlockView(
                             text = {
                                 Text(
                                     operand.name.lowercase().replaceFirstChar { it.uppercase() },
-                                    style = MaterialTheme.typography.bodyMedium
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = textColor
                                 )
                             },
                             onClick = {
@@ -1403,7 +1407,7 @@ fun WhileBlockView() {
             ) {
                 Text(
                     stringResource(R.string.While),
-                    style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 32.sp),
+                    style = MaterialTheme.typography.bodyMedium.copy(color = textColor, fontSize = 32.sp),
                     modifier = Modifier.padding(bottom = 4.dp)
                 )
             }
@@ -1412,14 +1416,14 @@ fun WhileBlockView() {
                 modifier = Modifier
                     .weight(1f)
                     .width(lineWidth)
-                    .background(Color.White)
+                    .background(cornerColor)
             )
 
             Box(
                 modifier = Modifier
                     .height(bottomLineHeight)
                     .width(bottomLineWidth)
-                    .background(Color.White)
+                    .background(cornerColor)
             )
         }
     }
@@ -1429,12 +1433,12 @@ fun WhileBlockView() {
 fun WhileBlockViewForCard(
 ){
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().background(innerBlockField),
         contentAlignment = Alignment.Center
     ) {
         Text(
             stringResource(R.string.While),
-            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black, fontSize = 14.sp),
+            style = MaterialTheme.typography.bodyMedium.copy(color = textColor, fontSize = 14.sp),
             modifier = Modifier.padding(2.dp)
         )
     }
@@ -1494,7 +1498,7 @@ fun ForBlockView(
         ) {
             Text(
                 stringResource(R.string.For),
-                style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
+                style = MaterialTheme.typography.bodyMedium.copy(color = textColor, fontSize = 14.sp),
                 modifier = Modifier.padding(bottom = 4.dp)
             )
 
@@ -1516,14 +1520,14 @@ fun ForBlockView(
                 ),
                 decorationBox = { innerTextField ->
                     Box(
-                        modifier = Modifier.fillMaxWidth().border(1.dp, EmptySpace, RoundedCornerShape(8.dp)).padding(2.dp),
+                        modifier = Modifier.fillMaxWidth().border(1.dp, innerBlockField, RoundedCornerShape(4.dp)).padding(1.dp),
                         contentAlignment = Alignment.CenterStart
                     ) {
                         if (name.text.isEmpty()) {
                             Text(
                                 stringResource(R.string.Var),
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                                color = textColor.copy(alpha = 0.5f)
                             )
                         }
                         innerTextField()
@@ -1533,7 +1537,7 @@ fun ForBlockView(
 
             Text(
                 stringResource(R.string.from),
-                style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
+                style = MaterialTheme.typography.bodyMedium.copy(color = textColor, fontSize = 14.sp),
                 modifier = Modifier.weight(1f).padding(bottom = 4.dp)
             )
 
@@ -1542,19 +1546,19 @@ fun ForBlockView(
                     .width(box1Width)
                     .height(50.dp)
                     .padding(4.dp, 0.dp)
-                    .background(EmptySpace),
+                    .background(innerBlockField),
                 contentAlignment = Alignment.Center
             ){
                 Text(
                     stringResource(R.string.from),
-                    style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black.copy(alpha = 0.5f), fontSize = 14.sp),
+                    style = MaterialTheme.typography.bodyMedium.copy(color = textColor.copy(alpha = 0.5f), fontSize = 14.sp),
                     modifier = Modifier.padding(bottom = 4.dp)
                 )
             }
 
             Text(
                 stringResource(R.string.to),
-                style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
+                style = MaterialTheme.typography.bodyMedium.copy(color = textColor, fontSize = 14.sp),
                 modifier = Modifier.weight(1f).padding(bottom = 4.dp)
             )
 
@@ -1563,19 +1567,19 @@ fun ForBlockView(
                     .width(box2Width)
                     .height(50.dp)
                     .padding(4.dp, 0.dp)
-                    .background(EmptySpace),
+                    .background(innerBlockField),
                 contentAlignment = Alignment.Center
             ){
                 Text(
                     stringResource(R.string.to),
-                    style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black.copy(alpha = 0.5f), fontSize = 14.sp),
+                    style = MaterialTheme.typography.bodyMedium.copy(color = textColor.copy(alpha = 0.5f), fontSize = 14.sp),
                     modifier = Modifier.padding(bottom = 4.dp)
                 )
             }
 
             Text(
                 stringResource(R.string.step),
-                style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
+                style = MaterialTheme.typography.bodyMedium.copy(color = textColor, fontSize = 14.sp),
                 modifier = Modifier.weight(1f).padding(bottom = 4.dp)
             )
 
@@ -1584,12 +1588,12 @@ fun ForBlockView(
                     .width(box3Width)
                     .height(50.dp)
                     .padding(4.dp, 0.dp)
-                    .background(EmptySpace),
+                    .background(innerBlockField),
                 contentAlignment = Alignment.Center
             ){
                 Text(
                     stringResource(R.string.step),
-                    style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black.copy(alpha = 0.5f), fontSize = 14.sp),
+                    style = MaterialTheme.typography.bodyMedium.copy(color = textColor.copy(alpha = 0.5f), fontSize = 14.sp),
                     modifier = Modifier.padding(bottom = 4.dp)
                 )
             }
@@ -1599,14 +1603,14 @@ fun ForBlockView(
             modifier = Modifier
                 .weight(1f)
                 .width(lineWidth)
-                .background(Color.White)
+                .background(cornerColor)
         )
 
         Box(
             modifier = Modifier
                 .height(bottomLineHeight)
                 .width(bottomLineWidth)
-                .background(Color.White)
+                .background(cornerColor)
         )
     }
 }
@@ -1614,12 +1618,12 @@ fun ForBlockView(
 @Composable
 fun ForBlockViewForCard() {
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().background(innerBlockField),
         contentAlignment = Alignment.Center
     ) {
         Text(
             stringResource(R.string.For),
-            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black, fontSize = 14.sp),
+            style = MaterialTheme.typography.bodyMedium.copy(color = textColor, fontSize = 14.sp),
             modifier = Modifier.padding(2.dp)
         )
     }
@@ -1652,7 +1656,7 @@ fun ForElementInListBlockView(block: DraggableBlock) {
             ) {
                 Text(
                     stringResource(R.string.For),
-                    style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
+                    style = MaterialTheme.typography.bodyMedium.copy(color = textColor, fontSize = 14.sp),
                     modifier = Modifier.padding(bottom = 4.dp)
                 )
                 BasicTextField(
@@ -1673,14 +1677,14 @@ fun ForElementInListBlockView(block: DraggableBlock) {
                     ),
                     decorationBox = { innerTextField ->
                         Box(
-                            modifier = Modifier.fillMaxWidth().border(1.dp, EmptySpace, RoundedCornerShape(8.dp)).padding(2.dp),
+                            modifier = Modifier.fillMaxWidth().border(1.dp, innerBlockField, RoundedCornerShape(4.dp)).padding(1.dp),
                             contentAlignment = Alignment.CenterStart
                         ) {
                             if (name.text.isEmpty()) {
                                 Text(
                                     stringResource(R.string.Var),
                                     style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                                    color = textColor.copy(alpha = 0.5f)
                                 )
                             }
                             innerTextField()
@@ -1689,7 +1693,7 @@ fun ForElementInListBlockView(block: DraggableBlock) {
                 )
                 Text(
                     stringResource(R.string.in_list),
-                    style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
+                    style = MaterialTheme.typography.bodyMedium.copy(color = textColor, fontSize = 14.sp),
                     modifier = Modifier.padding(bottom = 4.dp)
                 )
             }
@@ -1698,14 +1702,14 @@ fun ForElementInListBlockView(block: DraggableBlock) {
                 modifier = Modifier
                     .weight(1f)
                     .width(lineWidth)
-                    .background(Color.White)
+                    .background(cornerColor)
             )
 
             Box(
                 modifier = Modifier
                     .height(bottomLineHeight)
                     .width(bottomLineWidth)
-                    .background(Color.White)
+                    .background(cornerColor)
             )
         }
     }
@@ -1715,12 +1719,12 @@ fun ForElementInListBlockView(block: DraggableBlock) {
 fun ForElementInListBlockViewForCard(
 ){
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().background(innerBlockField),
         contentAlignment = Alignment.Center
     ) {
         Text(
             stringResource(R.string.For) + " " + stringResource(R.string.items) + " " + stringResource(R.string.in_list),
-            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black, fontSize = 14.sp),
+            style = MaterialTheme.typography.bodyMedium.copy(color = textColor, fontSize = 14.sp),
             modifier = Modifier.padding(2.dp)
         )
     }
@@ -1754,7 +1758,7 @@ fun FixedValuesAndSizeListView(block: DraggableBlock){
     Row(verticalAlignment = Alignment.CenterVertically){
         Text(
             stringResource(R.string.create_list_with),
-            style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
+            style = MaterialTheme.typography.bodyMedium.copy(color = textColor, fontSize = 14.sp),
             modifier = Modifier.padding(4.dp)
         )
 
@@ -1763,18 +1767,18 @@ fun FixedValuesAndSizeListView(block: DraggableBlock){
                 .width(box1Width)
                 .fillMaxHeight()
                 .padding(4.dp)
-                .background(EmptySpace)
+                .background(innerBlockField)
         ){
             Text(
                 stringResource(R.string.value),
-                style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black.copy(alpha = 0.5f), fontSize = 14.sp),
+                style = MaterialTheme.typography.bodyMedium.copy(color = textColor.copy(alpha = 0.5f), fontSize = 14.sp),
                 modifier = Modifier.padding(4.dp)
             )
         }
 
         Text(
             stringResource(R.string.repeated),
-            style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
+            style = MaterialTheme.typography.bodyMedium.copy(color = textColor, fontSize = 14.sp),
             modifier = Modifier.padding(4.dp)
         )
 
@@ -1783,18 +1787,18 @@ fun FixedValuesAndSizeListView(block: DraggableBlock){
                 .width(box2Width)
                 .fillMaxHeight()
                 .padding(4.dp)
-                .background(EmptySpace)
+                .background(innerBlockField)
         ){
             Text(
                 stringResource(R.string.count),
-                style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black.copy(alpha = 0.5f), fontSize = 14.sp),
+                style = MaterialTheme.typography.bodyMedium.copy(color = textColor.copy(alpha = 0.5f), fontSize = 14.sp),
                 modifier = Modifier.padding(4.dp)
             )
         }
 
         Text(
             stringResource(R.string.times),
-            style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
+            style = MaterialTheme.typography.bodyMedium.copy(color = textColor, fontSize = 14.sp),
             modifier = Modifier.padding(4.dp)
         )
     }
@@ -1803,26 +1807,26 @@ fun FixedValuesAndSizeListView(block: DraggableBlock){
 @Composable
 fun FixedValuesAndSizeListViewForCard(){
     Row(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().background(innerBlockField),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ){
 
         Text(
             stringResource(R.string.create_list_with),
-            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black, fontSize = 14.sp),
+            style = MaterialTheme.typography.bodyMedium.copy(color = textColor, fontSize = 14.sp),
             modifier = Modifier.padding(2.dp)
         )
 
         Text(
             stringResource(R.string.repeated),
-            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black, fontSize = 14.sp),
+            style = MaterialTheme.typography.bodyMedium.copy(color = textColor, fontSize = 14.sp),
             modifier = Modifier.padding(2.dp)
         )
 
         Text(
             "N",
-            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black, fontSize = 14.sp),
+            style = MaterialTheme.typography.bodyMedium.copy(color = textColor, fontSize = 14.sp),
             modifier = Modifier.padding(2.dp)
         )
     }
@@ -1859,7 +1863,7 @@ fun AddElementByIndexView(block: DraggableBlock){
     ){
         Text(
             stringResource(R.string.in_list),
-            style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
+            style = MaterialTheme.typography.bodyMedium.copy(color = textColor, fontSize = 14.sp),
             modifier = Modifier.padding(4.dp)
         )
 
@@ -1868,18 +1872,18 @@ fun AddElementByIndexView(block: DraggableBlock){
                 .width(box1Width)
                 .fillMaxHeight()
                 .padding(4.dp)
-                .background(EmptySpace)
+                .background(innerBlockField)
         ){
             Text(
                 stringResource(R.string.list),
-                style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black.copy(alpha = 0.5f), fontSize = 14.sp),
+                style = MaterialTheme.typography.bodyMedium.copy(color = textColor.copy(alpha = 0.5f), fontSize = 14.sp),
                 modifier = Modifier.padding(4.dp)
             )
         }
 
         Text(
             stringResource(R.string.insert),
-            style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
+            style = MaterialTheme.typography.bodyMedium.copy(color = textColor, fontSize = 14.sp),
             modifier = Modifier.padding(4.dp)
         )
 
@@ -1888,18 +1892,18 @@ fun AddElementByIndexView(block: DraggableBlock){
                 .width(box2Width)
                 .fillMaxHeight()
                 .padding(4.dp)
-                .background(EmptySpace)
+                .background(innerBlockField)
         ){
             Text(
                 stringResource(R.string.id),
-                style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black.copy(alpha = 0.5f), fontSize = 14.sp),
+                style = MaterialTheme.typography.bodyMedium.copy(color = textColor.copy(alpha = 0.5f), fontSize = 14.sp),
                 modifier = Modifier.padding(4.dp)
             )
         }
 
         Text(
             stringResource(R.string.value),
-            style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
+            style = MaterialTheme.typography.bodyMedium.copy(color = textColor, fontSize = 14.sp),
             modifier = Modifier.padding(4.dp)
         )
     }
@@ -1908,18 +1912,18 @@ fun AddElementByIndexView(block: DraggableBlock){
 @Composable
 fun AddElementByIndexViewForCard(){
     Row(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().background(innerBlockField),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
         Text(
             stringResource(R.string.in_list),
-            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black, fontSize = 14.sp),
+            style = MaterialTheme.typography.bodyMedium.copy(color = textColor, fontSize = 14.sp),
             modifier = Modifier.padding(2.dp)
         )
         Text(
             stringResource(R.string.insert),
-            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black, fontSize = 14.sp),
+            style = MaterialTheme.typography.bodyMedium.copy(color = textColor, fontSize = 14.sp),
             modifier = Modifier.padding(2.dp)
         )
     }
@@ -1956,7 +1960,7 @@ fun GetValueByIndexView(block: DraggableBlock){
     ){
         Text(
             stringResource(R.string.in_list),
-            style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
+            style = MaterialTheme.typography.bodyMedium.copy(color = textColor, fontSize = 14.sp),
             modifier = Modifier.padding(4.dp)
         )
 
@@ -1965,18 +1969,18 @@ fun GetValueByIndexView(block: DraggableBlock){
                 .width(box1Width)
                 .fillMaxHeight()
                 .padding(4.dp)
-                .background(EmptySpace)
+                .background(innerBlockField)
         ){
             Text(
                 stringResource(R.string.list),
-                style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black.copy(alpha = 0.5f), fontSize = 14.sp),
+                style = MaterialTheme.typography.bodyMedium.copy(color = textColor.copy(alpha = 0.5f), fontSize = 14.sp),
                 modifier = Modifier.padding(4.dp)
             )
         }
 
         Text(
             stringResource(R.string.get),
-            style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
+            style = MaterialTheme.typography.bodyMedium.copy(color = textColor, fontSize = 14.sp),
             modifier = Modifier.padding(4.dp)
         )
 
@@ -1985,11 +1989,11 @@ fun GetValueByIndexView(block: DraggableBlock){
                 .width(box2Width)
                 .fillMaxHeight()
                 .padding(4.dp)
-                .background(EmptySpace)
+                .background(innerBlockField)
         ){
             Text(
                 stringResource(R.string.id),
-                style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black.copy(alpha = 0.5f), fontSize = 14.sp),
+                style = MaterialTheme.typography.bodyMedium.copy(color = textColor.copy(alpha = 0.5f), fontSize = 14.sp),
                 modifier = Modifier.padding(4.dp)
             )
         }
@@ -1999,18 +2003,18 @@ fun GetValueByIndexView(block: DraggableBlock){
 @Composable
 fun GetValueByIndexViewForCard(){
     Row(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().background(innerBlockField),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
         Text(
             stringResource(R.string.in_list),
-            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black, fontSize = 14.sp),
+            style = MaterialTheme.typography.bodyMedium.copy(color = textColor, fontSize = 14.sp),
             modifier = Modifier.padding(2.dp)
         )
         Text(
             stringResource(R.string.get) + " " + stringResource(R.string.value),
-            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black, fontSize = 14.sp),
+            style = MaterialTheme.typography.bodyMedium.copy(color = textColor, fontSize = 14.sp),
             modifier = Modifier.padding(2.dp)
         )
     }
@@ -2024,7 +2028,7 @@ fun GetListSizeView(){
     ){
         Text(
             stringResource(R.string.length_of),
-            style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
+            style = MaterialTheme.typography.bodyMedium.copy(color = textColor, fontSize = 14.sp),
             modifier = Modifier.padding(4.dp)
         )
     }
@@ -2033,12 +2037,12 @@ fun GetListSizeView(){
 @Composable
 fun GetListSizeViewForCard(){
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().background(innerBlockField),
         contentAlignment = Alignment.Center
     ){
         Text(
             stringResource(R.string.length_of)+ " " + stringResource(R.string.list),
-            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black, fontSize = 14.sp),
+            style = MaterialTheme.typography.bodyMedium.copy(color = textColor, fontSize = 14.sp),
             modifier = Modifier.padding(2.dp)
         )
     }
@@ -2075,7 +2079,7 @@ fun RemoveValueByIndexView(block: DraggableBlock){
     ){
         Text(
             stringResource(R.string.in_list),
-            style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
+            style = MaterialTheme.typography.bodyMedium.copy(color = textColor, fontSize = 14.sp),
             modifier = Modifier.padding(4.dp)
         )
 
@@ -2084,18 +2088,18 @@ fun RemoveValueByIndexView(block: DraggableBlock){
                 .width(box1Width)
                 .fillMaxHeight()
                 .padding(4.dp)
-                .background(EmptySpace)
+                .background(innerBlockField)
         ){
             Text(
                 stringResource(R.string.list),
-                style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black.copy(alpha = 0.5f), fontSize = 14.sp),
+                style = MaterialTheme.typography.bodyMedium.copy(color = textColor.copy(alpha = 0.5f), fontSize = 14.sp),
                 modifier = Modifier.padding(4.dp)
             )
         }
 
         Text(
             stringResource(R.string.remove),
-            style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
+            style = MaterialTheme.typography.bodyMedium.copy(color = textColor, fontSize = 14.sp),
             modifier = Modifier.padding(4.dp)
         )
 
@@ -2104,11 +2108,11 @@ fun RemoveValueByIndexView(block: DraggableBlock){
                 .width(box2Width)
                 .fillMaxHeight()
                 .padding(4.dp)
-                .background(EmptySpace)
+                .background(innerBlockField)
         ){
             Text(
                 stringResource(R.string.id),
-                style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black.copy(alpha = 0.5f), fontSize = 14.sp),
+                style = MaterialTheme.typography.bodyMedium.copy(color = textColor.copy(alpha = 0.5f), fontSize = 14.sp),
                 modifier = Modifier.padding(4.dp)
             )
         }
@@ -2118,18 +2122,18 @@ fun RemoveValueByIndexView(block: DraggableBlock){
 @Composable
 fun RemoveValueByIndexViewForCard(){
     Row(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().background(innerBlockField),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
         Text(
             stringResource(R.string.in_list),
-            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black, fontSize = 14.sp),
+            style = MaterialTheme.typography.bodyMedium.copy(color = textColor, fontSize = 14.sp),
             modifier = Modifier.padding(2.dp)
         )
         Text(
             stringResource(R.string.remove) + " " + stringResource(R.string.value),
-            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black, fontSize = 14.sp),
+            style = MaterialTheme.typography.bodyMedium.copy(color = textColor, fontSize = 14.sp),
             modifier = Modifier.padding(2.dp)
         )
     }
@@ -2166,7 +2170,7 @@ fun EditValueByIndexView(block: DraggableBlock){
     ){
         Text(
             stringResource(R.string.in_list),
-            style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
+            style = MaterialTheme.typography.bodyMedium.copy(color = textColor, fontSize = 14.sp),
             modifier = Modifier.padding(4.dp)
         )
 
@@ -2175,18 +2179,18 @@ fun EditValueByIndexView(block: DraggableBlock){
                 .width(box1Width)
                 .fillMaxHeight()
                 .padding(4.dp)
-                .background(EmptySpace)
+                .background(innerBlockField)
         ){
             Text(
                 stringResource(R.string.list),
-                style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black.copy(alpha = 0.5f), fontSize = 14.sp),
+                style = MaterialTheme.typography.bodyMedium.copy(color = textColor.copy(alpha = 0.5f), fontSize = 14.sp),
                 modifier = Modifier.padding(4.dp)
             )
         }
 
         Text(
             stringResource(R.string.edit),
-            style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
+            style = MaterialTheme.typography.bodyMedium.copy(color = textColor, fontSize = 14.sp),
             modifier = Modifier.padding(4.dp)
         )
 
@@ -2195,17 +2199,17 @@ fun EditValueByIndexView(block: DraggableBlock){
                 .width(box2Width)
                 .fillMaxHeight()
                 .padding(4.dp)
-                .background(EmptySpace)
+                .background(innerBlockField)
         ){
             Text(
                 stringResource(R.string.id),
-                style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black.copy(alpha = 0.5f), fontSize = 14.sp),
+                style = MaterialTheme.typography.bodyMedium.copy(color = textColor.copy(alpha = 0.5f), fontSize = 14.sp),
                 modifier = Modifier.padding(4.dp)
             )
         }
         Text(
             stringResource(R.string.value),
-            style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
+            style = MaterialTheme.typography.bodyMedium.copy(color = textColor, fontSize = 14.sp),
             modifier = Modifier.padding(4.dp)
         )
     }
@@ -2214,18 +2218,18 @@ fun EditValueByIndexView(block: DraggableBlock){
 @Composable
 fun EditValueByIndexViewForCard(){
     Row(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().background(innerBlockField),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
         Text(
             stringResource(R.string.in_list),
-            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black, fontSize = 14.sp),
+            style = MaterialTheme.typography.bodyMedium.copy(color = textColor, fontSize = 14.sp),
             modifier = Modifier.padding(2.dp)
         )
         Text(
             stringResource(R.string.edit),
-            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black, fontSize = 14.sp),
+            style = MaterialTheme.typography.bodyMedium.copy(color = textColor, fontSize = 14.sp),
             modifier = Modifier.padding(2.dp)
         )
     }
@@ -2263,18 +2267,18 @@ fun PushBackElementView(block: DraggableBlock){
                 .width(box1Width)
                 .fillMaxHeight()
                 .padding(4.dp)
-                .background(EmptySpace)
+                .background(innerBlockField)
         ){
             Text(
                 stringResource(R.string.list),
-                style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black.copy(alpha = 0.5f), fontSize = 14.sp),
+                style = MaterialTheme.typography.bodyMedium.copy(color = textColor.copy(alpha = 0.5f), fontSize = 14.sp),
                 modifier = Modifier.padding(4.dp)
             )
         }
 
         Text(
             stringResource(R.string.push_back),
-            style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
+            style = MaterialTheme.typography.bodyMedium.copy(color = textColor, fontSize = 14.sp),
             modifier = Modifier.padding(4.dp)
         )
     }
@@ -2283,18 +2287,18 @@ fun PushBackElementView(block: DraggableBlock){
 @Composable
 fun PushBackElementViewForCard(){
     Row(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().background(innerBlockField),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
         Text(
             stringResource(R.string.in_list),
-            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black, fontSize = 14.sp),
+            style = MaterialTheme.typography.bodyMedium.copy(color = textColor, fontSize = 14.sp),
             modifier = Modifier.padding(2.dp)
         )
         Text(
             stringResource(R.string.push_back) + " " + stringResource(R.string.value),
-            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black, fontSize = 14.sp),
+            style = MaterialTheme.typography.bodyMedium.copy(color = textColor, fontSize = 14.sp),
             modifier = Modifier.padding(2.dp)
         )
     }

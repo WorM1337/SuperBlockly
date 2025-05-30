@@ -76,6 +76,8 @@ import com.unewexp.superblockly.blocks.loops.ForElementInListBlock
 import com.unewexp.superblockly.blocks.loops.WhileBlock
 import com.unewexp.superblockly.blocks.returnBlocks.StringConcatenationBlock
 import com.unewexp.superblockly.debug.Logger
+import com.unewexp.superblockly.ui.theme.buttonColor
+import com.unewexp.superblockly.ui.theme.buttonMyColor
 import com.unewexp.superblockly.ui.theme.canvasBackground
 import com.unewexp.superblockly.viewBlocks.AddElementByIndexView
 import com.unewexp.superblockly.viewBlocks.GetListSizeView
@@ -677,11 +679,7 @@ fun MyProjects(navController: NavHostController) {
     ) {
         toHomeBtn(navController)
     }
-    Box(
-        contentAlignment = Alignment.Center
-    ) {
 
-    }
 }
 
 @Composable

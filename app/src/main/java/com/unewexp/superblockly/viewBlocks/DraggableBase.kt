@@ -24,6 +24,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.unewexp.superblockly.DraggableBlock
 import com.unewexp.superblockly.getColorByBlockType
+import com.unewexp.superblockly.ui.theme.debugCurrent
+import com.unewexp.superblockly.ui.theme.errorStroke
 import kotlin.math.roundToInt
 
 
@@ -49,11 +51,11 @@ fun DraggableBase(
 
     val border = if (draggableBlock.block.hasException) {
         Log.i(currentBlock.block.blockType.toString(), "ошибка на блоке")
-        BorderStroke(3.dp, Color.Red)
+        BorderStroke(3.dp, errorStroke)
     } else if (draggableBlock.block.isDebug){
-        BorderStroke(3.dp, Color.Green)
+        BorderStroke(3.dp, debugCurrent)
     } else {
-        BorderStroke(0.dp, Color.Red.copy(alpha = 0f))
+        BorderStroke(0.dp, errorStroke.copy(alpha = 0f))
     }
 
     Box(
