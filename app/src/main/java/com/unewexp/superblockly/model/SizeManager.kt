@@ -51,12 +51,12 @@ object SizeManager {
                     connection.positionY += deltaHeight * plusOrMinus
                 }
             }
-            val oldHeight = currentBlock.height.value
 
             currentBlock.height.value += deltaHeight * plusOrMinus
 
             changeParentParams(currentBlock,viewModel, deltaHeight = deltaHeight, isPositive = isPositive)
-            ConnectorManager.normalizeConnectorsPositions(parent,viewModel, besides = child)
+            if(!isPositive)ConnectorManager.normalizeConnectorsPositions(currentBlock,viewModel, besides = child)
+            else ConnectorManager.normalizeConnectorsPositions(currentBlock,viewModel)
             return
         }
 
@@ -139,7 +139,8 @@ object SizeManager {
             }
             ExtendConnectionViewType.NONE -> {}
         }
-        ConnectorManager.normalizeConnectorsPositions(parent,viewModel, besides = child)
+        if(!isPositive)ConnectorManager.normalizeConnectorsPositions(parent,viewModel, besides = child)
+        else ConnectorManager.normalizeConnectorsPositions(parent,viewModel)
     }
     fun changeParentParams(child: DraggableBlock,viewModel: DraggableViewModel, deltaWidth: Dp = 0.dp, deltaHeight: Dp = 0.dp, isPositive: Boolean = true){ // Вызывается рекурсивно из верхней
         // перегрузки для пересчета размеров родительских блоков
@@ -167,7 +168,8 @@ object SizeManager {
             currentBlock.height.value += deltaHeight * plusOrMinus
             changeParentParams(currentBlock,viewModel, deltaWidth, deltaHeight, isPositive = isPositive)
 
-            ConnectorManager.normalizeConnectorsPositions(parent,viewModel)
+            if(!isPositive)ConnectorManager.normalizeConnectorsPositions(currentBlock,viewModel, besides = child)
+            else ConnectorManager.normalizeConnectorsPositions(currentBlock,viewModel)
             return
         }
 
@@ -226,6 +228,7 @@ object SizeManager {
             }
             ExtendConnectionViewType.NONE -> {}
         }
-        ConnectorManager.normalizeConnectorsPositions(parent,viewModel)
+        if(!isPositive)ConnectorManager.normalizeConnectorsPositions(parent,viewModel, besides = child)
+        else ConnectorManager.normalizeConnectorsPositions(parent,viewModel)
     }
 }

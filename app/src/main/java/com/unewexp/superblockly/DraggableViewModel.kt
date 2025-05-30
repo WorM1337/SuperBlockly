@@ -91,7 +91,16 @@ class DraggableViewModel: ViewModel() {
 
         if(block.connectedParent != null && block.connectedParentConnectionView != null){
             disconnect(block.outputConnectionView!!.connector, block.connectedParentConnectionView!!.connector)
-            if(isFirst) SizeManager.changeParentParams(block, this, deltaHeight = sumHeight, isPositive = false)
+            if(isFirst){
+                if(sumHeight > block.height.value){
+                    SizeManager.changeParentParams(block, this, deltaHeight = sumHeight, isPositive = false)
+                }
+                else {
+                    SizeManager.changeParentParams(block, this, isPositive = false)
+                }
+            }
+
+
 
             block.connectedParent!!.scope.remove(block)
             block.connectedParentConnectionView!!.isConnected = false
