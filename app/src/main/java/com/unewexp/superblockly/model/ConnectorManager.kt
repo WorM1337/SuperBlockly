@@ -520,7 +520,7 @@ object ConnectorManager {
                     ),
                     ConnectionView(
                         castedBlock.rightInputConnector,
-                        width * 3 / 4 - defaultWidth / 2 - innerPadding * 2,
+                        width * 3 / 4 - defaultWidth / 2,
                         height / 2,
                         ExtendConnectionViewType.INNER,
                         height = defaultHeight - innerPadding * 2,
@@ -601,7 +601,7 @@ object ConnectorManager {
                     ),
                     ConnectionView(
                         castedBlock.rightInputConnector,
-                        width * 3 / 4 - defaultWidth / 2 - innerPadding * 2,
+                        width * 3 / 4 - defaultWidth / 2,
                         height / 2,
                         ExtendConnectionViewType.INNER,
                         height = defaultHeight - innerPadding * 2,
@@ -682,7 +682,7 @@ object ConnectorManager {
                     ),
                     ConnectionView(
                         castedBlock.maxValueBlock,
-                        width * 5 / 9 + innerPadding,
+                        width * 5 / 9 + innerPadding*2,
                         defaultHeight / 2,
                         ExtendConnectionViewType.INNER,
                         width = defaultWidth,
@@ -690,7 +690,7 @@ object ConnectorManager {
                     ),
                     ConnectionView(
                         castedBlock.stepBlock,
-                        width * 7 / 9 + innerPadding,
+                        width * 7 / 9 + innerPadding*2,
                         defaultHeight / 2,
                         ExtendConnectionViewType.INNER,
                         width = defaultWidth,
@@ -729,7 +729,7 @@ object ConnectorManager {
                     ),
                     ConnectionView(
                         castedBlock.rightInputConnector,
-                        width * 3 / 4 - defaultWidth / 2 - innerPadding * 2,
+                        width * 3 / 4 - defaultWidth / 2,
                         height / 2,
                         ExtendConnectionViewType.INNER,
                         height = defaultHeight - innerPadding * 2,
@@ -744,15 +744,19 @@ object ConnectorManager {
                     ConnectionView(castedBlock.outputConnector, 0.dp, height / 2),
                     ConnectionView(
                         castedBlock.leftInputConnector,
-                        width / 4,
+                        width / 4- defaultWidth / 2 - innerPadding * 2,
                         height / 2,
-                        ExtendConnectionViewType.INNER
+                        ExtendConnectionViewType.INNER,
+                        width = defaultWidth,
+                        height = defaultHeight-innerPadding*2
                     ),
                     ConnectionView(
                         castedBlock.rightInputConnector,
-                        width * 3 / 4,
+                        width * 3 / 4- defaultWidth / 2,
                         height / 2,
-                        ExtendConnectionViewType.INNER
+                        ExtendConnectionViewType.INNER,
+                        width = defaultWidth,
+                        height = defaultHeight-innerPadding*2
                     ),
                 )
             }
