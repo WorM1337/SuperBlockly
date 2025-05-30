@@ -140,6 +140,7 @@ fun Canvas(
                 .fillMaxWidth()
                 .height(55.dp)
                 .background(topBarBackground)
+
                 .zIndex(100000f)
         ) {
             Box(
