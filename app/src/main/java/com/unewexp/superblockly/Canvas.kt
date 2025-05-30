@@ -56,7 +56,9 @@ import com.unewexp.superblockly.debug.ExecutionContext
 import com.unewexp.superblockly.debug.RunProgram
 import com.unewexp.superblockly.ui.theme.ActiveRunProgram
 import com.unewexp.superblockly.ui.theme.ConnectorColor
+import com.unewexp.superblockly.ui.theme.canvasBackground
 import com.unewexp.superblockly.ui.theme.stopProgram
+import com.unewexp.superblockly.ui.theme.topBarBackground
 import com.unewexp.superblockly.viewBlocks.AddElementByIndexView
 import com.unewexp.superblockly.viewBlocks.BooleanLiteralBlockView
 import com.unewexp.superblockly.viewBlocks.BooleanLogicBlockView
@@ -93,7 +95,7 @@ fun Canvas(
     openDrawer: () -> Unit,
     onHomeClick: @Composable () -> Unit,
     updateOffset: (newOffset: Offset) -> Unit,
-    viewModel: DraggableViewModel = viewModel()
+    viewModel: DraggableViewModel = viewModel(),
 ) {
     val density = LocalDensity.current
     val zoomFactor = 0.7f
@@ -138,7 +140,11 @@ fun Canvas(
 
     Column(modifier = Modifier.fillMaxSize()) {
         Box(
-            modifier = Modifier.fillMaxWidth().height(55.dp).background(Color.White).zIndex(100000f)
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(55.dp)
+                .background(topBarBackground)
+                .zIndex(100000f)
         ) {
             Box(
                 modifier = Modifier
@@ -173,7 +179,8 @@ fun Canvas(
                                                 true
                                             }
                                             ),
-                                    modifier = Modifier.size(iconButtonSize)
+                                    modifier = Modifier
+                                        .size(iconButtonSize)
                                         .background(
                                             backgroundColorIfActive,
                                             RoundedCornerShape(cornersButton)
@@ -194,7 +201,7 @@ fun Canvas(
                             }
                         }
 
-                        Spacer(modifier = Modifier.size(16.dp))
+                        Spacer(modifier = Modifier.size(22.dp))
 
                         Box(
                             contentAlignment = Alignment.Center
@@ -204,7 +211,8 @@ fun Canvas(
                                     ExecutionContext.programProgress = RunProgram.DEBUG
                                     startExecution()
                                 },
-                                modifier = Modifier.size(iconButtonSize)
+                                modifier = Modifier
+                                    .size(iconButtonSize)
                                     .background(backgroundColorIfActive, RoundedCornerShape(5.dp)),
                                 enabled = (
                                         if (ExecutionContext.programProgress == RunProgram.NONE) {
@@ -237,7 +245,7 @@ fun Canvas(
                         }
 
                         if (ExecutionContext.programProgress != RunProgram.NONE) {
-                            Spacer(modifier = Modifier.size(16.dp))
+                            Spacer(modifier = Modifier.size(22.dp))
                             Box(
 
                             ) {
@@ -245,7 +253,8 @@ fun Canvas(
                                     onClick = {
                                         stopExecution()
                                     },
-                                    modifier = Modifier.size(iconButtonSize)
+                                    modifier = Modifier
+                                        .size(iconButtonSize)
                                         .background(stopProgram, RoundedCornerShape(5.dp))
                                 ) {
                                     Image(
@@ -259,7 +268,7 @@ fun Canvas(
 
 
                     }
-                    Spacer(modifier = Modifier.size(16.dp))
+                    Spacer(modifier = Modifier.size(22.dp))
                     Row {
                         Box(
                             Modifier
@@ -278,7 +287,7 @@ fun Canvas(
                         }
 
                         if (ExecutionContext.programProgress == RunProgram.DEBUG) {
-                            Spacer(modifier = Modifier.size(16.dp))
+                            Spacer(modifier = Modifier.size(22.dp))
                             Box() {
                                 IconButton(
                                     onClick = {
@@ -316,7 +325,7 @@ fun Canvas(
                 modifier = Modifier
                     .width(4000.dp)
                     .height(2000.dp)
-                    .background(Color.LightGray)
+                    .background(canvasBackground)
 
                     .transformable(
                         state = rememberTransformableState { zoomChange, offsetChange, _ ->
@@ -409,7 +418,7 @@ fun Canvas(
                 if (ExecutionContext.programProgress != RunProgram.DEBUG && panelIsVisible) {
                     ConsolePanel()
                 }
-                if (ExecutionContext.programProgress == RunProgram.DEBUG && panelIsVisible){
+                if (ExecutionContext.programProgress == RunProgram.DEBUG && panelIsVisible) {
                     DebugPanel()
                 }
             }
@@ -419,16 +428,17 @@ fun Canvas(
 
 
 @Composable
-fun TakeViewBlock (block: DraggableBlock, viewModel: DraggableViewModel = viewModel()){
+fun TakeViewBlock(block: DraggableBlock, viewModel: DraggableViewModel = viewModel()) {
     val blockType = block.block.blockType
-    when(blockType){
-        BlockType.OPERAND -> OperandBlockView (
+    when (blockType) {
+        BlockType.OPERAND -> OperandBlockView(
             { type ->
-            (block.block as OperandBlock).operand = type
+                (block.block as OperandBlock).operand = type
 
-        },
+            },
             block
         )
+
         BlockType.SET_VARIABLE_VALUE -> SetValueVariableView(block)
 
         BlockType.START -> StartBlockView()
@@ -450,9 +460,11 @@ fun TakeViewBlock (block: DraggableBlock, viewModel: DraggableViewModel = viewMo
                 (block.block as CompareNumbers).compareType = type
             }
         )
-        BlockType.BOOLEAN_LOGIC_BLOCK -> BooleanLogicBlockView(block){ type ->
+
+        BlockType.BOOLEAN_LOGIC_BLOCK -> BooleanLogicBlockView(block) { type ->
             (block.block as BooleanLogicBlock).logicOperand = type
         }
+
         BlockType.NOT_BLOCK -> NotBlockView()
         BlockType.IF_BLOCK -> IfBlockView()
         BlockType.ELSE_BLOCK -> ElseBlockView()

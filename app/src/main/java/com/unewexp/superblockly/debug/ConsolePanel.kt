@@ -36,6 +36,11 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.min
+import com.unewexp.superblockly.ui.theme.daggerColor
+import com.unewexp.superblockly.ui.theme.errorTextColor
+import com.unewexp.superblockly.ui.theme.logDraggableLine
+import com.unewexp.superblockly.ui.theme.logsPanelBackground
+import com.unewexp.superblockly.ui.theme.logsTextColor
 
 
 @Composable
@@ -75,7 +80,7 @@ fun ConsolePanel(){
                     .fillMaxHeight()
                     .width(rolledUp)
                     .background(
-                        color = Color(0xFF2C2C2C),  // фон полосы ресайза
+                        color = logDraggableLine,
                         shape = RoundedCornerShape(
                             topStart = 20.dp,
                             bottomStart = 20.dp,
@@ -101,7 +106,7 @@ fun ConsolePanel(){
                         .height(70.dp)
                         .width(10.dp)
                         .background(
-                            color = Color(0xFF555555),  // маленький прямоугольник (драггер)
+                            color = daggerColor,
                             shape = RoundedCornerShape(5.dp)
                         )
                 )
@@ -112,15 +117,15 @@ fun ConsolePanel(){
                 modifier = Modifier
                     .fillMaxHeight()
                     .weight(1f)
-                    .background(Color(0xFF1E1E1E))  // фон логов
+                    .background(logsPanelBackground)
             ) {
                 if (showLogs){
                     var logs = Logger.logs
                     items(logs.size) { index ->
                         val log = logs[index]
                         val (prefix, color) = when (log.logType) {
-                            Logger.LogType.ERROR -> "[ERROR]" to Color(0xFFFF5555) // красный для ошибок
-                            Logger.LogType.TEXT -> "[INFO]" to Color(0xFFE0E0E0)  // светло-серый для обычных
+                            Logger.LogType.ERROR -> "[ERROR]" to errorTextColor
+                            Logger.LogType.TEXT -> "[INFO]" to logsTextColor
                         }
 
                         Text(

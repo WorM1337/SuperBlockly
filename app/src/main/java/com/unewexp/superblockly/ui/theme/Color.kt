@@ -13,6 +13,9 @@ val Pink40 = Color(0xFF7D5260)
 
 val ConnectorColor = Color(0xFF708090)
 
+val innerColor = Color(0xFF563581)
+val textColor = Color(0xFFE7DDDD)
+
 val MathColor = Color(0xFF26f5b5)
 val VariablesColor = Color(0xFFf1bf16)
 val StartColor = Color(0xFFbe10ff)
@@ -26,3 +29,14 @@ val EmptySpace = Color(0xFFb2b3af)
 
 val ActiveRunProgram = Color(0xFF57965C)
 val stopProgram = Color(0xFFC94F4F)
+
+
+val logsPanelBackground = Color(0xFF251E38)
+val daggerColor = Color(0xFF604A7C)
+val logDraggableLine = Color(0xFF2F2844)
+
+val topBarBackground = Color(0xFF301155)
+val canvasBackground = Color(0xFF3C2281)
+
+val errorTextColor = Color(0xFFFF5555)
+val logsTextColor = Color(0xFFE0E0E0)
