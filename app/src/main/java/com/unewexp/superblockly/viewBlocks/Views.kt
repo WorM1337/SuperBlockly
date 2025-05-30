@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -24,7 +23,6 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -74,21 +72,22 @@ import com.unewexp.superblockly.enums.CompareType
 import com.unewexp.superblockly.enums.OperandType
 import com.unewexp.superblockly.enums.symbol
 import com.unewexp.superblockly.ui.theme.EmptySpace
-import com.unewexp.superblockly.ui.theme.Pink40
-import com.unewexp.superblockly.ui.theme.innerColor
+import com.unewexp.superblockly.ui.theme.innerBlockField
 import com.unewexp.superblockly.ui.theme.textColor
+import com.unewexp.superblockly.ui.theme.textFieldColorForCard
+import com.unewexp.superblockly.ui.theme.backgoundForCard
+import com.unewexp.superblockly.ui.theme.spinnerColor
 
 @Composable
 fun StartBlockView() {
     Surface(
         modifier = Modifier.fillMaxSize(),
         shape = RoundedCornerShape(16.dp),
-        color = MaterialTheme.colorScheme.primaryContainer,
+        color = innerBlockField,
         shadowElevation = 8.dp
     ) {
         Box(
-            modifier = Modifier.fillMaxSize()
-                .background(innerColor),
+            modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
 
         ) {
@@ -122,7 +121,7 @@ fun TextFieldLike(
             .padding(horizontal = 4.dp)
             .height(TextFieldDefaults.MinHeight)
             .background(
-                color = MaterialTheme.colorScheme.surface,
+                color = textFieldColorForCard,
                 shape = MaterialTheme.shapes.small
             )
             .border(
@@ -212,7 +211,7 @@ fun IntLiteralView(
 
 @Composable
 fun IntLiteralViewForCard(){
-    TextFieldLike(placeholder = stringResource(R.string.Num), modifier = Modifier.fillMaxWidth())
+    TextFieldLike(placeholder = stringResource(R.string.Num), modifier = Modifier.fillMaxWidth().background(backgoundForCard))
 }
 
 @Composable
@@ -267,7 +266,7 @@ fun BooleanLiteralBlockView(
 
 @Composable
 fun BooleanLiteralBlockViewForCard(){
-    TextFieldLike(placeholder = stringResource(R.string.Boolean), modifier = Modifier.fillMaxWidth())
+    TextFieldLike(placeholder = stringResource(R.string.Boolean), modifier = Modifier.fillMaxWidth().background(backgoundForCard))
 }
 
 @Composable
@@ -322,7 +321,7 @@ fun StringLiteralBlockView(
 
 @Composable
 fun StringLiteralBlockViewForCard(){
-    TextFieldLike(placeholder = stringResource(R.string.text), modifier = Modifier.fillMaxWidth())
+    TextFieldLike(placeholder = stringResource(R.string.text), modifier = Modifier.fillMaxWidth().background(backgoundForCard))
 }
 
 @Composable
@@ -531,7 +530,7 @@ fun SetValueVariableViewForCard(){
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.padding(end = 4.dp)
         )
-        TextFieldLike(placeholder = stringResource(R.string.Var), modifier = Modifier.width(150.dp))
+        TextFieldLike(placeholder = stringResource(R.string.Var), modifier = Modifier.width(150.dp).background(backgoundForCard))
         Text(
             stringResource(R.string.to),
             style = MaterialTheme.typography.bodyMedium,
@@ -588,7 +587,7 @@ fun VariableReferenceView(
 
 @Composable
 fun VariableReferenceViewForCard(){
-    TextFieldLike(placeholder = stringResource(R.string.Var), modifier = Modifier.fillMaxWidth())
+    TextFieldLike(placeholder = stringResource(R.string.Var), modifier = Modifier.fillMaxWidth().background(backgoundForCard))
 }
 
 @Composable
@@ -659,7 +658,7 @@ fun DeclarationVariableViewForCard(){
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.padding(end = 4.dp)
         )
-        TextFieldLike(placeholder = stringResource(R.string.Var), modifier = Modifier.fillMaxWidth())
+        TextFieldLike(placeholder = stringResource(R.string.Var), modifier = Modifier.fillMaxWidth().background(backgoundForCard))
     }
 }
 
@@ -1289,7 +1288,7 @@ fun OperandBlockView(
                 DropdownMenu(
                     expanded = expanded,
                     onDismissRequest = { expanded = false },
-                    modifier = Modifier.background(MaterialTheme.colorScheme.surface)
+                    modifier = Modifier.background(spinnerColor)
                 ) {
                     OperandType.entries.forEach { operand ->
                         DropdownMenuItem(
@@ -1330,7 +1329,7 @@ fun OperandBlockForCard(
     Surface(
         modifier = modifier,
         shape = RoundedCornerShape(8.dp),
-        color = MaterialTheme.colorScheme.surfaceVariant,
+        color = backgoundForCard,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         shadowElevation = 1.dp
     ) {
@@ -1346,7 +1345,7 @@ fun OperandBlockForCard(
                     .width(70.dp)
                     .fillMaxHeight()
                     .background(
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.1f),
+                        color = textFieldColorForCard,
                         shape = RoundedCornerShape(4.dp)
                     )
             )
@@ -1373,7 +1372,7 @@ fun OperandBlockForCard(
                     .width(70.dp)
                     .fillMaxHeight()
                     .background(
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.1f),
+                        color = textFieldColorForCard,
                         shape = RoundedCornerShape(4.dp)
                     )
             )

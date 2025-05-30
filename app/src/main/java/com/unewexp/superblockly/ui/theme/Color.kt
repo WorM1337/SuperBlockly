@@ -13,12 +13,16 @@ val Pink40 = Color(0xFF7D5260)
 
 val ConnectorColor = Color(0xFF708090)
 
-val innerColor = Color(0xFF563581)
+val innerBlockField = Color(0xFF563581)
 val textColor = Color(0xFFE7DDDD)
+val textFieldColorForCard = Color(0xFF71369B)
+val backgoundForCard = Color(0xFF9225C8)
+val spinnerColor = Color(0xFF3F0E7F)
+
 
 val MathColor = Color(0xFF26f5b5)
 val VariablesColor = Color(0xFFf1bf16)
-val StartColor = Color(0xFFbe10ff)
+val StartColor = Color(0xFFCD1313)
 val BooleanColor = Color(0xFF2069b8)
 val PrintColor = Color(0xFFac6018)
 val LoopColor = Color(0xFFacad71)
