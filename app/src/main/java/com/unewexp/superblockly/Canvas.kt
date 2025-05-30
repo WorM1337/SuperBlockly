@@ -55,6 +55,7 @@ import com.unewexp.superblockly.blocks.logic.CompareNumbers
 import com.unewexp.superblockly.enums.symbol
 import com.unewexp.superblockly.viewBlocks.AddElementByIndexView
 import com.unewexp.superblockly.viewBlocks.CompareNumbersBlockView
+import com.unewexp.superblockly.viewBlocks.EditValueByIndexView
 import com.unewexp.superblockly.viewBlocks.ElseBlockView
 import com.unewexp.superblockly.viewBlocks.ElseIfBlockView
 import com.unewexp.superblockly.viewBlocks.FixedValuesAndSizeListView
@@ -65,6 +66,7 @@ import com.unewexp.superblockly.viewBlocks.IfBlockView
 import com.unewexp.superblockly.viewBlocks.IntLiteralView
 import com.unewexp.superblockly.viewBlocks.OperandBlockView
 import com.unewexp.superblockly.viewBlocks.PrintBlockView
+import com.unewexp.superblockly.viewBlocks.PushBackElementView
 import com.unewexp.superblockly.viewBlocks.RemoveValueByIndexView
 import com.unewexp.superblockly.viewBlocks.SetValueVariableView
 import com.unewexp.superblockly.viewBlocks.StartBlockView
@@ -213,14 +215,18 @@ fun Canvas(
                             viewModel.handleAction(DraggableViewModel.BlocklyAction.RemoveBlock(it))
                         },
                         onDragStart = {
-                            val queue: MutableList<DraggableBlock> = mutableListOf(it)
+                            it.zIndex.value = viewModel.maxZIndex + 0.1f
+                            val queue: MutableList<DraggableBlock> = mutableListOf()
+                            it.scope.forEach { block ->
+                                queue.add(block)
+                            }
                             while(!queue.isEmpty()){
                                 val item = queue.first()
                                 queue.removeAt(0)
                                 item.scope.forEach { element ->
                                     queue.add(element)
                                 }
-                                item.zIndex.value += viewModel.maxZIndex + 0.1f
+                                item.zIndex.value = item.connectedParent!!.zIndex.value + 0.1f
                                 viewModel.maxZIndex = max(item.zIndex.value, viewModel.maxZIndex)
                             }
                         },
@@ -293,6 +299,7 @@ fun TakeViewBlock (block: DraggableBlock, viewModel: DraggableViewModel = viewMo
         BlockType.PRINT_BLOCK -> PrintBlockView()
         BlockType.SHORTHAND_ARITHMETIC_BLOCK -> TODO()
         BlockType.COMPARE_NUMBERS_BLOCK -> CompareNumbersBlockView(
+            block,
             { type ->
                 (block.block as CompareNumbers).compareType = type
             }
@@ -304,7 +311,7 @@ fun TakeViewBlock (block: DraggableBlock, viewModel: DraggableViewModel = viewMo
         BlockType.IF_ELSE_BLOCK -> ElseIfBlockView()
         BlockType.REPEAT_N_TIMES -> TODO()
         BlockType.WHILE_BLOCK -> WhileBlockView()
-        BlockType.FOR_BLOCK -> ForBlockView { newValue ->
+        BlockType.FOR_BLOCK -> ForBlockView(block) { newValue ->
             viewModel.updateValue(block, newValue)
         }
         BlockType.FOR_ELEMENT_IN_LIST -> TODO()
@@ -313,7 +320,7 @@ fun TakeViewBlock (block: DraggableBlock, viewModel: DraggableViewModel = viewMo
         BlockType.REMOVE_VALUE_BY_INDEX -> RemoveValueByIndexView(block)
         BlockType.ADD_VALUE_BY_INDEX -> AddElementByIndexView(block)
         BlockType.GET_LIST_SIZE -> GetListSizeView()
-        BlockType.EDIT_VALUE_BY_INDEX -> TODO()
-        BlockType.PUSH_BACK_ELEMENT -> TODO()
+        BlockType.EDIT_VALUE_BY_INDEX -> EditValueByIndexView(block)
+        BlockType.PUSH_BACK_ELEMENT -> PushBackElementView(block)
     }
 }

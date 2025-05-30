@@ -97,18 +97,18 @@ fun getColorByBlockType(type: BlockType): Color {
         BlockType.SET_VARIABLE_VALUE -> color = VariablesColor
         BlockType.START -> color = StartColor
         BlockType.INT_LITERAL -> color = MathColor
-        BlockType.STRING_LITERAL -> TODO()
         BlockType.BOOLEAN_LITERAL -> color = BooleanColor
         BlockType.OPERAND -> color = MathColor
-        BlockType.SHORTHAND_ARITHMETIC_BLOCK -> TODO()
+        BlockType.SHORTHAND_ARITHMETIC_BLOCK -> color = MathColor
         BlockType.VARIABLE_DECLARATION -> color = VariablesColor
         BlockType.VARIABLE_REFERENCE -> color = VariablesColor
         BlockType.STRING_CONCAT -> TODO()
         BlockType.STRING_APPEND -> TODO()
+        BlockType.STRING_LITERAL -> TODO()
         BlockType.PRINT_BLOCK -> color = PrintColor
         BlockType.COMPARE_NUMBERS_BLOCK -> color = BooleanColor
         BlockType.BOOLEAN_LOGIC_BLOCK -> color = BooleanColor
-        BlockType.NOT_BLOCK -> TODO()
+        BlockType.NOT_BLOCK -> color = BooleanColor
         BlockType.IF_BLOCK -> color = BooleanColor
         BlockType.ELSE_BLOCK -> color = BooleanColor
         BlockType.IF_ELSE_BLOCK -> color = BooleanColor
@@ -121,8 +121,8 @@ fun getColorByBlockType(type: BlockType): Color {
         BlockType.REMOVE_VALUE_BY_INDEX -> color = ListColor
         BlockType.ADD_VALUE_BY_INDEX -> color = ListColor
         BlockType.GET_LIST_SIZE -> color = ListColor
-        BlockType.EDIT_VALUE_BY_INDEX -> TODO()
-        BlockType.PUSH_BACK_ELEMENT -> TODO()
+        BlockType.EDIT_VALUE_BY_INDEX -> color = ListColor
+        BlockType.PUSH_BACK_ELEMENT -> color = ListColor
     }
     return color
 }

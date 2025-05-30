@@ -56,7 +56,7 @@ fun DraggableBase(
     Box(
         modifier = Modifier
             .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
-            .size(currentBlock.width.value, currentBlock.height.value)
+            .requiredSize(currentBlock.width.value, currentBlock.height.value)
             .background(color, shape = MaterialTheme.shapes.small)
             .border(border, MaterialTheme.shapes.small)
             .pointerInput(Unit) {

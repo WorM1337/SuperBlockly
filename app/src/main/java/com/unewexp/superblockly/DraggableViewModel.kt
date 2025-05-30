@@ -20,6 +20,7 @@ import com.unewexp.superblockly.model.SizeManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlin.math.max
 import kotlin.math.min
 
 class DraggableViewModel: ViewModel() {
@@ -187,7 +188,12 @@ class DraggableViewModel: ViewModel() {
         if(minZIndex > 0){
             _blocks.value.forEach {
                 it.zIndex.value -= minZIndex
+                maxZIndex = max(maxZIndex, it.zIndex.value)
             }
+        }
+        maxZIndex = 0f
+        _blocks.value.forEach {
+            maxZIndex = max(maxZIndex, it.zIndex.value)
         }
     }
 

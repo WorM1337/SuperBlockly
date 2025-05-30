@@ -38,4 +38,5 @@
     <string name="remove">remove</string>
     <string name="edit">edit</string>
     <string name="count">count</string>
+    <string name="push_back">push_back</string>
 </resources>
