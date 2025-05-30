@@ -79,6 +79,9 @@ object SizeManager {
                             connection.positionY += delta/2 * plusOrMinus
                         }
                     }
+                    if(parent.outputConnectionView!!.positionY == connectionView.positionY){
+                        parent.outputConnectionView!!.positionY += delta/2 * plusOrMinus
+                    }
                     parent.height.value += delta * plusOrMinus
 
                     changeParentParams(parent,viewModel, deltaHeight = delta, isPositive = isPositive)
@@ -104,6 +107,9 @@ object SizeManager {
                         else if(connection.positionY == connectionView.positionY){
                             connection.positionY += deltaHeight/2 * plusOrMinus
                         }
+                    }
+                    if(parent.outputConnectionView!!.positionY == connectionView.positionY){
+                        parent.outputConnectionView!!.positionY += deltaHeight/2 * plusOrMinus
                     }
                     parent.height.value += deltaHeight * plusOrMinus
                     diffrenceHeight = deltaHeight
@@ -186,6 +192,9 @@ object SizeManager {
                             connection.positionY += deltaHeight/2 * plusOrMinus
                         }
                     }
+                    if(parent.outputConnectionView!!.positionY == connectionView.positionY){
+                        parent.outputConnectionView!!.positionY += deltaHeight/2 * plusOrMinus
+                    }
                     parent.height.value += deltaHeight * plusOrMinus
 
                     changeParentParams(parent,viewModel, deltaHeight = deltaHeight, isPositive = isPositive)
@@ -203,6 +212,9 @@ object SizeManager {
                         else if(connection.positionY == connectionView.positionY){
                             connection.positionY += deltaHeight/2 * plusOrMinus
                         }
+                    }
+                    if(parent.outputConnectionView!!.positionY == connectionView.positionY){
+                        parent.outputConnectionView!!.positionY += deltaHeight/2 * plusOrMinus
                     }
                     parent.height.value += deltaHeight * plusOrMinus
                 }

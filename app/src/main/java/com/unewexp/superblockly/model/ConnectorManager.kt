@@ -397,8 +397,8 @@ object ConnectorManager {
 
                 ans += mutableListOf(
                     ConnectionView(castedBlock.outputConnector, 0.dp, height/2),
-                    ConnectionView(castedBlock.leftInputConnector, width/4-defaultWidth/2-innerPadding*2, height/2, ExtendConnectionViewType.INNER, height = defaultHeight-innerPadding*2, width = defaultWidth + innerPadding*2),
-                    ConnectionView(castedBlock.rightInputConnector, width*3/4-defaultWidth/2-innerPadding*2, height/2, ExtendConnectionViewType.INNER, height = defaultHeight-innerPadding*2, width = defaultWidth + innerPadding*2),
+                    ConnectionView(castedBlock.leftInputConnector, width/4-defaultWidth/2-innerPadding*2, height/2, ExtendConnectionViewType.INNER, height = defaultHeight-innerPadding*2, width = defaultWidth),
+                    ConnectionView(castedBlock.rightInputConnector, width*3/4-defaultWidth/2-innerPadding*2, height/2, ExtendConnectionViewType.INNER, height = defaultHeight-innerPadding*2, width = defaultWidth),
                 )
             }
             BlockType.SET_VARIABLE_VALUE -> {
