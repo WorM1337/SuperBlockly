@@ -36,8 +36,6 @@ object SizeManager {
 
         val connectionView = child.connectedParentConnectionView!!.copy()
 
-
-
         if(parent.isInner && connectionView.extendType == ExtendConnectionViewType.NONE){
 
             var currentBlock = parent

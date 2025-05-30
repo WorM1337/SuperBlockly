@@ -70,11 +70,11 @@ object ViewInitialSize {
             BlockType.ADD_VALUE_BY_INDEX ->
                 PairDp(width = 300.dp, height = 60.dp)
             BlockType.GET_LIST_SIZE ->
-                PairDp(width = 100.dp, height = 60.dp)
+                PairDp(width = 120.dp, height = 60.dp)
             BlockType.EDIT_VALUE_BY_INDEX ->
                 PairDp(width = 300.dp, height = 60.dp)
             BlockType.PUSH_BACK_ELEMENT ->
-                PairDp(width = 220.dp, height = 60.dp)
+                PairDp(width = 240.dp, height = 60.dp)
             else -> null
         }
     }
