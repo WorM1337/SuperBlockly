@@ -1178,8 +1178,8 @@ fun ForBlockView(
                     name = it.copy(currentBlock.variableName)
                 },
                 modifier = Modifier
-                    .weight(1f)
                     .height(24.dp)
+                    .width(100.dp)
                     .padding(4.dp, 0.dp)
                     .align(Alignment.CenterVertically),
                 singleLine = true,
@@ -1207,14 +1207,14 @@ fun ForBlockView(
             Text(
                 stringResource(R.string.from),
                 style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
-                modifier = Modifier.padding(bottom = 4.dp)
+                modifier = Modifier.weight(1f).padding(bottom = 4.dp)
             )
 
             Box(
                 modifier = Modifier
                     .width(box1Width)
                     .height(50.dp)
-                    .padding(10.dp, 0.dp)
+                    .padding(4.dp, 0.dp)
                     .background(EmptySpace),
                 contentAlignment = Alignment.Center
             ){
@@ -1228,14 +1228,14 @@ fun ForBlockView(
             Text(
                 stringResource(R.string.to),
                 style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
-                modifier = Modifier.padding(bottom = 4.dp)
+                modifier = Modifier.weight(1f).padding(bottom = 4.dp)
             )
 
             Box(
                 modifier = Modifier
                     .width(box2Width)
                     .height(50.dp)
-                    .padding(10.dp, 0.dp)
+                    .padding(4.dp, 0.dp)
                     .background(EmptySpace),
                 contentAlignment = Alignment.Center
             ){
@@ -1249,14 +1249,14 @@ fun ForBlockView(
             Text(
                 stringResource(R.string.step),
                 style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
-                modifier = Modifier.padding(bottom = 4.dp)
+                modifier = Modifier.weight(1f).padding(bottom = 4.dp)
             )
 
             Box(
                 modifier = Modifier
                     .width(box3Width)
                     .height(50.dp)
-                    .padding(10.dp, 0.dp)
+                    .padding(4.dp, 0.dp)
                     .background(EmptySpace),
                 contentAlignment = Alignment.Center
             ){
