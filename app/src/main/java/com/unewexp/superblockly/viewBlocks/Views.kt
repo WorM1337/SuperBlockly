@@ -61,11 +61,15 @@ import com.unewexp.superblockly.blocks.list.PushBackElement
 import com.unewexp.superblockly.blocks.list.RemoveValueByIndex
 import com.unewexp.superblockly.blocks.literals.BooleanLiteralBlock
 import com.unewexp.superblockly.blocks.literals.StringLiteralBlock
+import com.unewexp.superblockly.blocks.logic.BooleanLogicBlock
 import com.unewexp.superblockly.blocks.logic.CompareNumbers
 import com.unewexp.superblockly.blocks.loops.ForBlock
+import com.unewexp.superblockly.blocks.loops.ForElementInListBlock
+import com.unewexp.superblockly.blocks.returnBlocks.StringConcatenationBlock
 import com.unewexp.superblockly.blocks.returnBlocks.VariableReferenceBlock
 import com.unewexp.superblockly.blocks.voidBlocks.SetValueVariableBlock
 import com.unewexp.superblockly.blocks.voidBlocks.VariableDeclarationBlock
+import com.unewexp.superblockly.enums.BooleanLogicType
 import com.unewexp.superblockly.enums.CompareType
 import com.unewexp.superblockly.enums.OperandType
 import com.unewexp.superblockly.enums.symbol
@@ -318,6 +322,136 @@ fun StringLiteralBlockViewForCard(){
 }
 
 @Composable
+fun StringConcatenationBlockView(
+    block: DraggableBlock,
+) {
+
+    fun determineBlocks(blocks: SnapshotStateList<DraggableBlock>): Pair<DraggableBlock?, DraggableBlock?> {
+        var pair: Pair<DraggableBlock?, DraggableBlock?> = Pair(null, null)
+        blocks.forEach { it ->
+            if (it.block == (block.block as StringConcatenationBlock).leftInputConnector.connectedTo){
+                pair = Pair(it, null)
+            }
+        }
+        blocks.forEach { it ->
+            if (it.block == (block.block as StringConcatenationBlock).rightInputConnector.connectedTo){
+                pair = pair.copy(second = it)
+            }
+        }
+        return pair
+    }
+
+    val (leftBlock, rightBlock) = remember(block.scope, block.scope.map { it.x.value }) {
+        determineBlocks(block.scope)
+    }
+
+    val box1Width by derivedStateOf { leftBlock?.width?.value ?: 60.dp }
+    val box2Width by derivedStateOf { rightBlock?.width?.value ?: 60.dp }
+
+    var expanded by remember { mutableStateOf(false) }
+
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.surfaceVariant,
+        shape = RoundedCornerShape(8.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .width(box1Width)
+                    .fillMaxHeight()
+                    .background(
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.1f),
+                        shape = RoundedCornerShape(4.dp)
+                    )
+            )
+
+            Box(
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = stringResource(R.string.plus),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
+
+            Box(
+                modifier = Modifier
+                    .width(box2Width)
+                    .fillMaxHeight()
+                    .background(
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.1f),
+                        shape = RoundedCornerShape(4.dp)
+                    )
+            )
+        }
+    }
+}
+
+@Composable
+fun StringConcatenationBlockForCard() {
+    Surface(
+        modifier = Modifier,
+        shape = RoundedCornerShape(8.dp),
+        color = MaterialTheme.colorScheme.surfaceVariant,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+        shadowElevation = 1.dp
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .width(60.dp)
+                    .fillMaxHeight()
+                    .background(
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.1f),
+                        shape = RoundedCornerShape(4.dp)
+                    )
+            )
+
+            Surface(
+                shape = CircleShape,
+                color = MaterialTheme.colorScheme.primaryContainer,
+                modifier = Modifier.size(50.dp)
+            ) {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    Text(
+                        text = stringResource(R.string.plus),
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+            }
+
+            Box(
+                modifier = Modifier
+                    .width(60.dp)
+                    .fillMaxHeight()
+                    .background(
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.1f),
+                        shape = RoundedCornerShape(4.dp)
+                    )
+            )
+        }
+    }
+}
+
+@Composable
 fun SetValueVariableView(
     block: DraggableBlock
 ) {
@@ -526,6 +660,168 @@ fun DeclarationVariableViewForCard(){
 }
 
 @Composable
+fun BooleanLogicBlockView(
+    block: DraggableBlock,
+    onBooleanLogicSelected: (BooleanLogicType) -> Unit
+) {
+
+    fun determineBlocks(blocks: SnapshotStateList<DraggableBlock>): Pair<DraggableBlock?, DraggableBlock?> {
+        var pair: Pair<DraggableBlock?, DraggableBlock?> = Pair(null, null)
+        blocks.forEach { it ->
+            if (it.block == (block.block as BooleanLogicBlock).leftInputConnector.connectedTo){
+                pair = Pair(it, null)
+            }
+        }
+        blocks.forEach { it ->
+            if (it.block == (block.block as BooleanLogicBlock).rightInputConnector.connectedTo){
+                pair = pair.copy(second = it)
+            }
+        }
+        return pair
+    }
+
+    val (leftBlock, rightBlock) = remember(block.scope, block.scope.map { it.x.value }) {
+        determineBlocks(block.scope)
+    }
+
+    val box1Width by derivedStateOf { leftBlock?.width?.value ?: 60.dp }
+    val box2Width by derivedStateOf { rightBlock?.width?.value ?: 60.dp }
+
+    var selectedLogicType by remember { mutableStateOf(BooleanLogicType.AND) }
+    var expanded by remember { mutableStateOf(false) }
+
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.surfaceVariant,
+        shape = RoundedCornerShape(8.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .width(box1Width)
+                    .fillMaxHeight()
+                    .background(
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.1f),
+                        shape = RoundedCornerShape(4.dp)
+                    )
+            )
+
+            Box(
+                contentAlignment = Alignment.Center
+            ) {
+                Spinner(
+                    size = 50.dp,
+                    onClick = { expanded = true }
+                ) {
+                    Text(
+                        text = selectedLogicType.symbol(),
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+
+                DropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false },
+                    modifier = Modifier.background(MaterialTheme.colorScheme.surface)
+                ) {
+                    BooleanLogicType.entries.forEach { type ->
+                        DropdownMenuItem(
+                            text = {
+                                Text(
+                                    type.name.lowercase().replaceFirstChar { it.uppercase() },
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                            },
+                            onClick = {
+                                selectedLogicType = type
+                                onBooleanLogicSelected(type)
+                                expanded = false
+                            }
+                        )
+                    }
+                }
+            }
+
+            Box(
+                modifier = Modifier
+                    .width(box2Width)
+                    .fillMaxHeight()
+                    .background(
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.1f),
+                        shape = RoundedCornerShape(4.dp)
+                    )
+            )
+        }
+    }
+}
+
+@Composable
+fun BooleanLogicBlockForCard(
+    booleanLogicType: BooleanLogicType = BooleanLogicType.AND,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        modifier = modifier,
+        shape = RoundedCornerShape(8.dp),
+        color = MaterialTheme.colorScheme.surfaceVariant,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+        shadowElevation = 1.dp
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .width(70.dp)
+                    .fillMaxHeight()
+                    .background(
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.1f),
+                        shape = RoundedCornerShape(4.dp)
+                    )
+            )
+
+            Surface(
+                shape = CircleShape,
+                color = MaterialTheme.colorScheme.primaryContainer,
+                modifier = Modifier.size(50.dp)
+            ) {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    Text(
+                        text = booleanLogicType.symbol(),
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+            }
+
+            Box(
+                modifier = Modifier
+                    .width(70.dp)
+                    .fillMaxHeight()
+                    .background(
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.1f),
+                        shape = RoundedCornerShape(4.dp)
+                    )
+            )
+        }
+    }
+}
+
+@Composable
 fun CompareNumbersBlockView(
     block: DraggableBlock,
     onCompareSelected: (CompareType) -> Unit
@@ -684,6 +980,34 @@ fun CompareNumbersBlockForCard(
                     )
             )
         }
+    }
+}
+
+@Composable
+fun NotBlockView(){
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ){
+        Text(
+            stringResource(R.string.not),
+            style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
+            modifier = Modifier.padding(4.dp)
+        )
+    }
+}
+
+@Composable
+fun NotBlockViewForCard(){
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ){
+        Text(
+            stringResource(R.string.not) + " " + stringResource(R.string.value),
+            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black, fontSize = 14.sp),
+            modifier = Modifier.padding(2.dp)
+        )
     }
 }
 
@@ -1292,6 +1616,107 @@ fun ForBlockViewForCard() {
     ) {
         Text(
             stringResource(R.string.For),
+            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black, fontSize = 14.sp),
+            modifier = Modifier.padding(2.dp)
+        )
+    }
+}
+
+@Composable
+fun ForElementInListBlockView(block: DraggableBlock) {
+    val textHeight = 60.dp
+    val bottomLineHeight = 1.dp
+    val lineWidth = 1.dp
+    val bottomLineWidth = 60.dp
+
+    val currentBlock by rememberUpdatedState(block.block as ForElementInListBlock)
+    var name by remember { mutableStateOf(TextFieldValue(currentBlock.elementName)) }
+
+    Box(
+        modifier = Modifier
+            .width(200.dp)
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Top
+        ) {
+            Row(
+                modifier = Modifier
+                    .height(textHeight)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Start
+            ) {
+                Text(
+                    stringResource(R.string.For),
+                    style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
+                    modifier = Modifier.padding(bottom = 4.dp)
+                )
+                BasicTextField(
+                    value = name,
+                    onValueChange = {
+                        currentBlock.elementName = it.text.trim()
+                        name = it.copy(currentBlock.elementName)
+                    },
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(24.dp)
+                        .padding(4.dp, 0.dp)
+                        .align(Alignment.CenterVertically),
+                    singleLine = true,
+                    textStyle = MaterialTheme.typography.bodyMedium.copy(
+                        color = MaterialTheme.colorScheme.onSurface,
+                        textAlign = TextAlign.Start
+                    ),
+                    decorationBox = { innerTextField ->
+                        Box(
+                            modifier = Modifier.fillMaxWidth().border(1.dp, EmptySpace, RoundedCornerShape(8.dp)).padding(2.dp),
+                            contentAlignment = Alignment.CenterStart
+                        ) {
+                            if (name.text.isEmpty()) {
+                                Text(
+                                    stringResource(R.string.Var),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                                )
+                            }
+                            innerTextField()
+                        }
+                    }
+                )
+                Text(
+                    stringResource(R.string.in_list),
+                    style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
+                    modifier = Modifier.padding(bottom = 4.dp)
+                )
+            }
+
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .width(lineWidth)
+                    .background(Color.White)
+            )
+
+            Box(
+                modifier = Modifier
+                    .height(bottomLineHeight)
+                    .width(bottomLineWidth)
+                    .background(Color.White)
+            )
+        }
+    }
+}
+
+@Composable
+fun ForElementInListBlockViewForCard(
+){
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            stringResource(R.string.For) + " " + stringResource(R.string.items) + " " + stringResource(R.string.in_list),
             style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black, fontSize = 14.sp),
             modifier = Modifier.padding(2.dp)
         )

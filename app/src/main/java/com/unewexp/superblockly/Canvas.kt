@@ -43,26 +43,31 @@ import com.unewexp.superblockly.model.ConnectorManager
 import com.unewexp.superblockly.viewBlocks.VariableDeclarationBlockView
 import com.unewexp.superblockly.viewBlocks.DraggableBase
 import com.unewexp.superblockly.blocks.arithmetic.OperandBlock
+import com.unewexp.superblockly.blocks.logic.BooleanLogicBlock
 import com.unewexp.superblockly.blocks.logic.CompareNumbers
 import com.unewexp.superblockly.ui.theme.ConnectorColor
 import com.unewexp.superblockly.viewBlocks.AddElementByIndexView
 import com.unewexp.superblockly.viewBlocks.BooleanLiteralBlockView
+import com.unewexp.superblockly.viewBlocks.BooleanLogicBlockView
 import com.unewexp.superblockly.viewBlocks.CompareNumbersBlockView
 import com.unewexp.superblockly.viewBlocks.EditValueByIndexView
 import com.unewexp.superblockly.viewBlocks.ElseBlockView
 import com.unewexp.superblockly.viewBlocks.ElseIfBlockView
 import com.unewexp.superblockly.viewBlocks.FixedValuesAndSizeListView
 import com.unewexp.superblockly.viewBlocks.ForBlockView
+import com.unewexp.superblockly.viewBlocks.ForElementInListBlockView
 import com.unewexp.superblockly.viewBlocks.GetListSizeView
 import com.unewexp.superblockly.viewBlocks.GetValueByIndexView
 import com.unewexp.superblockly.viewBlocks.IfBlockView
 import com.unewexp.superblockly.viewBlocks.IntLiteralView
+import com.unewexp.superblockly.viewBlocks.NotBlockView
 import com.unewexp.superblockly.viewBlocks.OperandBlockView
 import com.unewexp.superblockly.viewBlocks.PrintBlockView
 import com.unewexp.superblockly.viewBlocks.PushBackElementView
 import com.unewexp.superblockly.viewBlocks.RemoveValueByIndexView
 import com.unewexp.superblockly.viewBlocks.SetValueVariableView
 import com.unewexp.superblockly.viewBlocks.StartBlockView
+import com.unewexp.superblockly.viewBlocks.StringConcatenationBlockView
 import com.unewexp.superblockly.viewBlocks.StringLiteralBlockView
 import com.unewexp.superblockly.viewBlocks.TopConnector
 import com.unewexp.superblockly.viewBlocks.VariableReferenceView
@@ -278,7 +283,7 @@ fun TakeViewBlock (block: DraggableBlock, viewModel: DraggableViewModel = viewMo
         BlockType.BOOLEAN_LITERAL -> BooleanLiteralBlockView(block)
         BlockType.VARIABLE_REFERENCE -> VariableReferenceView(block)
 
-        BlockType.STRING_CONCAT -> TODO()
+        BlockType.STRING_CONCAT -> StringConcatenationBlockView(block)
         BlockType.STRING_APPEND -> TODO()
         BlockType.PRINT_BLOCK -> PrintBlockView()
         BlockType.SHORTHAND_ARITHMETIC_BLOCK -> TODO()
@@ -288,15 +293,17 @@ fun TakeViewBlock (block: DraggableBlock, viewModel: DraggableViewModel = viewMo
                 (block.block as CompareNumbers).compareType = type
             }
         )
-        BlockType.BOOLEAN_LOGIC_BLOCK -> TODO()
-        BlockType.NOT_BLOCK -> TODO()
+        BlockType.BOOLEAN_LOGIC_BLOCK -> BooleanLogicBlockView(block){ type ->
+            (block.block as BooleanLogicBlock).logicOperand = type
+        }
+        BlockType.NOT_BLOCK -> NotBlockView()
         BlockType.IF_BLOCK -> IfBlockView()
         BlockType.ELSE_BLOCK -> ElseBlockView()
         BlockType.IF_ELSE_BLOCK -> ElseIfBlockView()
         BlockType.REPEAT_N_TIMES -> TODO()
         BlockType.WHILE_BLOCK -> WhileBlockView()
         BlockType.FOR_BLOCK -> ForBlockView(block)
-        BlockType.FOR_ELEMENT_IN_LIST -> TODO()
+        BlockType.FOR_ELEMENT_IN_LIST -> ForElementInListBlockView(block)
         BlockType.FIXED_VALUE_AND_SIZE_LIST -> FixedValuesAndSizeListView(block)
         BlockType.GET_VALUE_BY_INDEX -> GetValueByIndexView(block)
         BlockType.REMOVE_VALUE_BY_INDEX -> RemoveValueByIndexView(block)

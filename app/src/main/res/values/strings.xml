@@ -45,4 +45,7 @@
     <string name="text">text</string>
     <string name="variables">Переменные</string>
     <string name="strings">Строки</string>
+    <string name="not">not</string>
+    <string name="math">Математика</string>
+    <string name="plus">+</string>
 </resources>

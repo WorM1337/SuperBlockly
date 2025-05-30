@@ -66,11 +66,15 @@ import com.unewexp.superblockly.blocks.list.PushBackElement
 import com.unewexp.superblockly.blocks.list.RemoveValueByIndex
 import com.unewexp.superblockly.blocks.literals.BooleanLiteralBlock
 import com.unewexp.superblockly.blocks.literals.StringLiteralBlock
+import com.unewexp.superblockly.blocks.logic.BooleanLogicBlock
 import com.unewexp.superblockly.blocks.logic.CompareNumbers
 import com.unewexp.superblockly.blocks.logic.ElseBlock
 import com.unewexp.superblockly.blocks.logic.ElseIfBlock
+import com.unewexp.superblockly.blocks.logic.NotBlock
 import com.unewexp.superblockly.blocks.loops.ForBlock
+import com.unewexp.superblockly.blocks.loops.ForElementInListBlock
 import com.unewexp.superblockly.blocks.loops.WhileBlock
+import com.unewexp.superblockly.blocks.returnBlocks.StringConcatenationBlock
 import com.unewexp.superblockly.debug.Logger
 import com.unewexp.superblockly.viewBlocks.AddElementByIndexView
 import com.unewexp.superblockly.viewBlocks.GetListSizeView
@@ -189,7 +193,7 @@ fun CreateNewProject(
                         }
                     }
                     item{
-                        Text("Математика", color = Color.White)
+                        Text(stringResource(R.string.math), color = Color.White)
                     }
                     item {
                         ListItem(
@@ -299,6 +303,23 @@ fun CreateNewProject(
                         ListItem(
                             { offset ->
                                 val newBlock = DraggableBlock(
+                                    BooleanLogicBlock(),
+                                    mutableStateOf(offset.x + dpToPx(200.dp) - globalOffset.value.x),
+                                    mutableStateOf(offset.y - dpToPx(60.dp) - globalOffset.value.y),
+                                    width = mutableStateOf(100.dp)
+                                )
+                                viewModel.handleAction(
+                                    DraggableViewModel.BlocklyAction.AddBlock(newBlock)
+                                )
+                            }
+                        ) {
+                            BooleanLogicBlockCard()
+                        }
+                    }
+                    item {
+                        ListItem(
+                            { offset ->
+                                val newBlock = DraggableBlock(
                                     CompareNumbers(),
                                     mutableStateOf(offset.x + dpToPx(200.dp) - globalOffset.value.x),
                                     mutableStateOf(offset.y - dpToPx(60.dp) - globalOffset.value.y),
@@ -310,6 +331,23 @@ fun CreateNewProject(
                             }
                         ) {
                             CompareNumbersBlockCard()
+                        }
+                    }
+                    item {
+                        ListItem(
+                            { offset ->
+                                val newBlock = DraggableBlock(
+                                    NotBlock(),
+                                    mutableStateOf(offset.x + dpToPx(200.dp) - globalOffset.value.x),
+                                    mutableStateOf(offset.y - dpToPx(60.dp) - globalOffset.value.y),
+                                    width = mutableStateOf(100.dp)
+                                )
+                                viewModel.handleAction(
+                                    DraggableViewModel.BlocklyAction.AddBlock(newBlock)
+                                )
+                            }
+                        ) {
+                            NotBlockCard()
                         }
                     }
                     item {
@@ -377,6 +415,23 @@ fun CreateNewProject(
                             StringLiteralBlockCard()
                         }
                     }
+                    item{
+                        ListItem(
+                            { offset ->
+                                val newBlock = DraggableBlock(
+                                    StringConcatenationBlock(),
+                                    mutableStateOf(offset.x + dpToPx(200.dp) - globalOffset.value.x),
+                                    mutableStateOf(offset.y - dpToPx(60.dp) - globalOffset.value.y),
+                                    width = mutableStateOf(300.dp)
+                                )
+                                viewModel.handleAction(
+                                    DraggableViewModel.BlocklyAction.AddBlock(newBlock)
+                                )
+                            }
+                        ){
+                            StringConcatenationBlockCard()
+                        }
+                    }
                     item { Text(stringResource(R.string.loops), color = Color.White) }
                     item{
                         ListItem(
@@ -410,6 +465,23 @@ fun CreateNewProject(
                             }
                         ){
                             ForBlockCard()
+                        }
+                    }
+                    item {
+                        ListItem(
+                            { offset ->
+                                val newBlock = DraggableBlock(
+                                    ForElementInListBlock(),
+                                    mutableStateOf(offset.x + dpToPx(200.dp) - globalOffset.value.x),
+                                    mutableStateOf(offset.y - dpToPx(60.dp) - globalOffset.value.y),
+                                    width = mutableStateOf(100.dp)
+                                )
+                                viewModel.handleAction(
+                                    DraggableViewModel.BlocklyAction.AddBlock(newBlock)
+                                )
+                            }
+                        ){
+                            ForElementInLustBlockCard()
                         }
                     }
                     item { Text(stringResource(R.string.lists), color = Color.White) }
