@@ -21,11 +21,13 @@ class ForElementInListBlock : LoopBlock(UUID.randomUUID(), BlockType.FOR_ELEMENT
 
     var elementName by mutableStateOf("k")
 
-    override fun execute() {
+    override suspend fun execute() {
+        checkDebugPause()
         val list = listConnector.connectedTo?.evaluate() as? List<*>
             ?: throw IllegalStateException("Переданная переменная не содержит список")
 
         for (item in list){
+            checkDebugPause()
             (innerConnector.connectedTo as? VoidBlock)?.let{ firstBlock ->
                 ExecutionContext.enterNewScope(firstBlock)
                 ExecutionContext.declareVariable(elementName, item)

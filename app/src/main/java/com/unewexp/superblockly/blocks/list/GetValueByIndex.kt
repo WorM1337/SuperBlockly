@@ -30,7 +30,9 @@ class GetValueByIndex : Block(UUID.randomUUID(), BlockType.GET_VALUE_BY_INDEX) {
 
 
 
-    override fun evaluate(): Any? {
+    override suspend fun evaluate(): Any? {
+        checkDebugPause()
+
         val list = listConnector.connectedTo?.evaluate() as? List<*>
             ?: throw IllegalStateException("Переданная переменная не содержит список")
 

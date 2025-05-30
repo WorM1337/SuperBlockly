@@ -41,7 +41,9 @@ class CompareNumbers(
 
     var compareType by mutableStateOf(CompareType.EQUAL)
 
-    override fun evaluate(): Boolean {
+    override suspend  fun evaluate(): Boolean {
+        checkDebugPause()
+
         val leftValue = leftInputConnector.connectedTo?.evaluate() as? Int
             ?: throw IllegalStateException("Левое выражение отсутствует или не Int")
         val rightValue = rightInputConnector.connectedTo?.evaluate() as? Int

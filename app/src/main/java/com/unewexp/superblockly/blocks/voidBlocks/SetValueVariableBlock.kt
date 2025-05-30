@@ -32,7 +32,10 @@ class SetValueVariableBlock : VoidBlock(UUID.randomUUID(), BlockType.SET_VARIABL
         )
     )
 
-    override fun execute() {
+    override suspend fun execute() {
+        checkDebugPause()
+
+
         if (selectedVariableName.isBlank()) {
             throw IllegalStateException("Не указано имя переменной")
         }

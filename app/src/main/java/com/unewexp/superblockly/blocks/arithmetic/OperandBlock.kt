@@ -30,7 +30,9 @@ class OperandBlock : Block(UUID.randomUUID(), BlockType.OPERAND) {
 
     var operand by mutableStateOf(OperandType.PLUS)
 
-    override fun evaluate(): Int {
+    override suspend  fun evaluate(): Int {
+        checkDebugPause()
+
         val left = leftInputConnector.connectedTo?.evaluate() as? Int
             ?: throw IllegalArgumentException("Ожидается числовое значение")
         val right = rightInputConnector.connectedTo?.evaluate() as? Int

@@ -73,7 +73,7 @@ open class ConditionBlock(
     )
 
 
-    protected fun executeConditionBlock(condition: Boolean){
+    protected suspend fun executeConditionBlock(condition: Boolean){
         if (condition){
             executeInnerBlocks()
             skipRemainingConditionBlocks()
@@ -82,7 +82,7 @@ open class ConditionBlock(
         }
     }
 
-    protected fun executeInnerBlocks(){
+    protected suspend fun executeInnerBlocks(){
         (innerConnector.connectedTo as? VoidBlock)?.let{ firstBlock ->
             ExecutionContext.enterNewScope(firstBlock)
 
@@ -92,7 +92,7 @@ open class ConditionBlock(
                     try{
                         current.execute()
                     } catch (ex: Exception){
-                        ErrorHandler.setBlockError(current.id, ex.message ?: "Неизвестная ошибка")
+                        ErrorHandler.setBlockError(current, ex.message ?: "Неизвестная ошибка")
                     }
                     current = ExecutionContext.getNextBlockInScope()
                 }
@@ -110,7 +110,7 @@ open class ConditionBlock(
         }
     }
 
-    protected fun skipToNextConditionOrExecute(){
+    protected suspend fun skipToNextConditionOrExecute(){
         val next = ExecutionContext.checkNextBlockInScope()
         if (next != null && otherConditions.contains(next.blockType)){
             ExecutionContext.getNextBlockInScope()?.execute()

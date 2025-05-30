@@ -5,7 +5,8 @@ import java.util.UUID
 
 class ElseIfBlock : ConditionBlock(UUID.randomUUID(), BlockType.IF_ELSE_BLOCK) {
 
-    override fun execute() {
+    override suspend fun execute() {
+        checkDebugPause()
         val condition = conditionConnector.connectedTo?.evaluate() as? Boolean
             ?: throw IllegalStateException("Выражение не возвращает Boolean")
 

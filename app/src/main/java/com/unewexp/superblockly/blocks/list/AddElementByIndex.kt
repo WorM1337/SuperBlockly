@@ -29,7 +29,9 @@ class AddElementByIndex : VoidBlock(UUID.randomUUID(), BlockType.ADD_VALUE_BY_IN
         allowedDataTypes = setOf(Int::class.java, String::class.java, Boolean::class.java)
     )
 
-    override fun execute() {
+    override suspend  fun execute() {
+        checkDebugPause()
+
         val list = listConnector.connectedTo?.evaluate() as? MutableList<*>
             ?: throw IllegalStateException("Переданная переменная не содержит список")
 

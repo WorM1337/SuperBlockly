@@ -32,7 +32,9 @@ class EditValueByIndex : VoidBlock(UUID.randomUUID(), BlockType.EDIT_VALUE_BY_IN
         )
     )
 
-    override fun execute() {
+    override suspend fun execute() {
+        checkDebugPause()
+
         val list = listConnector.connectedTo?.evaluate() as? MutableList<*>
             ?: throw IllegalStateException("Переданная переменная не содержит список")
 

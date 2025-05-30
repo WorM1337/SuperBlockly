@@ -33,7 +33,9 @@ class BooleanLogicBlock : Block(UUID.randomUUID(), BlockType.BOOLEAN_LOGIC_BLOCK
 
     var logicOperand by mutableStateOf(BooleanLogicType.AND)
 
-    override fun evaluate(): Boolean {
+    override suspend fun evaluate(): Boolean {
+        checkDebugPause()
+
         val leftValue = leftInputConnector.connectedTo?.evaluate() as? Boolean
             ?: throw IllegalStateException("Левое соединение отсутствует или не Boolean")
 

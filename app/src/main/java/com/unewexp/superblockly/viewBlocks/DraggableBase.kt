@@ -9,14 +9,11 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
@@ -51,6 +48,8 @@ fun DraggableBase(
     val border = if (draggableBlock.block.hasException) {
         Log.i(currentBlock.block.blockType.toString(), "ошибка на блоке")
         BorderStroke(3.dp, Color.Red)
+    } else if (draggableBlock.block.isDebug){
+        BorderStroke(3.dp, Color.Green)
     } else {
         BorderStroke(0.dp, Color.Red.copy(alpha = 0f))
     }
@@ -58,8 +57,7 @@ fun DraggableBase(
     Box(
         modifier = Modifier
             .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
-            .wrapContentSize(unbounded = true, align = Alignment.TopCenter)
-            .requiredSize(currentBlock.width.value, currentBlock.height.value)
+            .size(currentBlock.width.value, currentBlock.height.value)
             .background(color, shape = MaterialTheme.shapes.small)
             .border(border, MaterialTheme.shapes.small)
             .pointerInput(Unit) {

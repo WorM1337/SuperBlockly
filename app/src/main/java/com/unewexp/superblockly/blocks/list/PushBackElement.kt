@@ -22,7 +22,9 @@ class PushBackElement: VoidBlock(UUID.randomUUID(), blockType = BlockType.PUSH_B
         allowedDataTypes = setOf(Int::class.java, String::class.java, Boolean::class.java)
     )
 
-    override fun execute() {
+    override suspend  fun execute() {
+        checkDebugPause()
+
         val list = listConnector.connectedTo?.evaluate() as? MutableList<*>
             ?: throw IllegalStateException("Переданная переменная не содержит список")
 

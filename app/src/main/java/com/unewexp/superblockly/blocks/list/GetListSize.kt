@@ -21,7 +21,9 @@ class GetListSize : Block(UUID.randomUUID(), BlockType.GET_LIST_SIZE) {
         )
     )
 
-    override fun evaluate(): Any? {
+    override suspend fun evaluate(): Any? {
+        checkDebugPause()
+
         val list = listConnector.connectedTo?.evaluate() as? List<*>
             ?: throw IllegalStateException("Переданная переменная не содержит список")
 

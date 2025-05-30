@@ -9,7 +9,8 @@ import java.util.UUID
 
 
 class IfBlock : ConditionBlock(UUID.randomUUID(), BlockType.IF_BLOCK) {
-    override fun execute() {
+    override suspend fun execute() {
+        checkDebugPause()
         val condition = conditionConnector.connectedTo?.evaluate() as? Boolean
             ?: throw IllegalStateException("Выражение не возвращает Boolean")
 

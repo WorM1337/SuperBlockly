@@ -1,25 +1,33 @@
 package com.unewexp.superblockly
 
+import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.rememberTransformableState
 import androidx.compose.foundation.gestures.transformable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -32,7 +40,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -40,15 +52,21 @@ import com.unewexp.superblockly.blocks.StartBlock
 import com.unewexp.superblockly.debug.ConsolePanel
 import com.unewexp.superblockly.enums.BlockType
 import com.unewexp.superblockly.model.ConnectorManager
-import com.unewexp.superblockly.viewBlocks.VariableDeclarationBlockView
+import com.unewexp.superblockly.viewBlocks.BottomConnector
+import com.unewexp.superblockly.viewBlocks.DeclarationVariableView
 import com.unewexp.superblockly.viewBlocks.DraggableBase
+import com.unewexp.superblockly.DraggableBlock
 import com.unewexp.superblockly.blocks.arithmetic.OperandBlock
 import com.unewexp.superblockly.blocks.logic.CompareNumbers
-import com.unewexp.superblockly.ui.theme.ConnectorColor
+import com.unewexp.superblockly.debug.DebugController
+import com.unewexp.superblockly.debug.DebugPanel
+import com.unewexp.superblockly.debug.ExecutionContext
+import com.unewexp.superblockly.debug.RunProgram
+import com.unewexp.superblockly.enums.symbol
+import com.unewexp.superblockly.ui.theme.ActiveRunProgram
+import com.unewexp.superblockly.ui.theme.stopProgram
 import com.unewexp.superblockly.viewBlocks.AddElementByIndexView
-import com.unewexp.superblockly.viewBlocks.BooleanLiteralBlockView
 import com.unewexp.superblockly.viewBlocks.CompareNumbersBlockView
-import com.unewexp.superblockly.viewBlocks.EditValueByIndexView
 import com.unewexp.superblockly.viewBlocks.ElseBlockView
 import com.unewexp.superblockly.viewBlocks.ElseIfBlockView
 import com.unewexp.superblockly.viewBlocks.FixedValuesAndSizeListView
@@ -59,15 +77,22 @@ import com.unewexp.superblockly.viewBlocks.IfBlockView
 import com.unewexp.superblockly.viewBlocks.IntLiteralView
 import com.unewexp.superblockly.viewBlocks.OperandBlockView
 import com.unewexp.superblockly.viewBlocks.PrintBlockView
-import com.unewexp.superblockly.viewBlocks.PushBackElementView
 import com.unewexp.superblockly.viewBlocks.RemoveValueByIndexView
 import com.unewexp.superblockly.viewBlocks.SetValueVariableView
 import com.unewexp.superblockly.viewBlocks.StartBlockView
-import com.unewexp.superblockly.viewBlocks.StringLiteralBlockView
 import com.unewexp.superblockly.viewBlocks.TopConnector
 import com.unewexp.superblockly.viewBlocks.VariableReferenceView
 import com.unewexp.superblockly.viewBlocks.WhileBlockView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.util.Queue
+import kotlin.collections.get
 import kotlin.math.max
+import kotlin.math.roundToInt
+
+
+
 
 @Composable
 fun Canvas(
@@ -81,6 +106,25 @@ fun Canvas(
     val zoomFactor = 0.7f
     val globalOffset = remember { mutableStateOf(Offset.Zero) }
     val blocks by viewModel.blocks.collectAsState()
+
+    val iconButtonSize = 34.dp
+    val iconImageSize = 30.dp
+    val cornersButton = 5.dp
+
+    val isActive = ExecutionContext.programProgress == RunProgram.RUN || ExecutionContext.programProgress == RunProgram.DEBUG
+    val backgroundColorIfActive = if (isActive) ActiveRunProgram else Color.Transparent
+
+    fun startExecution() {
+        ExecutionContext.executionJob = CoroutineScope(Dispatchers.Main).launch {
+            blocks[0].block.execute()
+        }
+    }
+
+    fun stopExecution() {
+        ExecutionContext.executionJob?.cancel()
+        ExecutionContext.programProgress = RunProgram.NONE
+        DebugController.reset()
+    }
 
     var panelIsVisible by remember { mutableStateOf(true) }
 
@@ -97,59 +141,164 @@ fun Canvas(
 
     Column(modifier = Modifier.fillMaxSize()) {
         Box(
-            modifier = Modifier.fillMaxWidth().height(50.dp).background(Color.White).zIndex(100000f)
+            modifier = Modifier.fillMaxWidth().height(55.dp).background(Color.White).zIndex(100000f)
         ) {
-            Row {
-                Box {
-                    IconButton(onClick = openDrawer) {
-                        Icon(Icons.Filled.List, null)
-                    }
+            Box(
+                modifier = Modifier
+                    .align(Alignment.CenterStart)
+                    .padding(start = 8.dp)
+            ) {
+                IconButton(onClick = openDrawer) {
+                    Icon(Icons.Filled.List, contentDescription = "Меню")
                 }
             }
             Box(
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                Row{
-                    Box(
-                        Modifier
-                            .padding(2.dp)
-                    ){
-                        IconButton(
-                            onClick = { panelIsVisible = !panelIsVisible },
-                            modifier =
-                                Modifier
-                                    .border(3.dp, Color.Black, CircleShape)
-                        ) {
-                            Icon(Icons.Filled.Info, null)
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ){
+                    Row(){
+
+                        if (ExecutionContext.programProgress != RunProgram.DEBUG){
+                            Box(contentAlignment = Alignment.Center){
+                                IconButton(
+                                    onClick = {
+                                        ExecutionContext.programProgress = RunProgram.RUN
+                                        startExecution()
+                                    },
+                                    enabled = (
+                                        if (ExecutionContext.programProgress == RunProgram.RUN){
+                                            false
+                                        } else {
+                                            true
+                                        }
+                                            ),
+                                    modifier = Modifier.size(iconButtonSize)
+                                        .background(backgroundColorIfActive, RoundedCornerShape(cornersButton)),
+                                    content = {
+                                        Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()){
+                                            Image(
+                                                painter = painterResource(id = R.drawable.start_program_button_green),
+                                                contentDescription = "Запуск программы",
+                                                modifier = Modifier.size(iconImageSize)
+                                            )
+                                        }
+                                    }
+                                )
+                            }
                         }
+
+                        Spacer(modifier = Modifier.size(16.dp))
+
+                        Box(
+                            contentAlignment = Alignment.Center
+                        ){
+                            IconButton(
+                                onClick = {
+                                    ExecutionContext.programProgress = RunProgram.DEBUG
+                                    startExecution()
+                                          },
+                                modifier = Modifier.size(iconButtonSize)
+                                    .background(backgroundColorIfActive, RoundedCornerShape(5.dp)),
+                                enabled = (
+                                    if (ExecutionContext.programProgress == RunProgram.NONE){
+                                        true
+                                    } else {
+                                        false
+                                    }
+                                        ),
+                                content = {
+                                    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()){
+                                        if (ExecutionContext.programProgress == RunProgram.DEBUG){
+                                            Image(
+                                                painter = painterResource(id = R.drawable.debug_icon_white),
+                                                contentDescription = "Отладка",
+                                                modifier = Modifier.size(iconImageSize)
+                                            )
+                                        } else {
+                                            Image(
+                                                painter = painterResource(id = R.drawable.debug_icon_green),
+                                                contentDescription = "Отладка",
+                                                modifier = Modifier.size(iconImageSize)
+                                            )
+                                        }
+                                    }
+                                }
+                            )
+                        }
+
+                        if (ExecutionContext.programProgress != RunProgram.NONE){
+                            Spacer(modifier = Modifier.size(16.dp))
+                            Box(
+
+                            ){
+                                IconButton(
+                                    onClick = {
+                                        stopExecution()
+                                    },
+                                    modifier = Modifier.size(iconButtonSize)
+                                        .background(stopProgram, RoundedCornerShape(5.dp))
+                                ) {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.stop_icon_white),
+                                        contentDescription = "Остановить программу",
+                                        modifier = Modifier.size(iconImageSize)
+                                    )
+                                }
+                            }
+                        }
+
+
                     }
-                    Box(
-                        Modifier
-                            .padding(2.dp)
-                    ){
-                        IconButton(
-                            onClick = { blocks[0].block.execute() },
-                            modifier =
-                                Modifier
-                                    .border(3.dp, Color.Green, CircleShape)
-                        ) {
-                            Icon(Icons.Filled.PlayArrow, null)
+                    Spacer(modifier = Modifier.size(16.dp))
+                    Row{
+                        Box(
+                            Modifier
+
+                        ){
+                            IconButton(
+                                onClick = { panelIsVisible = !panelIsVisible },
+                                modifier = Modifier.size(iconButtonSize)
+                            ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.console_icon_blue),
+                                    contentDescription = "Открыть/Закрыть консоль",
+                                    modifier = Modifier.size(iconImageSize)
+                                )
+                            }
+                        }
+
+                        if (ExecutionContext.programProgress == RunProgram.DEBUG){
+                            Spacer(modifier = Modifier.size(16.dp))
+                            Box(){
+                                IconButton(
+                                    onClick = {
+                                        DebugController.continueExecution()
+                                    },
+                                    modifier = Modifier.size(42.dp)
+                                ) {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.step_to_button_blue),
+                                        contentDescription = "Следующий блок",
+                                        modifier = Modifier.size(32.dp)
+                                    )
+                                }
+                            }
                         }
                     }
 
                 }
             }
+
             Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(0.dp, 0.dp, 5.dp, 0.dp),
-                contentAlignment = Alignment.CenterEnd
+                    .align(Alignment.CenterEnd)
+                    .padding(end = 8.dp)
             ) {
-                Row{
-                    onHomeClick()
-                }
+                onHomeClick()
             }
         }
         Box(modifier = Modifier.fillMaxWidth()){
@@ -190,7 +339,7 @@ fun Canvas(
                                             it.outputConnectionView!!.positionX - 10.dp - 16.dp,
                                             it.outputConnectionView!!.positionY - 12.dp - 8.dp
                                         ),
-                                    color = if (it.connectedParent != null) ConnectorColor else Color.Gray.copy(
+                                    color = if (it.connectedParent != null) getColorByBlockType(it.block.blockType) else Color.Gray.copy(
                                         alpha = 0.5f
                                     )
                                 )
@@ -207,18 +356,14 @@ fun Canvas(
                             viewModel.handleAction(DraggableViewModel.BlocklyAction.RemoveBlock(it))
                         },
                         onDragStart = {
-                            it.zIndex.value = viewModel.maxZIndex + 0.1f
-                            val queue: MutableList<DraggableBlock> = mutableListOf()
-                            it.scope.forEach { block ->
-                                queue.add(block)
-                            }
+                            val queue: MutableList<DraggableBlock> = mutableListOf(it)
                             while(!queue.isEmpty()){
                                 val item = queue.first()
                                 queue.removeAt(0)
                                 item.scope.forEach { element ->
                                     queue.add(element)
                                 }
-                                item.zIndex.value = item.connectedParent!!.zIndex.value + 0.1f
+                                item.zIndex.value += viewModel.maxZIndex + 0.1f
                                 viewModel.maxZIndex = max(item.zIndex.value, viewModel.maxZIndex)
                             }
                         },
@@ -247,8 +392,11 @@ fun Canvas(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.BottomEnd
             ){
-                if(panelIsVisible){
+                if(ExecutionContext.programProgress != RunProgram.DEBUG && panelIsVisible){
                     ConsolePanel()
+                }
+                if (ExecutionContext.programProgress == RunProgram.DEBUG && panelIsVisible){
+                    DebugPanel()
                 }
             }
         }
@@ -267,23 +415,30 @@ fun TakeViewBlock (block: DraggableBlock, viewModel: DraggableViewModel = viewMo
         },
             block
         )
-        BlockType.SET_VARIABLE_VALUE -> SetValueVariableView(block)
+        BlockType.SET_VARIABLE_VALUE -> SetValueVariableView { newValue ->
+            viewModel.updateValue(block, newValue)
+        }
 
         BlockType.START -> StartBlockView()
-        BlockType.VARIABLE_DECLARATION -> VariableDeclarationBlockView(block)
+        BlockType.VARIABLE_DECLARATION -> DeclarationVariableView { newValue ->
+            viewModel.updateValue(block, newValue)
+        }
 
-        BlockType.INT_LITERAL -> IntLiteralView(block)
+        BlockType.INT_LITERAL -> IntLiteralView { newValue ->
+            viewModel.updateValue(block, newValue)
+        }
 
-        BlockType.STRING_LITERAL -> StringLiteralBlockView(block)
-        BlockType.BOOLEAN_LITERAL -> BooleanLiteralBlockView(block)
-        BlockType.VARIABLE_REFERENCE -> VariableReferenceView(block)
+        BlockType.STRING_LITERAL -> TODO()
+        BlockType.BOOLEAN_LITERAL -> TODO()
+        BlockType.VARIABLE_REFERENCE -> VariableReferenceView { newValue ->
+            viewModel.updateValue(block, newValue)
+        }
 
         BlockType.STRING_CONCAT -> TODO()
         BlockType.STRING_APPEND -> TODO()
         BlockType.PRINT_BLOCK -> PrintBlockView()
         BlockType.SHORTHAND_ARITHMETIC_BLOCK -> TODO()
         BlockType.COMPARE_NUMBERS_BLOCK -> CompareNumbersBlockView(
-            block,
             { type ->
                 (block.block as CompareNumbers).compareType = type
             }
@@ -295,14 +450,16 @@ fun TakeViewBlock (block: DraggableBlock, viewModel: DraggableViewModel = viewMo
         BlockType.IF_ELSE_BLOCK -> ElseIfBlockView()
         BlockType.REPEAT_N_TIMES -> TODO()
         BlockType.WHILE_BLOCK -> WhileBlockView()
-        BlockType.FOR_BLOCK -> ForBlockView(block)
+        BlockType.FOR_BLOCK -> ForBlockView { newValue ->
+            viewModel.updateValue(block, newValue)
+        }
         BlockType.FOR_ELEMENT_IN_LIST -> TODO()
         BlockType.FIXED_VALUE_AND_SIZE_LIST -> FixedValuesAndSizeListView(block)
         BlockType.GET_VALUE_BY_INDEX -> GetValueByIndexView(block)
         BlockType.REMOVE_VALUE_BY_INDEX -> RemoveValueByIndexView(block)
         BlockType.ADD_VALUE_BY_INDEX -> AddElementByIndexView(block)
         BlockType.GET_LIST_SIZE -> GetListSizeView()
-        BlockType.EDIT_VALUE_BY_INDEX -> EditValueByIndexView(block)
-        BlockType.PUSH_BACK_ELEMENT -> PushBackElementView(block)
+        BlockType.EDIT_VALUE_BY_INDEX -> TODO()
+        BlockType.PUSH_BACK_ELEMENT -> TODO()
     }
 }

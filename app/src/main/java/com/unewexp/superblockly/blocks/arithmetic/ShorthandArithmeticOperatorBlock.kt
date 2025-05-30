@@ -25,7 +25,9 @@ class ShorthandArithmeticOperatorBlock(var initialVariableName: String = "Undefi
     )
 
 
-    override fun execute() {
+    override suspend  fun execute() {
+        checkDebugPause()
+
         if (!ExecutionContext.hasVariable(selectedVariableName)){
             throw IllegalStateException("Переменная $selectedVariableName не существует")
         }
