@@ -51,6 +51,7 @@ import com.unewexp.superblockly.blocks.arithmetic.OperandBlock
 import com.unewexp.superblockly.blocks.logic.BooleanLogicBlock
 import com.unewexp.superblockly.blocks.logic.CompareNumbers
 import com.unewexp.superblockly.debug.DebugController
+import com.unewexp.superblockly.debug.DebugPanel
 import com.unewexp.superblockly.debug.ExecutionContext
 import com.unewexp.superblockly.debug.RunProgram
 import com.unewexp.superblockly.ui.theme.ActiveRunProgram
@@ -103,11 +104,14 @@ fun Canvas(
     val iconImageSize = 30.dp
     val cornersButton = 5.dp
 
+    var panelIsVisible by remember { mutableStateOf(true) }
+
     val isActive =
         ExecutionContext.programProgress == RunProgram.RUN || ExecutionContext.programProgress == RunProgram.DEBUG
     val backgroundColorIfActive = if (isActive) ActiveRunProgram else Color.Transparent
 
     fun startExecution() {
+        panelIsVisible = true
         ExecutionContext.executionJob = CoroutineScope(Dispatchers.Main).launch {
             blocks[0].block.execute()
         }
@@ -119,7 +123,6 @@ fun Canvas(
         DebugController.reset()
     }
 
-    var panelIsVisible by remember { mutableStateOf(true) }
 
     val core = DraggableBlock(
         StartBlock(),
@@ -403,8 +406,11 @@ fun Canvas(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.BottomEnd
             ) {
-                if (panelIsVisible) {
+                if (ExecutionContext.programProgress != RunProgram.DEBUG && panelIsVisible) {
                     ConsolePanel()
+                }
+                if (ExecutionContext.programProgress == RunProgram.DEBUG && panelIsVisible){
+                    DebugPanel()
                 }
             }
         }

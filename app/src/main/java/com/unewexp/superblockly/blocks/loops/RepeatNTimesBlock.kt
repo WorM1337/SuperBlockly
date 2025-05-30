@@ -3,6 +3,7 @@ package com.unewexp.superblockly.blocks.loops
 import com.example.myfirstapplicatioin.model.Connector
 import com.unewexp.superblockly.debug.ExecutionContext
 import com.unewexp.superblockly.blocks.voidBlocks.VoidBlock
+import com.unewexp.superblockly.debug.BlockIllegalStateException
 import com.unewexp.superblockly.enums.BlockType
 import com.unewexp.superblockly.enums.ConnectorType
 import java.lang.IllegalStateException
@@ -19,7 +20,7 @@ class RepeatNTimesBlock() : LoopBlock(UUID.randomUUID(), BlockType.REPEAT_N_TIME
     override suspend fun execute() {
         checkDebugPause()
         val countTimes = countRepeatTimesConnector.connectedTo?.evaluate() as? Int
-            ?: throw IllegalStateException("Передаваемое значение не является Int")
+            ?: throw BlockIllegalStateException(this, "Передаваемое в цикл значение не является Int")
         for (i in 1..countTimes){
             checkDebugPause()
             (innerConnector.connectedTo as? VoidBlock)?.let{ firstBlock ->

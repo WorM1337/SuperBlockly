@@ -31,6 +31,8 @@ open class LoopBlock(
             BlockType.FOR_ELEMENT_IN_LIST,
             BlockType.ADD_VALUE_BY_INDEX,
             BlockType.REMOVE_VALUE_BY_INDEX,
+            BlockType.PUSH_BACK_ELEMENT,
+            BlockType.EDIT_VALUE_BY_INDEX,
         )
     )
 
@@ -38,11 +40,7 @@ open class LoopBlock(
             try {
                 var current: Block? = firstBlock
                 while (current != null){
-                    try{
-                        current.execute()
-                    } catch (ex: Exception){
-                        ErrorHandler.setBlockError(current, ex.message ?: "Неизвестная ошибка")
-                    }
+                    current.execute()
                     current = ExecutionContext.getNextBlockInScope()
                 }
             } finally{

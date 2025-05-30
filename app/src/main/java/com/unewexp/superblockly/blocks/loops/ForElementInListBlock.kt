@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import com.example.myfirstapplicatioin.model.Connector
 import com.unewexp.superblockly.debug.ExecutionContext
 import com.unewexp.superblockly.blocks.voidBlocks.VoidBlock
+import com.unewexp.superblockly.debug.BlockIllegalStateException
 import com.unewexp.superblockly.enums.BlockType
 import com.unewexp.superblockly.enums.ConnectorType
 import java.util.UUID
@@ -16,6 +17,7 @@ class ForElementInListBlock : LoopBlock(UUID.randomUUID(), BlockType.FOR_ELEMENT
         sourceBlock = this,
         allowedBlockTypes = setOf(
             BlockType.VARIABLE_REFERENCE,
+            BlockType.FIXED_VALUE_AND_SIZE_LIST
         )
     )
 
@@ -24,7 +26,7 @@ class ForElementInListBlock : LoopBlock(UUID.randomUUID(), BlockType.FOR_ELEMENT
     override suspend fun execute() {
         checkDebugPause()
         val list = listConnector.connectedTo?.evaluate() as? List<*>
-            ?: throw IllegalStateException("Переданная переменная не содержит список")
+            ?: throw BlockIllegalStateException(this,"Переменная, переданная в цикл, не содержит список")
 
         for (item in list){
             checkDebugPause()

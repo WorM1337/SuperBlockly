@@ -3,6 +3,7 @@ package com.unewexp.superblockly.blocks.list
 import com.example.myfirstapplicatioin.blocks.Block
 import com.example.myfirstapplicatioin.model.Connector
 import com.unewexp.superblockly.blocks.voidBlocks.VoidBlock
+import com.unewexp.superblockly.debug.BlockIllegalStateException
 import com.unewexp.superblockly.enums.BlockType
 import com.unewexp.superblockly.enums.ConnectorType
 import java.lang.IllegalStateException
@@ -30,13 +31,13 @@ class FixedValuesAndSizeList : ListBlock(UUID.randomUUID(), BlockType.FIXED_VALU
         checkDebugPause()
 
         val valueRepeat = valueInput.connectedTo?.evaluate()
-            ?: throw IllegalStateException("Вы не указали значение для создания списка")
+            ?: throw BlockIllegalStateException(this, "Вы не указали значение для создания списка")
 
         val countRepeat = repeatTimes.connectedTo?.evaluate() as? Int
-            ?: throw IllegalStateException("Количество элементов в списке должно быть типа Int")
+            ?: throw BlockIllegalStateException(this, "Количество элементов в списке должно быть типа Int")
 
         if (countRepeat < 0){
-            throw IllegalStateException("Количество элементов не может быть отрицательным")
+            throw BlockIllegalStateException(this, "Количество элементов не может быть отрицательным")
         }
 
         return MutableList(countRepeat) { valueRepeat }

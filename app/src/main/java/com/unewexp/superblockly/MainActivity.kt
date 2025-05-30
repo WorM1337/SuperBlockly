@@ -616,7 +616,7 @@ fun CreateNewProject(
             navController.popBackStack()
         } else {
             backPressedTime = currentTime
-            Toast.makeText(context, stringResource(R.string.toast_message), Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, R.string.toast_message, Toast.LENGTH_SHORT).show()
         }
     }
         Canvas(

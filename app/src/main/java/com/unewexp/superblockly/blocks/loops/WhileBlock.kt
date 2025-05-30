@@ -1,8 +1,10 @@
 package com.unewexp.superblockly.blocks.loops
 
+import com.example.myfirstapplicatioin.blocks.Block
 import com.example.myfirstapplicatioin.model.Connector
 import com.unewexp.superblockly.debug.ExecutionContext
 import com.unewexp.superblockly.blocks.voidBlocks.VoidBlock
+import com.unewexp.superblockly.debug.BlockIllegalStateException
 import com.unewexp.superblockly.enums.BlockType
 import com.unewexp.superblockly.enums.ConnectorType
 import java.lang.IllegalStateException
@@ -25,7 +27,7 @@ class WhileBlock : LoopBlock(UUID.randomUUID(), BlockType.WHILE_BLOCK) {
         checkDebugPause()
         while (
             conditionConnector.connectedTo?.evaluate() as? Boolean
-                ?: throw IllegalStateException("Выражение не возвращает Boolean")
+                ?: throw BlockIllegalStateException(this, "Выражение в цикле while не возвращает Boolean")
         ) {
             checkDebugPause()
             (innerConnector.connectedTo as? VoidBlock)?.let{ firstBlock ->

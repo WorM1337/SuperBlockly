@@ -1,6 +1,7 @@
 package com.unewexp.superblockly.blocks.voidBlocks
 
 import com.example.myfirstapplicatioin.model.Connector
+import com.unewexp.superblockly.debug.BlockIllegalStateException
 import com.unewexp.superblockly.debug.DebugController
 import com.unewexp.superblockly.debug.Logger
 import com.unewexp.superblockly.debug.Logger.LogType
@@ -22,7 +23,7 @@ class PrintBlock() : VoidBlock(UUID.randomUUID(), BlockType.PRINT_BLOCK) {
         checkDebugPause()
 
         val value = inputConnector.connectedTo?.evaluate()
-            ?: throw IllegalStateException("В PrintBlock не добавлено значение вывода")
+            ?: throw BlockIllegalStateException(this, "В PrintBlock не добавлено значение вывода")
         Logger.appendLog(LogType.TEXT, value.toString())
     }
 
