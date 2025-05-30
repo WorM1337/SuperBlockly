@@ -208,7 +208,7 @@ fun IntLiteralView(
 
 @Composable
 fun IntLiteralViewForCard(){
-    TextFieldLike(placeholder = "Num", modifier = Modifier.fillMaxWidth())
+    TextFieldLike(placeholder = stringResource(R.string.Num), modifier = Modifier.fillMaxWidth())
 }
 
 @Composable
@@ -245,7 +245,7 @@ fun BooleanLiteralBlockView(
                 ) {
                     if (value.text.isEmpty()) {
                         Text(
-                            "Value",
+                            stringResource(R.string.value),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
                         )
@@ -263,7 +263,7 @@ fun BooleanLiteralBlockView(
 
 @Composable
 fun BooleanLiteralBlockViewForCard(){
-    TextFieldLike(placeholder = "Boolean", modifier = Modifier.fillMaxWidth())
+    TextFieldLike(placeholder = stringResource(R.string.Boolean), modifier = Modifier.fillMaxWidth())
 }
 
 @Composable
@@ -509,7 +509,7 @@ fun SetValueVariableView(
             )
 
             Text(
-                "to",
+                stringResource(R.string.to),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(start = 8.dp)
