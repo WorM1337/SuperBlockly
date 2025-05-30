@@ -38,7 +38,6 @@
     <string name="remove">remove</string>
     <string name="edit">edit</string>
     <string name="count">count</string>
-<<<<<<< HEAD
     <string name="push_back">push_back</string>
     <string name="Var">var</string>
     <string name="set">Set</string>
@@ -49,6 +48,4 @@
     <string name="not">not</string>
     <string name="math">Математика</string>
     <string name="plus">+</string>
-=======
->>>>>>> b407ef00572d57bac906b3d462fba77339eb77ca
 </resources>
