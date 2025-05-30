@@ -2,19 +2,36 @@ package com.unewexp.superblockly.model
 
 import android.util.Log
 import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.myfirstapplicatioin.blocks.Block
 import com.example.myfirstapplicatioin.blocks.literals.IntLiteralBlock
 import com.example.myfirstapplicatioin.model.ConnectionView
 import com.example.myfirstapplicatioin.utils.disconnect
 import com.example.myfirstapplicatioin.utils.safeConnect
+import com.unewexp.superblockly.DraggableBlock
 import com.unewexp.superblockly.DraggableViewModel
 import com.unewexp.superblockly.blocks.StartBlock
 import com.unewexp.superblockly.blocks.arithmetic.OperandBlock
+import com.unewexp.superblockly.blocks.arithmetic.ShorthandArithmeticOperatorBlock
+import com.unewexp.superblockly.blocks.list.AddElementByIndex
+import com.unewexp.superblockly.blocks.list.EditValueByIndex
+import com.unewexp.superblockly.blocks.list.FixedValuesAndSizeList
+import com.unewexp.superblockly.blocks.list.GetListSize
+import com.unewexp.superblockly.blocks.list.GetValueByIndex
+import com.unewexp.superblockly.blocks.list.PushBackElement
+import com.unewexp.superblockly.blocks.list.RemoveValueByIndex
 import com.unewexp.superblockly.blocks.literals.BooleanLiteralBlock
 import com.unewexp.superblockly.blocks.literals.StringLiteralBlock
+import com.unewexp.superblockly.blocks.logic.BooleanLogicBlock
+import com.unewexp.superblockly.blocks.logic.CompareNumbers
+import com.unewexp.superblockly.blocks.logic.ElseBlock
+import com.unewexp.superblockly.blocks.logic.ElseIfBlock
 import com.unewexp.superblockly.blocks.logic.IfBlock
+import com.unewexp.superblockly.blocks.logic.NotBlock
+import com.unewexp.superblockly.blocks.loops.ForBlock
+import com.unewexp.superblockly.blocks.loops.ForElementInListBlock
+import com.unewexp.superblockly.blocks.loops.RepeatNTimesBlock
+import com.unewexp.superblockly.blocks.loops.WhileBlock
 import com.unewexp.superblockly.blocks.returnBlocks.StringConcatenationBlock
 import com.unewexp.superblockly.blocks.returnBlocks.VariableReferenceBlock
 import com.unewexp.superblockly.blocks.voidBlocks.PrintBlock
@@ -24,28 +41,8 @@ import com.unewexp.superblockly.blocks.voidBlocks.VariableDeclarationBlock
 import com.unewexp.superblockly.blocks.voidBlocks.VoidBlock
 import com.unewexp.superblockly.enums.BlockType
 import com.unewexp.superblockly.enums.ConnectorType
-import com.unewexp.superblockly.DraggableBlock
-import com.unewexp.superblockly.blocks.arithmetic.ShorthandArithmeticOperatorBlock
-import com.unewexp.superblockly.blocks.list.AddElementByIndex
-import com.unewexp.superblockly.blocks.list.EditValueByIndex
-import com.unewexp.superblockly.blocks.list.FixedValuesAndSizeList
-import com.unewexp.superblockly.blocks.list.GetListSize
-import com.unewexp.superblockly.blocks.list.GetValueByIndex
-import com.unewexp.superblockly.blocks.list.PushBackElement
-import com.unewexp.superblockly.blocks.list.RemoveValueByIndex
-import com.unewexp.superblockly.blocks.logic.BooleanLogicBlock
-import com.unewexp.superblockly.blocks.logic.CompareNumbers
-import com.unewexp.superblockly.blocks.logic.ElseBlock
-import com.unewexp.superblockly.blocks.logic.ElseIfBlock
-import com.unewexp.superblockly.blocks.logic.NotBlock
-import com.unewexp.superblockly.blocks.loops.ForBlock
-import com.unewexp.superblockly.blocks.loops.ForElementInListBlock
-import com.unewexp.superblockly.blocks.loops.RepeatNTimesBlock
-import com.unewexp.superblockly.blocks.loops.WhileBlock
 import com.unewexp.superblockly.enums.ExtendConnectionViewType
 import com.unewexp.superblockly.viewBlocks.ViewInitialSize
-import kotlin.math.pow
-import kotlin.math.sqrt
 
 object ConnectorManager {
     val connetionLength = 70.0
@@ -156,9 +153,9 @@ object ConnectorManager {
 
         SizeManager.changeParentParams(connectable, viewModel)
 
-        // Для всех дочерних блоков нужно высчитать isInner. Для коннекторов кроме STRING_BOTTOM_OUTER isInner наследуется
-        // (если после этого встретили OUTER, то его помечаем isInner для корректного удаления)
         if (connectable.connectedParentConnectionView!!.connector.connectionType != ConnectorType.STRING_BOTTOM_OUTER || connectable.connectedParent!!.isInner) {
+
+        if(connectable.connectedParentConnectionView!!.connector.connectionType != ConnectorType.STRING_BOTTOM_OUTER || connectable.connectedParent!!.isInner){
             val stack: MutableList<DraggableBlock> = mutableListOf(connectable)
 
             while (!stack.isEmpty()) {
@@ -274,9 +271,8 @@ object ConnectorManager {
 
             SizeManager.changeParentParams(sourceDragBlock, viewModel)
 
-            // Для всех дочерних блоков нужно высчитать isInner. Для коннекторов кроме STRING_BOTTOM_OUTER isInner наследуется
-            // (если после этого встретили OUTER, то его помечаем isInner для корректного удаления)
-            if (sourceDragBlock.connectedParentConnectionView!!.connector.connectionType != ConnectorType.STRING_BOTTOM_OUTER || sourceDragBlock.connectedParent!!.isInner) {
+            if(sourceDragBlock.connectedParentConnectionView!!.connector.connectionType != ConnectorType.STRING_BOTTOM_OUTER || sourceDragBlock.connectedParent!!.isInner){
+
                 val stack: MutableList<DraggableBlock> = mutableListOf(sourceDragBlock)
 
                 while (!stack.isEmpty()) {
@@ -326,7 +322,6 @@ object ConnectorManager {
             ) {
                 DisconnectBlock(sourceDragBlock, viewModel)
 
-                // Убираем isInner для всех прикреплённых нижних блоков
 
                 val stack: MutableList<DraggableBlock> = mutableListOf(sourceDragBlock)
 

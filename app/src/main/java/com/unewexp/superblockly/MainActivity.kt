@@ -82,8 +82,6 @@ import com.unewexp.superblockly.viewBlocks.GetValueByIndexView
 import kotlinx.coroutines.launch
 
 
-
-
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -91,14 +89,22 @@ class MainActivity : ComponentActivity() {
         setContent {
 
             SuperBlocklyTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
                     val navController = rememberNavController()
                     NavHost(navController = navController, startDestination = Routes.Home.route) {
 
                         composable(Routes.Home.route) { Home(navController) }
-                        composable(Routes.CreateProject.route) { CreateNewProject(navController, this@MainActivity.applicationContext)  }
-                        composable(Routes.MyProjects.route) { MyProjects(navController)  }
+                        composable(Routes.CreateProject.route) {
+                            CreateNewProject(
+                                navController,
+                                this@MainActivity.applicationContext
+                            )
+                        }
+                        composable(Routes.MyProjects.route) { MyProjects(navController) }
                         composable(Routes.About.route) { About(navController) }
                     }
                 }
@@ -111,24 +117,24 @@ class MainActivity : ComponentActivity() {
 fun Home(navController: NavHostController) {
     Box(
         contentAlignment = Alignment.Center
-    ){
+    ) {
         Column {
             Button(
                 { navController.navigate(Routes.CreateProject.route) },
                 Modifiers.homeBtnModifier
-            ){
+            ) {
                 Text(stringResource(R.string.create_new_project))
             }
             Button(
                 { navController.navigate(Routes.MyProjects.route) },
                 Modifiers.homeBtnModifier
-            ){
+            ) {
                 Text(stringResource(R.string.my_projects))
             }
             Button(
                 { navController.navigate(Routes.About.route) },
                 Modifiers.homeBtnModifier
-            ){
+            ) {
                 Text(stringResource(R.string.about))
             }
         }
@@ -140,15 +146,15 @@ fun Home(navController: NavHostController) {
 fun CreateNewProject(
     navController: NavHostController,
     context: Context,
-    viewModel: DraggableViewModel = viewModel()
-){
+    viewModel: DraggableViewModel = viewModel(),
+) {
 
     val density = LocalDensity.current
 
     viewModel.density = density
 
     fun dpToPx(dp: Dp): Float {
-        val pxValue = with(density) {dp.toPx()}
+        val pxValue = with(density) { dp.toPx() }
 
         return pxValue
     }
@@ -164,9 +170,10 @@ fun CreateNewProject(
         modifier = Modifier
             .fillMaxSize(),
         drawerContent = {
-            Column(modifier = Modifier
-                .background(DrawerColor)
-            ){
+            Column(
+                modifier = Modifier
+                    .background(DrawerColor)
+            ) {
                 Button(onClick = {
                     scope.launch { drawerState.close() }
                     gesturesEnabled.value = false
@@ -176,8 +183,8 @@ fun CreateNewProject(
                 LazyColumn(
                     modifier = Modifier
                         .padding(5.dp, 5.dp)
-                ){
-                    item{
+                ) {
+                    item {
                         ListItem(
                             { offset ->
                                 val newBlock = DraggableBlock(
@@ -186,13 +193,17 @@ fun CreateNewProject(
                                     mutableStateOf(offset.y - dpToPx(60.dp) - globalOffset.value.y),
                                     width = mutableStateOf(100.dp)
                                 )
-                                viewModel.handleAction(DraggableViewModel.BlocklyAction.AddBlock(newBlock))
+                                viewModel.handleAction(
+                                    DraggableViewModel.BlocklyAction.AddBlock(
+                                        newBlock
+                                    )
+                                )
                             }
-                        ){
+                        ) {
                             PrintBlockCard()
                         }
                     }
-                    item{
+                    item {
                         Text(stringResource(R.string.math), color = Color.White)
                     }
                     item {
@@ -208,7 +219,7 @@ fun CreateNewProject(
                                     DraggableViewModel.BlocklyAction.AddBlock(newBlock)
                                 )
                             }
-                        ){
+                        ) {
                             IntLiteralBlockCard()
                         }
                         ListItem(
@@ -223,7 +234,7 @@ fun CreateNewProject(
                                     DraggableViewModel.BlocklyAction.AddBlock(newBlock)
                                 )
                             }
-                        ){
+                        ) {
                             OperandBlockCard()
                         }
                     }
@@ -241,7 +252,7 @@ fun CreateNewProject(
                                     DraggableViewModel.BlocklyAction.AddBlock(newBlock)
                                 )
                             }
-                        ){
+                        ) {
                             SetValueVariableCard()
                         }
                     }
@@ -258,7 +269,7 @@ fun CreateNewProject(
                                     DraggableViewModel.BlocklyAction.AddBlock(newBlock)
                                 )
                             }
-                        ){
+                        ) {
                             DeclarationVariableCard()
                         }
                     }
@@ -275,7 +286,7 @@ fun CreateNewProject(
                                     DraggableViewModel.BlocklyAction.AddBlock(newBlock)
                                 )
                             }
-                        ){
+                        ) {
                             ReferenceVariableCard()
                         }
                     }
@@ -363,7 +374,7 @@ fun CreateNewProject(
                                     DraggableViewModel.BlocklyAction.AddBlock(newBlock)
                                 )
                             }
-                        ){
+                        ) {
                             IfBlockCard()
                         }
                         ListItem(
@@ -378,7 +389,7 @@ fun CreateNewProject(
                                     DraggableViewModel.BlocklyAction.AddBlock(newBlock)
                                 )
                             }
-                        ){
+                        ) {
                             ElseBlockCard()
                         }
                         ListItem(
@@ -393,12 +404,12 @@ fun CreateNewProject(
                                     DraggableViewModel.BlocklyAction.AddBlock(newBlock)
                                 )
                             }
-                        ){
+                        ) {
                             ElseIfBlockCard()
                         }
                     }
                     item { Text(stringResource(R.string.strings), color = Color.White) }
-                    item{
+                    item {
                         ListItem(
                             { offset ->
                                 val newBlock = DraggableBlock(
@@ -411,11 +422,11 @@ fun CreateNewProject(
                                     DraggableViewModel.BlocklyAction.AddBlock(newBlock)
                                 )
                             }
-                        ){
+                        ) {
                             StringLiteralBlockCard()
                         }
                     }
-                    item{
+                    item {
                         ListItem(
                             { offset ->
                                 val newBlock = DraggableBlock(
@@ -428,12 +439,12 @@ fun CreateNewProject(
                                     DraggableViewModel.BlocklyAction.AddBlock(newBlock)
                                 )
                             }
-                        ){
+                        ) {
                             StringConcatenationBlockCard()
                         }
                     }
                     item { Text(stringResource(R.string.loops), color = Color.White) }
-                    item{
+                    item {
                         ListItem(
                             { offset ->
                                 val newBlock = DraggableBlock(
@@ -446,7 +457,7 @@ fun CreateNewProject(
                                     DraggableViewModel.BlocklyAction.AddBlock(newBlock)
                                 )
                             }
-                        ){
+                        ) {
                             WhileBlockCard()
                         }
                     }
@@ -463,7 +474,7 @@ fun CreateNewProject(
                                     DraggableViewModel.BlocklyAction.AddBlock(newBlock)
                                 )
                             }
-                        ){
+                        ) {
                             ForBlockCard()
                         }
                     }
@@ -480,7 +491,7 @@ fun CreateNewProject(
                                     DraggableViewModel.BlocklyAction.AddBlock(newBlock)
                                 )
                             }
-                        ){
+                        ) {
                             ForElementInLustBlockCard()
                         }
                     }
@@ -498,7 +509,7 @@ fun CreateNewProject(
                                     DraggableViewModel.BlocklyAction.AddBlock(newBlock)
                                 )
                             }
-                        ){
+                        ) {
                             FixedValuesAndSizeListViewCard()
                         }
                     }
@@ -515,7 +526,7 @@ fun CreateNewProject(
                                     DraggableViewModel.BlocklyAction.AddBlock(newBlock)
                                 )
                             }
-                        ){
+                        ) {
                             AddElementByIndexViewCard()
                         }
                     }
@@ -532,7 +543,7 @@ fun CreateNewProject(
                                     DraggableViewModel.BlocklyAction.AddBlock(newBlock)
                                 )
                             }
-                        ){
+                        ) {
                             GetValueByIndexViewCard()
                         }
                     }
@@ -549,7 +560,7 @@ fun CreateNewProject(
                                     DraggableViewModel.BlocklyAction.AddBlock(newBlock)
                                 )
                             }
-                        ){
+                        ) {
                             GetListSizeViewCard()
                         }
                     }
@@ -566,7 +577,7 @@ fun CreateNewProject(
                                     DraggableViewModel.BlocklyAction.AddBlock(newBlock)
                                 )
                             }
-                        ){
+                        ) {
                             RemoveValueByIndexCard()
                         }
                     }
@@ -583,7 +594,7 @@ fun CreateNewProject(
                                     DraggableViewModel.BlocklyAction.AddBlock(newBlock)
                                 )
                             }
-                        ){
+                        ) {
                             EditValueByIndexCard()
                         }
                     }
@@ -600,7 +611,7 @@ fun CreateNewProject(
                                     DraggableViewModel.BlocklyAction.AddBlock(newBlock)
                                 )
                             }
-                        ){
+                        ) {
                             PushBackElementCard()
                         }
                     }
@@ -610,23 +621,23 @@ fun CreateNewProject(
     ) {
         var backPressedTime: Long = 0
         BackHandler(enabled = true) {
-        val currentTime = System.currentTimeMillis()
-        val doubleBackPressInterval = 2000
-        if (currentTime - backPressedTime < doubleBackPressInterval) {
-            navController.popBackStack()
-        } else {
-            backPressedTime = currentTime
-            Toast.makeText(context, R.string.toast_message, Toast.LENGTH_SHORT).show()
+            val currentTime = System.currentTimeMillis()
+            val doubleBackPressInterval = 2000
+            if (currentTime - backPressedTime < doubleBackPressInterval) {
+                navController.popBackStack()
+            } else {
+                backPressedTime = currentTime
+                Toast.makeText(context, R.string.toast_message, Toast.LENGTH_SHORT).show()
+            }
         }
-    }
         Canvas(
             {
                 scope.launch { drawerState.open() }
                 gesturesEnabled.value = true
             },
-            {toHomeBtn(navController, { Logger.clearLogs()}) },
-            {
-                newOffset -> globalOffset.value = newOffset
+            { toHomeBtn(navController, { Logger.clearLogs() }) },
+            { newOffset ->
+                globalOffset.value = newOffset
                 gesturesEnabled.value = false
             }
         )
@@ -636,8 +647,8 @@ fun CreateNewProject(
 @Composable
 fun ListItem(
     onDoubleClick: (offset: Offset) -> Unit,
-    content: @Composable () -> Unit
-){
+    content: @Composable () -> Unit,
+) {
 
     var dragStartPosition by remember { mutableStateOf(Offset.Zero) }
 
@@ -646,7 +657,7 @@ fun ListItem(
             .onGloballyPositioned { coordinates ->
                 dragStartPosition = coordinates.positionInRoot()
             }
-            .pointerInput(Unit){
+            .pointerInput(Unit) {
                 detectTapGestures(
                     onDoubleTap = {
                         onDoubleClick(dragStartPosition)
@@ -659,7 +670,7 @@ fun ListItem(
 }
 
 @Composable
-fun MyProjects(navController: NavHostController){
+fun MyProjects(navController: NavHostController) {
     Box(
         contentAlignment = Alignment.TopStart
     ) {
@@ -667,13 +678,13 @@ fun MyProjects(navController: NavHostController){
     }
     Box(
         contentAlignment = Alignment.Center
-    ){
+    ) {
 
     }
 }
 
 @Composable
-fun About(navController: NavHostController){
+fun About(navController: NavHostController) {
     Box(
         contentAlignment = Alignment.TopStart
     ) {
@@ -693,8 +704,8 @@ fun About(navController: NavHostController){
         contentAlignment = Alignment.CenterStart,
         modifier = Modifier
             .padding(5.dp, 0.dp, 0.dp, 0.dp)
-    ){
-        Column{
+    ) {
+        Column {
             Text(stringResource(R.string.about_title), style = MaterialTheme.typography.titleLarge)
             Text(
                 stringResource(R.string.about_body1),

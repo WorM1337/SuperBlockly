@@ -21,7 +21,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,12 +31,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
-import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
+import com.unewexp.superblockly.ui.theme.booleanLogVariableColor
+import com.unewexp.superblockly.ui.theme.daggerColor
+import com.unewexp.superblockly.ui.theme.errorTextColor
+import com.unewexp.superblockly.ui.theme.logDraggableLine
+import com.unewexp.superblockly.ui.theme.logsPanelBackground
+import com.unewexp.superblockly.ui.theme.logsTextColor
+import com.unewexp.superblockly.ui.theme.nullLogVariableColor
+import com.unewexp.superblockly.ui.theme.numberLogVariableColor
+import com.unewexp.superblockly.ui.theme.otherLogVariableColor
+import com.unewexp.superblockly.ui.theme.stringLogVariableColor
+
+import com.unewexp.superblockly.ui.theme.variablesDebugColor
 
 
 @Composable
@@ -53,8 +61,6 @@ fun DebugPanel() {
     val minConsoleWidth = 70.dp
     val density = LocalDensity.current
 
-    val leftPanelColor = Color(0xFF2E2B3F)
-    val rightPanelColor = Color(0xFF1E2B38)
 
     var leftFraction by remember { mutableStateOf(0.5f) }
 
@@ -70,13 +76,12 @@ fun DebugPanel() {
     ) {
         Row(modifier = Modifier.fillMaxSize()) {
 
-            // Левая полоса (разворачивание)
             Box(
                 modifier = Modifier
                     .fillMaxHeight()
                     .width(rolledUp)
                     .background(
-                        color = Color(0xFF2C2C2C),
+                        color = logDraggableLine,
                         shape = RoundedCornerShape(topStart = 20.dp, bottomStart = 20.dp)
                     )
                     .pointerInput(Unit) {
@@ -97,7 +102,7 @@ fun DebugPanel() {
                     modifier = Modifier
                         .height(70.dp)
                         .width(10.dp)
-                        .background(Color(0xFF555555), RoundedCornerShape(5.dp))
+                        .background(daggerColor, RoundedCornerShape(5.dp))
                 )
             }
 
@@ -106,28 +111,30 @@ fun DebugPanel() {
                 val leftWidth = max(minConsoleWidth, usableWidth * leftFraction)
                 val rightWidth = usableWidth - leftWidth
 
-                // Левая панель
+
                 Box(
                     modifier = Modifier
                         .width(leftWidth)
                         .fillMaxHeight()
-                        .background(leftPanelColor)
+                        .background(variablesDebugColor)
                 ) {
                     VariablesPanel()
                 }
 
-                // Центр. полоса (перетаскиваемая)
                 Box(
                     modifier = Modifier
                         .fillMaxHeight()
                         .width(rolledUp)
-                        .background(Color(0xFF2C2C2C))
+                        .background(logDraggableLine)
                         .draggable(
                             orientation = Orientation.Horizontal,
                             state = rememberDraggableState { distance ->
                                 val usable = widthDp - rolledUp * 2
                                 val deltaDp = with(density) { distance.toDp() }
-                                val newLeft = (usable * leftFraction + deltaDp).coerceIn(minConsoleWidth, usable - minConsoleWidth)
+                                val newLeft = (usable * leftFraction + deltaDp).coerceIn(
+                                    minConsoleWidth,
+                                    usable - minConsoleWidth
+                                )
                                 leftFraction = newLeft / usable
                             }
                         ),
@@ -137,16 +144,16 @@ fun DebugPanel() {
                         modifier = Modifier
                             .height(70.dp)
                             .width(10.dp)
-                            .background(Color(0xFF555555), RoundedCornerShape(5.dp))
+                            .background(daggerColor, RoundedCornerShape(5.dp))
                     )
                 }
 
-                // Правая панель
+
                 Box(
                     modifier = Modifier
                         .width(rightWidth)
                         .fillMaxHeight()
-                        .background(rightPanelColor)
+                        .background(logsPanelBackground)
                 ) {
                     LogsPanel()
                 }
@@ -163,7 +170,6 @@ fun VariablesPanel() {
         modifier = Modifier
             .fillMaxSize()
             .fillMaxHeight()
-            .background(Color(0xFF1E1E1E))
             .padding(12.dp)
     ) {
         VariableList(scopes)
@@ -190,11 +196,11 @@ fun VariableRow(name: String, value: Any?, indentLevel: Int) {
     val typeName = value?.let { it::class.simpleName } ?: "null"
     val displayValue = value?.toString() ?: "null"
     val valueColor = when (value) {
-        is String -> Color(0xFF81C784)
-        is Int, is Float, is Double -> Color(0xFF64B5F6)
-        is Boolean -> Color(0xFFFFD54F)
-        null -> Color(0xFFEF9A9A)
-        else -> Color(0xFFE0E0E0)
+        is String -> stringLogVariableColor
+        is Int, is Float, is Double -> numberLogVariableColor
+        is Boolean -> booleanLogVariableColor
+        null -> nullLogVariableColor
+        else -> otherLogVariableColor
     }
 
     Row(
@@ -238,8 +244,8 @@ fun LogsPanel(){
         items(logs.size) { index ->
             val log = logs[index]
             val (prefix, color) = when (log.logType) {
-                Logger.LogType.ERROR -> "[ERROR]" to Color(0xFFFF5555)
-                Logger.LogType.TEXT -> "[INFO]" to Color(0xFFE0E0E0)
+                Logger.LogType.ERROR -> "[ERROR]" to errorTextColor
+                Logger.LogType.TEXT -> "[INFO]" to logsTextColor
             }
 
             Text(

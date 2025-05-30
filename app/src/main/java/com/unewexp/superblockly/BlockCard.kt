@@ -7,9 +7,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
-import com.unewexp.superblockly.blocks.logic.CompareNumbers
 import com.unewexp.superblockly.viewBlocks.AddElementByIndexViewForCard
 import com.unewexp.superblockly.viewBlocks.BooleanLiteralBlockViewForCard
 import com.unewexp.superblockly.viewBlocks.BooleanLogicBlockForCard
@@ -21,7 +19,6 @@ import com.unewexp.superblockly.viewBlocks.ElseIfBlockViewForCard
 import com.unewexp.superblockly.viewBlocks.FixedValuesAndSizeListViewForCard
 import com.unewexp.superblockly.viewBlocks.ForBlockViewForCard
 import com.unewexp.superblockly.viewBlocks.ForElementInListBlockViewForCard
-import com.unewexp.superblockly.viewBlocks.GetListSizeView
 import com.unewexp.superblockly.viewBlocks.GetListSizeViewForCard
 import com.unewexp.superblockly.viewBlocks.GetValueByIndexViewForCard
 import com.unewexp.superblockly.viewBlocks.IfBlockViewForCard
@@ -38,314 +35,153 @@ import com.unewexp.superblockly.viewBlocks.VariableReferenceViewForCard
 import com.unewexp.superblockly.viewBlocks.WhileBlockViewForCard
 
 @Composable
-fun BlockCard(content: @Composable () -> Unit, onClick: () -> Unit){
+fun BlockCard(content: @Composable () -> Unit, onClick: () -> Unit) {
     Card(
-        modifier = Modifier.clickable {
-            onClick()
-        }
+        modifier = Modifier
+            .clickable { onClick() }
+            .padding(2.dp)
+            .width(200.dp)
+            .height(60.dp)
     ) {
         content()
     }
 }
 
 @Composable
-fun IntLiteralBlockCard(alpha: Float = 1f){
+fun SimpleBlockCard(content: @Composable () -> Unit) {
     Card(
         modifier = Modifier
+            .padding(2.dp)
             .width(200.dp)
             .height(60.dp)
-            .padding(2.dp)
-            .alpha(alpha)
-    ){
-        IntLiteralViewForCard()
+    ) {
+        content()
     }
 }
 
+// Блоки
+
 @Composable
-fun BooleanLiteralBlockCard(){
-    Card(
-        modifier = Modifier
-            .width(200.dp)
-            .height(60.dp)
-            .padding(2.dp)
-    ){
-        BooleanLiteralBlockViewForCard()
-    }
+fun IntLiteralBlockCard() {
+    SimpleBlockCard { IntLiteralViewForCard() }
 }
 
 @Composable
-fun StringLiteralBlockCard(){
-    Card(
-        modifier = Modifier
-            .width(200.dp)
-            .height(60.dp)
-            .padding(2.dp)
-    ){
-        StringLiteralBlockViewForCard()
-    }
+fun BooleanLiteralBlockCard() {
+    SimpleBlockCard { BooleanLiteralBlockViewForCard() }
 }
 
 @Composable
-fun StringConcatenationBlockCard(){
-    Card(
-        modifier = Modifier
-            .width(200.dp)
-            .height(60.dp)
-            .padding(2.dp)
-    ){
-        StringConcatenationBlockForCard()
-    }
+fun StringLiteralBlockCard() {
+    SimpleBlockCard { StringLiteralBlockViewForCard() }
 }
 
 @Composable
-fun SetValueVariableCard(){
-    Card(
-        modifier = Modifier
-            .width(200.dp)
-            .height(60.dp)
-            .padding(2.dp)
-    ){
-        SetValueVariableViewForCard()
-    }
+fun StringConcatenationBlockCard() {
+    SimpleBlockCard { StringConcatenationBlockForCard() }
 }
 
 @Composable
-fun DeclarationVariableCard(){
-    Card(
-        modifier = Modifier
-            .width(200.dp)
-            .height(60.dp)
-            .padding(2.dp)
-    ){
-        DeclarationVariableViewForCard()
-    }
+fun SetValueVariableCard() {
+    SimpleBlockCard { SetValueVariableViewForCard() }
 }
 
 @Composable
-fun ReferenceVariableCard(){
-    Card(
-        modifier = Modifier
-            .width(200.dp)
-            .height(60.dp)
-            .padding(2.dp)
-    ){
-        VariableReferenceViewForCard()
-    }
+fun DeclarationVariableCard() {
+    SimpleBlockCard { DeclarationVariableViewForCard() }
 }
 
 @Composable
-fun BooleanLogicBlockCard(){
-    Card(
-        modifier = Modifier
-            .width(200.dp)
-            .height(60.dp)
-            .padding(2.dp)
-    ){
-        BooleanLogicBlockForCard()
-    }
+fun ReferenceVariableCard() {
+    SimpleBlockCard { VariableReferenceViewForCard() }
 }
 
 @Composable
-fun CompareNumbersBlockCard(){
-    Card(
-        modifier = Modifier
-            .width(200.dp)
-            .height(60.dp)
-            .padding(2.dp)
-    ){
-        CompareNumbersBlockForCard()
-    }
+fun BooleanLogicBlockCard() {
+    SimpleBlockCard { BooleanLogicBlockForCard() }
 }
 
 @Composable
-fun NotBlockCard(){
-    Card(
-        modifier = Modifier
-            .width(200.dp)
-            .height(60.dp)
-            .padding(2.dp)
-    ){
-        NotBlockViewForCard()
-    }
-}
-
-
-@Composable
-fun IfBlockCard(){
-    Card(
-        modifier = Modifier
-            .width(200.dp)
-            .height(60.dp)
-            .padding(2.dp)
-    ){
-        IfBlockViewForCard()
-    }
+fun CompareNumbersBlockCard() {
+    SimpleBlockCard { CompareNumbersBlockForCard() }
 }
 
 @Composable
-fun ElseBlockCard(){
-    Card(
-        modifier = Modifier
-            .width(200.dp)
-            .height(60.dp)
-            .padding(2.dp)
-    ){
-        ElseBlockViewForCard()
-    }
+fun NotBlockCard() {
+    SimpleBlockCard { NotBlockViewForCard() }
 }
 
 @Composable
-fun ElseIfBlockCard(){
-    Card(
-        modifier = Modifier
-            .width(200.dp)
-            .height(60.dp)
-            .padding(2.dp)
-    ){
-        ElseIfBlockViewForCard()
-    }
+fun IfBlockCard() {
+    SimpleBlockCard { IfBlockViewForCard() }
 }
 
 @Composable
-fun PrintBlockCard(){
-    Card(
-        modifier = Modifier
-            .width(200.dp)
-            .height(60.dp)
-            .padding(2.dp)
-    ){
-        PrintBlockView()
-    }
+fun ElseBlockCard() {
+    SimpleBlockCard { ElseBlockViewForCard() }
 }
 
 @Composable
-fun OperandBlockCard(){
-    Card(
-        modifier = Modifier
-            .width(200.dp)
-            .height(60.dp)
-            .padding(2.dp)
-    ){
-        OperandBlockForCard()
-    }
+fun ElseIfBlockCard() {
+    SimpleBlockCard { ElseIfBlockViewForCard() }
 }
 
 @Composable
-fun WhileBlockCard(){
-    Card(
-        modifier = Modifier
-            .width(200.dp)
-            .height(60.dp)
-            .padding(2.dp)
-    ){
-        WhileBlockViewForCard()
-    }
+fun PrintBlockCard() {
+    SimpleBlockCard { PrintBlockView() }
 }
 
 @Composable
-fun ForBlockCard(){
-    Card(
-        modifier = Modifier
-            .width(200.dp)
-            .height(60.dp)
-            .padding(2.dp)
-    ){
-        ForBlockViewForCard()
-    }
+fun OperandBlockCard() {
+    SimpleBlockCard { OperandBlockForCard() }
 }
 
 @Composable
-fun ForElementInLustBlockCard(){
-    Card(
-        modifier = Modifier
-            .width(200.dp)
-            .height(60.dp)
-            .padding(2.dp)
-    ){
-        ForElementInListBlockViewForCard()
-    }
+fun WhileBlockCard() {
+    SimpleBlockCard { WhileBlockViewForCard() }
 }
 
 @Composable
-fun FixedValuesAndSizeListViewCard(){
-    Card(
-        modifier = Modifier
-            .width(200.dp)
-            .height(60.dp)
-            .padding(2.dp)
-    ){
-        FixedValuesAndSizeListViewForCard()
-    }
+fun ForBlockCard() {
+    SimpleBlockCard { ForBlockViewForCard() }
 }
 
 @Composable
-fun AddElementByIndexViewCard(){
-    Card(
-        modifier = Modifier
-            .width(200.dp)
-            .height(60.dp)
-            .padding(2.dp)
-    ){
-        AddElementByIndexViewForCard()
-    }
+fun ForElementInLustBlockCard() {
+    SimpleBlockCard { ForElementInListBlockViewForCard() }
 }
 
 @Composable
-fun GetValueByIndexViewCard(){
-    Card(
-        modifier = Modifier
-            .width(200.dp)
-            .height(60.dp)
-            .padding(2.dp)
-    ){
-        GetValueByIndexViewForCard()
-    }
+fun FixedValuesAndSizeListViewCard() {
+    SimpleBlockCard { FixedValuesAndSizeListViewForCard() }
 }
 
 @Composable
-fun GetListSizeViewCard(){
-    Card(
-        modifier = Modifier
-            .width(200.dp)
-            .height(60.dp)
-            .padding(2.dp)
-    ){
-        GetListSizeViewForCard()
-    }
+fun AddElementByIndexViewCard() {
+    SimpleBlockCard { AddElementByIndexViewForCard() }
 }
 
 @Composable
-fun RemoveValueByIndexCard(){
-    Card(
-        modifier = Modifier
-            .width(200.dp)
-            .height(60.dp)
-            .padding(2.dp)
-    ){
-        RemoveValueByIndexViewForCard()
-    }
+fun GetValueByIndexViewCard() {
+    SimpleBlockCard { GetValueByIndexViewForCard() }
 }
 
 @Composable
-fun EditValueByIndexCard(){
-    Card(
-        modifier = Modifier
-            .width(200.dp)
-            .height(60.dp)
-            .padding(2.dp)
-    ){
-        EditValueByIndexViewForCard()
-    }
+fun GetListSizeViewCard() {
+    SimpleBlockCard { GetListSizeViewForCard() }
 }
 
 @Composable
-fun PushBackElementCard(){
-    Card(
-        modifier = Modifier
-            .width(200.dp)
-            .height(60.dp)
-            .padding(2.dp)
-    ){
-        PushBackElementViewForCard()
-    }
+fun RemoveValueByIndexCard() {
+    SimpleBlockCard { RemoveValueByIndexViewForCard() }
+}
+
+@Composable
+fun EditValueByIndexCard() {
+    SimpleBlockCard { EditValueByIndexViewForCard() }
+}
+
+@Composable
+fun PushBackElementCard() {
+    SimpleBlockCard { PushBackElementViewForCard() }
 }

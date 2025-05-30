@@ -2,7 +2,6 @@ package com.unewexp.superblockly
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.rememberTransformableState
 import androidx.compose.foundation.gestures.transformable
 import androidx.compose.foundation.layout.Box
@@ -16,12 +15,9 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
@@ -42,18 +38,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.unewexp.superblockly.blocks.StartBlock
-import com.unewexp.superblockly.debug.ConsolePanel
-import com.unewexp.superblockly.enums.BlockType
-import com.unewexp.superblockly.model.ConnectorManager
-import com.unewexp.superblockly.viewBlocks.VariableDeclarationBlockView
-import com.unewexp.superblockly.viewBlocks.DraggableBase
 import com.unewexp.superblockly.blocks.arithmetic.OperandBlock
 import com.unewexp.superblockly.blocks.logic.BooleanLogicBlock
 import com.unewexp.superblockly.blocks.logic.CompareNumbers
+import com.unewexp.superblockly.debug.ConsolePanel
 import com.unewexp.superblockly.debug.DebugController
 import com.unewexp.superblockly.debug.DebugPanel
 import com.unewexp.superblockly.debug.ExecutionContext
 import com.unewexp.superblockly.debug.RunProgram
+import com.unewexp.superblockly.enums.BlockType
+import com.unewexp.superblockly.model.ConnectorManager
 import com.unewexp.superblockly.ui.theme.ActiveRunProgram
 import com.unewexp.superblockly.ui.theme.ConnectorColor
 import com.unewexp.superblockly.ui.theme.canvasBackground
@@ -63,6 +57,7 @@ import com.unewexp.superblockly.viewBlocks.AddElementByIndexView
 import com.unewexp.superblockly.viewBlocks.BooleanLiteralBlockView
 import com.unewexp.superblockly.viewBlocks.BooleanLogicBlockView
 import com.unewexp.superblockly.viewBlocks.CompareNumbersBlockView
+import com.unewexp.superblockly.viewBlocks.DraggableBase
 import com.unewexp.superblockly.viewBlocks.EditValueByIndexView
 import com.unewexp.superblockly.viewBlocks.ElseBlockView
 import com.unewexp.superblockly.viewBlocks.ElseIfBlockView
@@ -83,6 +78,7 @@ import com.unewexp.superblockly.viewBlocks.StartBlockView
 import com.unewexp.superblockly.viewBlocks.StringConcatenationBlockView
 import com.unewexp.superblockly.viewBlocks.StringLiteralBlockView
 import com.unewexp.superblockly.viewBlocks.TopConnector
+import com.unewexp.superblockly.viewBlocks.VariableDeclarationBlockView
 import com.unewexp.superblockly.viewBlocks.VariableReferenceView
 import com.unewexp.superblockly.viewBlocks.WhileBlockView
 import kotlinx.coroutines.CoroutineScope

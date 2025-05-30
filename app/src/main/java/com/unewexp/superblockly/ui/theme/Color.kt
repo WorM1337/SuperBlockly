@@ -39,8 +39,15 @@ val logsPanelBackground = Color(0xFF251E38)
 val daggerColor = Color(0xFF604A7C)
 val logDraggableLine = Color(0xFF2F2844)
 
+val variablesDebugColor = Color(0xFF1E2B38)
+
 val topBarBackground = Color(0xFF301155)
 val canvasBackground = Color(0xFF3C2281)
 
 val errorTextColor = Color(0xFFFF5555)
 val logsTextColor = Color(0xFFE0E0E0)
+val stringLogVariableColor = Color(0xFF81C784)
+val numberLogVariableColor = Color(0xFF64B5F6)
+val booleanLogVariableColor = Color(0xFFFFD54F)
+val nullLogVariableColor = Color(0xFFEF9A9A)
+val otherLogVariableColor = Color(0xFFE0E0E0)
