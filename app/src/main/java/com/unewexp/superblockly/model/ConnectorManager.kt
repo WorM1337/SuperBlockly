@@ -53,7 +53,7 @@ object ConnectorManager {
         target: DraggableBlock,
         connection: ConnectionView,
         viewModel: DraggableViewModel,
-        density: Density
+        density: Density,
     ): Boolean {
         when (connectable.outputConnectionView!!.connector.connectionType) {
             ConnectorType.OUTPUT -> {
@@ -62,14 +62,12 @@ object ConnectorManager {
                 connectBlocks(connectable, target, connection, viewModel, density)
                 return true
             }
-
             ConnectorType.STRING_TOP -> {
                 if (connection.connector.connectionType != ConnectorType.STRING_BOTTOM_INNER && connection.connector.connectionType != ConnectorType.STRING_BOTTOM_OUTER) return false
 
                 connectBlocks(connectable, target, connection, viewModel, density)
                 return true
             }
-
             else -> throw IllegalArgumentException("Коннектор типа ${connectable.outputConnectionView!!.connector.connectionType} выступил как получатель")
         }
     }
@@ -102,7 +100,7 @@ object ConnectorManager {
     fun tryConnectAndDisconnectDrag(
         sourceDragBlock: DraggableBlock,
         viewModel: DraggableViewModel,
-        density: Density
+        density: Density,
     ) {
 
         if (!parentDisconnectOrNot(
@@ -128,7 +126,7 @@ object ConnectorManager {
         target: DraggableBlock,
         connection: ConnectionView,
         viewModel: DraggableViewModel,
-        density: Density
+        density: Density,
     ) {
         safeConnect(connectable.outputConnectionView!!.connector, connection.connector)
 
@@ -152,8 +150,6 @@ object ConnectorManager {
         Log.i("Connect", "${connectable.block.blockType}")
 
         SizeManager.changeParentParams(connectable, viewModel)
-
-        if (connectable.connectedParentConnectionView!!.connector.connectionType != ConnectorType.STRING_BOTTOM_OUTER || connectable.connectedParent!!.isInner) {
 
         if(connectable.connectedParentConnectionView!!.connector.connectionType != ConnectorType.STRING_BOTTOM_OUTER || connectable.connectedParent!!.isInner){
             val stack: MutableList<DraggableBlock> = mutableListOf(connectable)
@@ -189,7 +185,7 @@ object ConnectorManager {
         sourceDragBlock: DraggableBlock,
         viewModel: DraggableViewModel,
         density: Density,
-        connectionType: ConnectorType
+        connectionType: ConnectorType,
     ) {
 
         val listDragBlocks =
@@ -210,7 +206,6 @@ object ConnectorManager {
                     mutableListOf(ConnectorType.INPUT)
                 )
             }
-
             ConnectorType.STRING_TOP -> {
                 nearestBlock = getBlockWithNearestConnection(
                     sourceDragBlock, listDragBlocks, density,
@@ -228,7 +223,6 @@ object ConnectorManager {
                 )
 
             }
-
             else -> throw IllegalArgumentException("Коннектор типа ${sourceDragBlock.outputConnectionView!!.connector.connectionType} выступил как получатель")
         }
 
@@ -272,7 +266,6 @@ object ConnectorManager {
             SizeManager.changeParentParams(sourceDragBlock, viewModel)
 
             if(sourceDragBlock.connectedParentConnectionView!!.connector.connectionType != ConnectorType.STRING_BOTTOM_OUTER || sourceDragBlock.connectedParent!!.isInner){
-
                 val stack: MutableList<DraggableBlock> = mutableListOf(sourceDragBlock)
 
                 while (!stack.isEmpty()) {
@@ -306,7 +299,7 @@ object ConnectorManager {
     private fun parentDisconnectOrNot(
         sourceDragBlock: DraggableBlock,
         viewModel: DraggableViewModel,
-        density: Density
+        density: Density,
     ): Boolean {
         sourceDragBlock.connectedParent?.let {
             if (sourceDragBlock.connectedParentConnectionView == null) {
@@ -365,7 +358,7 @@ object ConnectorManager {
     fun normalizeConnectorsPositions(
         block: DraggableBlock,
         viewModel: DraggableViewModel,
-        besides: DraggableBlock? = null
+        besides: DraggableBlock? = null,
     ) {
         val density = viewModel.density
         block.scope.forEach { child ->
@@ -391,7 +384,7 @@ object ConnectorManager {
         listBlocks: MutableList<DraggableBlock>,
         density: Density,
         connectionTypes: MutableList<ConnectorType>,
-        requiresVoid: Boolean
+        requiresVoid: Boolean,
     ): DraggableBlock? {
 
         var ans: DraggableBlock? = null
@@ -450,7 +443,7 @@ object ConnectorManager {
         dragBlock: DraggableBlock,
         listBlocks: MutableList<DraggableBlock>,
         density: Density,
-        connectionTypes: MutableList<ConnectorType>
+        connectionTypes: MutableList<ConnectorType>,
     ): ConnectionView? {
 
         var ans: ConnectionView? = null
@@ -512,7 +505,6 @@ object ConnectorManager {
                     ConnectionView(castedBlock.topConnector, cornerOffset, 0.dp)
                 )
             }
-
             BlockType.OPERAND -> {
                 val castedBlock = (block as OperandBlock)
 
@@ -520,7 +512,7 @@ object ConnectorManager {
                     ConnectionView(castedBlock.outputConnector, 0.dp, height / 2),
                     ConnectionView(
                         castedBlock.leftInputConnector,
-                        width / 4 - defaultWidth / 2 - innerPadding,
+                        width / 4 - defaultWidth / 2 - innerPadding * 2,
                         height / 2,
                         ExtendConnectionViewType.INNER,
                         height = defaultHeight - innerPadding * 2,
@@ -528,7 +520,7 @@ object ConnectorManager {
                     ),
                     ConnectionView(
                         castedBlock.rightInputConnector,
-                        width * 3 / 4 - defaultWidth / 2,
+                        width * 3 / 4 - defaultWidth / 2 - innerPadding * 2,
                         height / 2,
                         ExtendConnectionViewType.INNER,
                         height = defaultHeight - innerPadding * 2,
@@ -536,7 +528,6 @@ object ConnectorManager {
                     ),
                 )
             }
-
             BlockType.SET_VARIABLE_VALUE -> {
                 val castedBlock = (block as SetValueVariableBlock)
 
@@ -552,7 +543,6 @@ object ConnectorManager {
                     ConnectionView(castedBlock.bottomConnector, cornerOffset, height),
                 )
             }
-
             BlockType.VARIABLE_DECLARATION -> {
                 val castedBlock = (block as VariableDeclarationBlock)
 
@@ -568,7 +558,6 @@ object ConnectorManager {
                     ConnectionView(castedBlock.bottomConnector, cornerOffset, height),
                 )
             }
-
             BlockType.INT_LITERAL -> {
                 val castedBlock = (block as IntLiteralBlock)
 
@@ -576,7 +565,6 @@ object ConnectorManager {
                     ConnectionView(castedBlock.outputConnector, 0.dp, height / 2),
                 )
             }
-
             BlockType.STRING_LITERAL -> {
                 val castedBlock = (block as StringLiteralBlock)
 
@@ -584,7 +572,6 @@ object ConnectorManager {
                     ConnectionView(castedBlock.outputConnector, 0.dp, height / 2),
                 )
             }
-
             BlockType.BOOLEAN_LITERAL -> {
                 val castedBlock = (block as BooleanLiteralBlock)
 
@@ -592,7 +579,6 @@ object ConnectorManager {
                     ConnectionView(castedBlock.outputConnector, 0.dp, height / 2),
                 )
             }
-
             BlockType.VARIABLE_REFERENCE -> {
                 val castedBlock = (block as VariableReferenceBlock)
 
@@ -600,7 +586,6 @@ object ConnectorManager {
                     ConnectionView(castedBlock.outputConnector, 0.dp, height / 2),
                 )
             }
-
             BlockType.STRING_CONCAT -> {
                 val castedBlock = (block as StringConcatenationBlock)
 
@@ -624,7 +609,6 @@ object ConnectorManager {
                     ),
                 )
             }
-
             BlockType.STRING_APPEND -> {
                 val castedBlock = (block as StringAppendBlock)
 
@@ -640,7 +624,6 @@ object ConnectorManager {
                     ConnectionView(castedBlock.bottomConnector, cornerOffset, height),
                 )
             }
-
             BlockType.PRINT_BLOCK -> {
                 val castedBlock = (block as PrintBlock)
 
@@ -656,7 +639,6 @@ object ConnectorManager {
                     ConnectionView(castedBlock.bottomConnector, cornerOffset, height),
                 )
             }
-
             BlockType.IF_BLOCK -> {
                 val castedBlock = (block as IfBlock)
 
@@ -678,7 +660,6 @@ object ConnectorManager {
                     )
                 )
             }
-
             BlockType.FOR_BLOCK -> {
                 val castedBlock = (block as ForBlock)
 
@@ -733,7 +714,6 @@ object ConnectorManager {
                     ConnectionView(castedBlock.bottomConnector, cornerOffset, height),
                 )
             }
-
             BlockType.COMPARE_NUMBERS_BLOCK -> {
                 val castedBlock = (block as CompareNumbers)
 
@@ -757,7 +737,6 @@ object ConnectorManager {
                     ),
                 )
             }
-
             BlockType.BOOLEAN_LOGIC_BLOCK -> {
                 val castedBlock = (block as BooleanLogicBlock)
 
@@ -765,23 +744,18 @@ object ConnectorManager {
                     ConnectionView(castedBlock.outputConnector, 0.dp, height / 2),
                     ConnectionView(
                         castedBlock.leftInputConnector,
-                        width / 4 - defaultWidth / 2 - innerPadding * 2,
+                        width / 4,
                         height / 2,
-                        ExtendConnectionViewType.INNER,
-                        width = defaultWidth,
-                        height = defaultHeight - innerPadding * 2
+                        ExtendConnectionViewType.INNER
                     ),
                     ConnectionView(
                         castedBlock.rightInputConnector,
-                        width * 3 / 4 - defaultWidth / 2 - innerPadding * 2,
+                        width * 3 / 4,
                         height / 2,
-                        ExtendConnectionViewType.INNER,
-                        width = defaultWidth,
-                        height = defaultHeight - innerPadding * 2
+                        ExtendConnectionViewType.INNER
                     ),
                 )
             }
-
             BlockType.NOT_BLOCK -> {
                 val castedBlock = (block as NotBlock)
 
@@ -796,7 +770,6 @@ object ConnectorManager {
                     ),
                 )
             }
-
             BlockType.ELSE_BLOCK -> {
                 val castedBlock = (block as ElseBlock)
 
@@ -811,7 +784,6 @@ object ConnectorManager {
                     ),
                 )
             }
-
             BlockType.IF_ELSE_BLOCK -> {
                 val castedBlock = (block as ElseIfBlock)
 
@@ -833,7 +805,6 @@ object ConnectorManager {
                     )
                 )
             }
-
             BlockType.REPEAT_N_TIMES -> {
                 val castedBlock = (block as RepeatNTimesBlock)
 
@@ -855,7 +826,6 @@ object ConnectorManager {
                     ),
                 )
             }
-
             BlockType.WHILE_BLOCK -> {
                 val castedBlock = (block as WhileBlock)
 
@@ -877,7 +847,6 @@ object ConnectorManager {
                     )
                 )
             }
-
             BlockType.FOR_ELEMENT_IN_LIST -> {
                 val castedBlock = (block as ForElementInListBlock)
 
@@ -892,14 +861,12 @@ object ConnectorManager {
                     ),
                     ConnectionView(
                         castedBlock.listConnector,
-                        width,
-                        defaultHeight / 2,
-                        ExtendConnectionViewType.SIDE,
-                        height = defaultHeight
+                        width * 3 / 4,
+                        defaultHeight,
+                        ExtendConnectionViewType.INNER
                     ),
                 )
             }
-
             BlockType.FIXED_VALUE_AND_SIZE_LIST -> {
                 val castedBlock = (block as FixedValuesAndSizeList)
 
@@ -923,7 +890,6 @@ object ConnectorManager {
                     ),
                 )
             }
-
             BlockType.GET_VALUE_BY_INDEX -> {
                 val castedBlock = (block as GetValueByIndex)
 
@@ -947,7 +913,6 @@ object ConnectorManager {
                     )
                 )
             }
-
             BlockType.REMOVE_VALUE_BY_INDEX -> {
                 val castedBlock = (block as RemoveValueByIndex)
 
@@ -972,7 +937,6 @@ object ConnectorManager {
                     )
                 )
             }
-
             BlockType.ADD_VALUE_BY_INDEX -> {
                 val castedBlock = (block as AddElementByIndex)
 
@@ -1004,7 +968,6 @@ object ConnectorManager {
                     )
                 )
             }
-
             BlockType.GET_LIST_SIZE -> {
                 val castedBlock = (block as GetListSize)
 
@@ -1019,7 +982,6 @@ object ConnectorManager {
                     ),
                 )
             }
-
             BlockType.EDIT_VALUE_BY_INDEX -> {
                 val castedBlock = (block as EditValueByIndex)
 
@@ -1051,7 +1013,6 @@ object ConnectorManager {
                     )
                 )
             }
-
             BlockType.PUSH_BACK_ELEMENT -> {
                 val castedBlock = (block as PushBackElement)
 

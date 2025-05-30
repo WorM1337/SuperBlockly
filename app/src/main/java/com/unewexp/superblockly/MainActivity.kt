@@ -76,6 +76,7 @@ import com.unewexp.superblockly.blocks.loops.ForElementInListBlock
 import com.unewexp.superblockly.blocks.loops.WhileBlock
 import com.unewexp.superblockly.blocks.returnBlocks.StringConcatenationBlock
 import com.unewexp.superblockly.debug.Logger
+import com.unewexp.superblockly.ui.theme.canvasBackground
 import com.unewexp.superblockly.viewBlocks.AddElementByIndexView
 import com.unewexp.superblockly.viewBlocks.GetListSizeView
 import com.unewexp.superblockly.viewBlocks.GetValueByIndexView
@@ -92,7 +93,7 @@ class MainActivity : ComponentActivity() {
 
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+                    color = canvasBackground
                 ) {
                     val navController = rememberNavController()
                     NavHost(navController = navController, startDestination = Routes.Home.route) {

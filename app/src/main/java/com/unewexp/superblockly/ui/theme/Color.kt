@@ -43,6 +43,7 @@ val variablesDebugColor = Color(0xFF1E2B38)
 
 val topBarBackground = Color(0xFF301155)
 val canvasBackground = Color(0xFF3C2281)
+val buttonColor = Color(0xFF5531B3)
 
 val errorTextColor = Color(0xFFFF5555)
 val logsTextColor = Color(0xFFE0E0E0)
