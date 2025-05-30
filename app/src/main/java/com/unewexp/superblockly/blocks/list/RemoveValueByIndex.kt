@@ -24,7 +24,9 @@ class RemoveValueByIndex : VoidBlock(UUID.randomUUID(), BlockType.REMOVE_VALUE_B
     )
 
     @Suppress("UNCHECKED_CAST")
-    override fun execute() {
+    override suspend fun execute() {
+        checkDebugPause()
+
         val list = listConnector.connectedTo?.evaluate() as? MutableList<*>
             ?: throw IllegalStateException("Переданная переменная не содержит список")
 

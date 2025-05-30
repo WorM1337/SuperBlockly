@@ -1,16 +1,18 @@
 package com.unewexp.superblockly.debug
 
 import androidx.compose.runtime.mutableStateMapOf
+import com.example.myfirstapplicatioin.blocks.Block
 import com.unewexp.superblockly.debug.Logger.LogType
 import java.util.UUID
 
 
 object ErrorHandler {
-    private val blockErrors = mutableStateMapOf<UUID, String>()
+    private val blockErrors = mutableStateMapOf<Block, String>()
     private val connectionErrors = mutableStateMapOf<UUID, String>()
 
-    fun setBlockError(blockId: UUID, message: String){
-        blockErrors[blockId] = message
+    fun setBlockError(block: Block, message: String){
+        blockErrors[block] = message
+        block.hasException = true
         Logger.appendLog(LogType.ERROR, message)
     }
 
@@ -23,9 +25,12 @@ object ErrorHandler {
     }
 
     fun clearBlockErrors(){
+        for ((block, message) in blockErrors){
+            block.hasException = false
+        }
         blockErrors.clear()
     }
 
     fun getAllConnectionErrors(): Map<UUID, String> = connectionErrors.toMap()
-    fun getAllBlockErrors(): Map<UUID, String> = blockErrors.toMap()
+    fun getAllBlockErrors(): Map<Block, String> = blockErrors.toMap()
 }

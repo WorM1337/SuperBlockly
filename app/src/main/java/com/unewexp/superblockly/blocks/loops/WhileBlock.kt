@@ -21,11 +21,13 @@ class WhileBlock : LoopBlock(UUID.randomUUID(), BlockType.WHILE_BLOCK) {
         )
     )
 
-    override fun execute() {
+    override suspend fun execute() {
+        checkDebugPause()
         while (
             conditionConnector.connectedTo?.evaluate() as? Boolean
                 ?: throw IllegalStateException("Выражение не возвращает Boolean")
         ) {
+            checkDebugPause()
             (innerConnector.connectedTo as? VoidBlock)?.let{ firstBlock ->
                 ExecutionContext.enterNewScope(firstBlock)
                 executeInnerBlocks(firstBlock)

@@ -5,7 +5,8 @@ import java.util.UUID
 
 class ElseBlock : ConditionBlock(UUID.randomUUID(), BlockType.ELSE_BLOCK) {
 
-    override fun execute() {
+    override suspend fun execute() {
+        checkDebugPause()
         executeInnerBlocks()
     }
 }

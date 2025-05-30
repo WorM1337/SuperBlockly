@@ -34,14 +34,14 @@ open class LoopBlock(
         )
     )
 
-    fun executeInnerBlocks(firstBlock: Block){
+    suspend fun executeInnerBlocks(firstBlock: Block){
             try {
                 var current: Block? = firstBlock
                 while (current != null){
                     try{
                         current.execute()
                     } catch (ex: Exception){
-                        ErrorHandler.setBlockError(current.id, ex.message ?: "Неизвестная ошибка")
+                        ErrorHandler.setBlockError(current, ex.message ?: "Неизвестная ошибка")
                     }
                     current = ExecutionContext.getNextBlockInScope()
                 }

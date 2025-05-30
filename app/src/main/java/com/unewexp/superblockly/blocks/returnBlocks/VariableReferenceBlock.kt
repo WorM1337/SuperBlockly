@@ -20,7 +20,9 @@ class VariableReferenceBlock : Block(UUID.randomUUID(), BlockType.VARIABLE_REFER
     )
 
 
-    override fun evaluate(): Any {
+    override suspend fun evaluate(): Any {
+        checkDebugPause()
+
         if (!ExecutionContext.hasVariable(selectedVariableName)) {
             throw IllegalArgumentException("Переменная '$selectedVariableName' не существует")
         }

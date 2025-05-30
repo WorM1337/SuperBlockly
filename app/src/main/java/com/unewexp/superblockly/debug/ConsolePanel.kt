@@ -40,7 +40,8 @@ import androidx.compose.ui.unit.min
 
 @Composable
 fun ConsolePanel(){
-    val logs = Logger.logs
+
+
     var isExpanded by remember{ mutableStateOf(true) }
     var widthDp by remember { mutableStateOf(200.dp) }
 
@@ -51,16 +52,7 @@ fun ConsolePanel(){
     val maxWidth = 650.dp
     val rolledUp = 16.dp
 
-
     val density = LocalDensity.current
-
-    val listState = rememberLazyListState()
-
-    LaunchedEffect(logs.size) {
-        if (logs.isNotEmpty()) {
-            listState.animateScrollToItem(logs.size - 1)
-        }
-    }
 
     Box(
         modifier = Modifier
@@ -116,13 +108,14 @@ fun ConsolePanel(){
             }
 
             LazyColumn(
-                state = listState,
+
                 modifier = Modifier
                     .fillMaxHeight()
                     .weight(1f)
                     .background(Color(0xFF1E1E1E))  // фон логов
             ) {
                 if (showLogs){
+                    var logs = Logger.logs
                     items(logs.size) { index ->
                         val log = logs[index]
                         val (prefix, color) = when (log.logType) {

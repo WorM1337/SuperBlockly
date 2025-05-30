@@ -20,7 +20,8 @@ class NotBlock : Block(UUID.randomUUID(), BlockType.NOT_BLOCK) {
         allowedDataTypes = setOf(Boolean::class.java)
     )
 
-    override fun evaluate(): Boolean {
+    override suspend fun evaluate(): Boolean {
+        checkDebugPause()
         val value = inputConnector.connectedTo?.evaluate() as? Boolean
             ?: throw IllegalStateException("Соединение отсутствует или не Boolean")
 

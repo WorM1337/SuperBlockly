@@ -16,10 +16,12 @@ class RepeatNTimesBlock() : LoopBlock(UUID.randomUUID(), BlockType.REPEAT_N_TIME
         allowedDataTypes = setOf(Int::class.java),
     )
 
-    override fun execute() {
+    override suspend fun execute() {
+        checkDebugPause()
         val countTimes = countRepeatTimesConnector.connectedTo?.evaluate() as? Int
             ?: throw IllegalStateException("Передаваемое значение не является Int")
         for (i in 1..countTimes){
+            checkDebugPause()
             (innerConnector.connectedTo as? VoidBlock)?.let{ firstBlock ->
                 ExecutionContext.enterNewScope(firstBlock)
                 executeInnerBlocks(firstBlock)

@@ -34,7 +34,10 @@ class VariableDeclarationBlock(var initialName: String = "Undefined") : VoidBloc
 
     private var variableType: Class<*>? = null
 
-    override fun execute() {
+    override suspend fun execute() {
+
+        checkDebugPause()
+
         validateName()
         val value = valueInputConnector.connectedTo?.evaluate()
             ?: throw IllegalStateException("Не указано значение для переменной '$name'")

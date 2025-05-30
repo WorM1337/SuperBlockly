@@ -22,3 +22,7 @@ val LoopColor = Color(0xFFacad71)
 val ListColor = Color(0xFFadce19)
 val StringColor = Color(0xFFAdFe12)
 val EmptySpace = Color(0xFFb2b3af)
+
+
+val ActiveRunProgram = Color(0xFF57965C)
+val stopProgram = Color(0xFFC94F4F)

@@ -17,5 +17,8 @@ class IntLiteralBlock(var initialValue: Int = 123 ) : Block(UUID.randomUUID(), B
 
     var value by mutableIntStateOf(initialValue)
 
-    override fun evaluate(): Int = value
+    override suspend fun evaluate(): Int {
+        checkDebugPause()
+        return value
+    }
 }

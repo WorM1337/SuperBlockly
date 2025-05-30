@@ -34,7 +34,8 @@ class ForBlock(var initialName: String = "i") : LoopBlock(UUID.randomUUID(), Blo
         allowedDataTypes = setOf(Int::class.java)
     )
 
-    override fun execute() {
+    override suspend fun execute() {
+        checkDebugPause()
         val currentValueVariable = initialValueBlock.connectedTo?.evaluate() as? Int
             ?: throw IllegalStateException("Переменная в цикле должна быть Int")
 
@@ -54,6 +55,7 @@ class ForBlock(var initialName: String = "i") : LoopBlock(UUID.randomUUID(), Blo
             }
         } else {
             for (i in currentValueVariable downTo lastValue step stepValue){
+                checkDebugPause()
                 (innerConnector.connectedTo as? VoidBlock)?.let{ firstBlock ->
                     ExecutionContext.enterNewScope(firstBlock)
                     ExecutionContext.declareVariable(variableName, i)

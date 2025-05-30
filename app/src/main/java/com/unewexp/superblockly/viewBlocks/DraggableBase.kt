@@ -51,6 +51,8 @@ fun DraggableBase(
     val border = if (draggableBlock.block.hasException) {
         Log.i(currentBlock.block.blockType.toString(), "ошибка на блоке")
         BorderStroke(3.dp, Color.Red)
+    } else if (draggableBlock.block.isDebug){
+        BorderStroke(3.dp, Color.Green)
     } else {
         BorderStroke(0.dp, Color.Red.copy(alpha = 0f))
     }

@@ -26,7 +26,9 @@ class FixedValuesAndSizeList : ListBlock(UUID.randomUUID(), BlockType.FIXED_VALU
         allowedDataTypes = setOf(Int::class.java)
     )
 
-    override fun evaluate(): Any? {
+    override suspend  fun evaluate(): Any? {
+        checkDebugPause()
+
         val valueRepeat = valueInput.connectedTo?.evaluate()
             ?: throw IllegalStateException("Вы не указали значение для создания списка")
 

@@ -36,7 +36,9 @@ class StringAppendBlock : VoidBlock(UUID.randomUUID(), BlockType.STRING_APPEND) 
         )
     )
 
-    override fun execute() {
+    override suspend fun execute() {
+        checkDebugPause()
+
         if (!ExecutionContext.hasVariable(variableName)) {
             throw IllegalStateException("Переменная $variableName не существует или неверное название")
         }

@@ -25,9 +25,9 @@ class StringConcatenationBlock : Block(UUID.randomUUID(), BlockType.STRING_CONCA
 //        allowedDataTypes = setOf(String::class.java)
     )
 
-    override fun evaluate(): String {
+    override suspend fun evaluate(): String {
         // тут наверное нужна проверка на конкотенацию строк, то есть должны строки со строками фигачить
-
+        checkDebugPause()
         val left = leftInputConnector.connectedTo?.evaluate()?.toString()
             ?: throw IllegalStateException("Не указана левая строка")
         val right = rightInputConnector.connectedTo?.evaluate()?.toString()
