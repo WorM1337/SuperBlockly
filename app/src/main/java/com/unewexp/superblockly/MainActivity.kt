@@ -148,7 +148,7 @@ fun CreateNewProject(
     viewModel.density = density
 
     fun dpToPx(dp: Dp): Float {
-        val pxValue = with(density) {dp.toPx()}  // Упрощённый расчёт
+        val pxValue = with(density) {dp.toPx()}
 
         return pxValue
     }

@@ -33,10 +33,10 @@ fun SoftTriangle() {
         val sideOffset = (width - topWidth) / 2
 
         val path = Path().apply {
-            moveTo(sideOffset, 0f)                  // Верхний левый угол
-            lineTo(width - sideOffset, 0f)          // Верхний правый угол
-            lineTo(width, height)                   // Нижний правый угол
-            lineTo(0f, height)                      // Нижний левый угол
+            moveTo(sideOffset, 0f)
+            lineTo(width - sideOffset, 0f)
+            lineTo(width, height)
+            lineTo(0f, height)
             close()
         }
 
