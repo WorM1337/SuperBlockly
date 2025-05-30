@@ -10,7 +10,6 @@ import androidx.compose.runtime.snapshots.SnapshotStateMap
 import com.example.myfirstapplicatioin.blocks.Block
 import com.unewexp.superblockly.blocks.voidBlocks.VoidBlock
 import kotlinx.coroutines.Job
-import java.lang.IllegalStateException
 
 enum class RunProgram{
     RUN,
@@ -22,14 +21,13 @@ object ExecutionContext {
     private val _scopes = mutableStateListOf<SnapshotStateMap<String, Any?>>(
         mutableStateMapOf()
     )
-    private val variableTypes = mutableMapOf<String, Class<*>>() // Class<*> означает что туда будет поступать класс неопределенного типа
+    private val variableTypes = mutableMapOf<String, Class<*>>()
     private val scopesBlocks = mutableListOf<Block>()
 
     internal var executionJob: Job? = null
 
     var programProgress by mutableStateOf(RunProgram.NONE)
 
-//    val scopes: List<Map<String, Any?>> get() = _scopes.toList()
     val scopes: SnapshotStateList<SnapshotStateMap<String, Any?>> get() = _scopes
 
 
@@ -107,7 +105,7 @@ object ExecutionContext {
     }
 
 
-    fun getVariableNames(): Set<String> = scopes.flatMap{it.keys}.toSet() // flatMap проходит по каждой области
+    fun getVariableNames(): Set<String> = scopes.flatMap { it.keys }.toSet()
 
     fun getVariableType(name: String): Class<*>? = variableTypes[name]
 

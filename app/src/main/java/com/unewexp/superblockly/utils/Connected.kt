@@ -8,7 +8,7 @@ import kotlin.math.pow
 import kotlin.math.sqrt
 
 
-fun safeConnect(source: Connector, target: Connector){ // для сани, пользуемся этой штукой для соединения блоков
+fun safeConnect(source: Connector, target: Connector) {
         try{
                 connectTo(source, target)
         } catch (ex: Exception){

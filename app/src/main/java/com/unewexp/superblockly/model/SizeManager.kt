@@ -147,7 +147,7 @@ object SizeManager {
         else ConnectorManager.normalizeConnectorsPositions(parent,viewModel)
     }
     fun changeParentParams(child: DraggableBlock,viewModel: DraggableViewModel, deltaWidth: Dp = 0.dp, deltaHeight: Dp = 0.dp, isPositive: Boolean = true){ // Вызывается рекурсивно из верхней
-        // перегрузки для пересчета размеров родительских блоков
+
 
         val parent = child.connectedParent
 

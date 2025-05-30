@@ -9,7 +9,6 @@ import com.unewexp.superblockly.debug.BlockIllegalStateException
 import com.unewexp.superblockly.enums.BlockType
 import com.unewexp.superblockly.enums.BooleanLogicType
 import com.unewexp.superblockly.enums.ConnectorType
-import java.lang.IllegalStateException
 import java.util.UUID
 
 class BooleanLogicBlock : Block(UUID.randomUUID(), BlockType.BOOLEAN_LOGIC_BLOCK){

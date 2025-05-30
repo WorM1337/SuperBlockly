@@ -23,11 +23,11 @@ class StringConcatenationBlock : Block(UUID.randomUUID(), BlockType.STRING_CONCA
     val outputConnector = Connector(
         connectionType = ConnectorType.OUTPUT,
         sourceBlock = this,
-//        allowedDataTypes = setOf(String::class.java)
+
     )
 
     override suspend fun evaluate(): String {
-        // тут наверное нужна проверка на конкотенацию строк, то есть должны строки со строками фигачить
+
         checkDebugPause()
         val left = leftInputConnector.connectedTo?.evaluate()?.toString()
             ?: throw BlockIllegalStateException(this, "Не указана левая строка")

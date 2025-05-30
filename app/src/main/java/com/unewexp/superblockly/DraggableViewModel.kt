@@ -24,7 +24,7 @@ import kotlinx.coroutines.flow.update
 import kotlin.math.max
 import kotlin.math.min
 
-class DraggableViewModel: ViewModel() {
+class DraggableViewModel : ViewModel() {
 
     private val _blocks = MutableStateFlow<List<DraggableBlock>>(listOf())
     val blocks = _blocks.asStateFlow()
@@ -33,12 +33,13 @@ class DraggableViewModel: ViewModel() {
     var density: Density = Density(0.0f)
 
     fun handleAction(action: BlocklyAction) {
-        when(action) {
+        when (action) {
             is BlocklyAction.MoveBlock -> updateBlockPosition(
                 action.block,
                 action.offsetX,
                 action.offsetY
             )
+
             is BlocklyAction.AddBlock -> addBlock(action.block)
             is BlocklyAction.RemoveBlock -> removeBlock(action.block)
         }
@@ -63,25 +64,27 @@ class DraggableViewModel: ViewModel() {
 
     private fun removeBlock(block: DraggableBlock, isFirst: Boolean = true) {
 
-        if(block.block is StartBlock){
+        if (block.block is StartBlock) {
             return
         }
 
         var sumHeight = 0.dp
 
-        if(isFirst) sumHeight = CalculationsManager.getSummaryHeight(block)
+        if (isFirst) sumHeight = CalculationsManager.getSummaryHeight(block)
 
         val child = ConnectorManager.getStringBottomOuterConnectionChild(block)
         val parent = block.connectedParent
         val connectionParent = block.connectedParentConnectionView
 
-        for(i in block.scope.indices.reversed()){
+        for (i in block.scope.indices.reversed()) {
 
-            if(block.scope[i].connectedParentConnectionView!!.connector.connectionType != ConnectorType.STRING_BOTTOM_OUTER || block.scope[i].isInner && !isFirst){
+            if (block.scope[i].connectedParentConnectionView!!.connector.connectionType != ConnectorType.STRING_BOTTOM_OUTER || block.scope[i].isInner && !isFirst) {
                 removeBlock(block.scope[i], false)
-            }
-            else {
-                disconnect(block.scope[i].outputConnectionView!!.connector, block.scope[i].connectedParentConnectionView!!.connector)
+            } else {
+                disconnect(
+                    block.scope[i].outputConnectionView!!.connector,
+                    block.scope[i].connectedParentConnectionView!!.connector
+                )
 
                 block.scope[i].connectedParentConnectionView!!.isConnected = false
                 block.scope[i].connectedParent = null
@@ -91,13 +94,20 @@ class DraggableViewModel: ViewModel() {
             }
         }
 
-        if(block.connectedParent != null && block.connectedParentConnectionView != null){
-            disconnect(block.outputConnectionView!!.connector, block.connectedParentConnectionView!!.connector)
-            if(isFirst){
-                if(sumHeight > block.height.value){
-                    SizeManager.changeParentParams(block, this, deltaHeight = sumHeight, isPositive = false)
-                }
-                else {
+        if (block.connectedParent != null && block.connectedParentConnectionView != null) {
+            disconnect(
+                block.outputConnectionView!!.connector,
+                block.connectedParentConnectionView!!.connector
+            )
+            if (isFirst) {
+                if (sumHeight > block.height.value) {
+                    SizeManager.changeParentParams(
+                        block,
+                        this,
+                        deltaHeight = sumHeight,
+                        isPositive = false
+                    )
+                } else {
                     SizeManager.changeParentParams(block, this, isPositive = false)
                 }
             }
@@ -110,8 +120,14 @@ class DraggableViewModel: ViewModel() {
             block.connectedParent = null
             block.connectedParentConnectionView = null
 
-            if(isFirst && child != null) {
-                ConnectorManager.tryConnectBlocks(child,parent!!,connectionParent!!,this, density)
+            if (isFirst && child != null) {
+                ConnectorManager.tryConnectBlocks(
+                    child,
+                    parent!!,
+                    connectionParent!!,
+                    this,
+                    density
+                )
             }
         }
 
@@ -123,41 +139,46 @@ class DraggableViewModel: ViewModel() {
         Log.i("Delete", "${block.block.blockType} with id: " + block.block.id)
     }
 
-    fun updateValue(block: DraggableBlock, newValue: String): Boolean{
+    fun updateValue(block: DraggableBlock, newValue: String): Boolean {
         val realBlock = block.block
-        when(realBlock.blockType){
+        when (realBlock.blockType) {
             BlockType.SET_VARIABLE_VALUE -> {
                 (realBlock as SetValueVariableBlock).selectedVariableName = newValue
                 return newValue.matches(Regex("[_a-zA-Z]\\w*"))
             }
+
             BlockType.START -> TODO()
             BlockType.INT_LITERAL -> {
-                if(newValue.length > 5){
-                    block.width.value = 100.dp + (newValue.length - 5)*10.dp
+                if (newValue.length > 5) {
+                    block.width.value = 100.dp + (newValue.length - 5) * 10.dp
                 }
                 val v = newValue.toFloatOrNull()
-                if(v != null){
+                if (v != null) {
                     (realBlock as IntLiteralBlock).value = v.toInt()
                     return true
-                }else{
+                } else {
                     return false
                 }
             }
+
             BlockType.STRING_LITERAL -> TODO()
             BlockType.BOOLEAN_LITERAL -> {
                 (realBlock as BooleanLiteralBlock).value = newValue.trim().toBoolean()
                 return true
             }
+
             BlockType.OPERAND -> TODO()
             BlockType.SHORTHAND_ARITHMETIC_BLOCK -> TODO()
             BlockType.VARIABLE_DECLARATION -> {
                 (realBlock as VariableDeclarationBlock).name = newValue
                 return newValue.matches(Regex("[_a-zA-Z]\\w*"))
             }
+
             BlockType.VARIABLE_REFERENCE -> {
                 (realBlock as VariableReferenceBlock).selectedVariableName = newValue
                 return newValue.matches(Regex("[_a-zA-Z]\\w*"))
             }
+
             BlockType.STRING_CONCAT -> TODO()
             BlockType.STRING_APPEND -> TODO()
             BlockType.PRINT_BLOCK -> TODO()
@@ -173,6 +194,7 @@ class DraggableViewModel: ViewModel() {
                 (realBlock as ForBlock).variableName = newValue
                 return newValue.matches(Regex("[_a-zA-Z]\\w*"))
             }
+
             BlockType.FOR_ELEMENT_IN_LIST -> TODO()
             BlockType.FIXED_VALUE_AND_SIZE_LIST -> TODO()
             BlockType.GET_VALUE_BY_INDEX -> TODO()
@@ -189,7 +211,7 @@ class DraggableViewModel: ViewModel() {
         blocks.value.forEach {
             minZIndex = min(minZIndex, it.zIndex.value)
         }
-        if(minZIndex > 0){
+        if (minZIndex > 0) {
             _blocks.value.forEach {
                 it.zIndex.value -= minZIndex
                 maxZIndex = max(maxZIndex, it.zIndex.value)
@@ -201,9 +223,11 @@ class DraggableViewModel: ViewModel() {
         }
     }
 
-    sealed class BlocklyAction{
-        data class MoveBlock(var block: DraggableBlock, var offsetX: Float, var offsetY: Float): BlocklyAction()
-        data class AddBlock(var block: DraggableBlock): BlocklyAction()
-        data class RemoveBlock(var block: DraggableBlock): BlocklyAction()
+    sealed class BlocklyAction {
+        data class MoveBlock(var block: DraggableBlock, var offsetX: Float, var offsetY: Float) :
+            BlocklyAction()
+
+        data class AddBlock(var block: DraggableBlock) : BlocklyAction()
+        data class RemoveBlock(var block: DraggableBlock) : BlocklyAction()
     }
 }

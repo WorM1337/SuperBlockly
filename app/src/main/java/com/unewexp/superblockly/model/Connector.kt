@@ -29,22 +29,23 @@ data class Connector(
     val allowedBlockTypes: Set<BlockType> = emptySet(),
     val allowedDataTypes: Set<Class<*>> = emptySet(),
 
-    // Class<*> объект Java-класса неизвестного типа
-) {
+
+    ) {
     fun canConnect(target: Connector): Boolean {
 
-        // Проверяем базовые условия соединения
+
         if (connectionType == target.connectionType) return false
         if (connectedTo != null || target.connectedTo != null) return false
 
 
-        // Проверяем допустимые типы блоков
+
         if (allowedBlockTypes.isNotEmpty() &&
-            !allowedBlockTypes.contains(target.sourceBlock.blockType)) {
+            !allowedBlockTypes.contains(target.sourceBlock.blockType)
+        ) {
             return false
         }
 
-        // Проверяем совместимость типов данных
+
         if (allowedDataTypes.isNotEmpty()) {
             val targetDataType = getDataType(target.sourceBlock)
             if (targetDataType != null && !allowedDataTypes.contains(targetDataType)) {
@@ -66,22 +67,25 @@ data class Connector(
             BlockType.STRING_CONCAT -> String::class.java
             BlockType.STRING_APPEND -> String::class.java
             BlockType.VARIABLE_REFERENCE -> {
-                if (ExecutionContext.hasVariable((block as VariableReferenceBlock).selectedVariableName)){
+                if (ExecutionContext.hasVariable((block as VariableReferenceBlock).selectedVariableName)) {
                     ExecutionContext.getVariableType(block.selectedVariableName)
                 } else {
                     null
                 }
             }
+
             BlockType.NOT_BLOCK -> Boolean::class.java
             BlockType.GET_LIST_SIZE -> Int::class.java
             BlockType.GET_VALUE_BY_INDEX -> {
                 if ((block as GetValueByIndex).listConnector.connectedTo != null &&
-                    ExecutionContext.hasVariable((block.listConnector.connectedTo as VariableReferenceBlock).selectedVariableName)){
+                    ExecutionContext.hasVariable((block.listConnector.connectedTo as VariableReferenceBlock).selectedVariableName)
+                ) {
                     ExecutionContext.getVariableType((block.listConnector.connectedTo as VariableReferenceBlock).selectedVariableName)?.javaClass
                 } else {
                     null
                 }
             }
+
             BlockType.OPERAND -> Int::class.java
             BlockType.FIXED_VALUE_AND_SIZE_LIST -> MutableList::class.java
             else -> null

@@ -23,28 +23,27 @@ data class DraggableBlock(
     var height: MutableState<Dp> = mutableStateOf(60.dp),
     var connectedParent: DraggableBlock? = null,
     var connectedParentConnectionView: ConnectionView? = null,
-    var isInner: Boolean = false, // Показывает, находится ли блок внутри другого блока. Например, параметры для OperandBlock, либо поле для void-блоков для if
-    var zIndex: MutableState<Float> = mutableStateOf(0f)
-){
+    var isInner: Boolean = false,
+    var zIndex: MutableState<Float> = mutableStateOf(0f),
+) {
     init {
 
         val sizeOfBlock = ViewInitialSize.getInitialSizeByBlockType(block.blockType)
 
-        if(sizeOfBlock == null) throw IllegalArgumentException("Ошибка инициализации блока")
+        if (sizeOfBlock == null) throw IllegalArgumentException("Ошибка инициализации блока")
         width.value = sizeOfBlock.width
         height.value = sizeOfBlock.height
 
         val connectionViews = ConnectorManager.initConnectionsFromBlock(block)
 
-        connectionViews.forEach{
-            if(it.connector.connectionType == ConnectorType.OUTPUT || it.connector.connectionType == ConnectorType.STRING_TOP){
+        connectionViews.forEach {
+            if (it.connector.connectionType == ConnectorType.OUTPUT || it.connector.connectionType == ConnectorType.STRING_TOP) {
                 outputConnectionView = it
-            }
-            else {
+            } else {
                 inputConnectionViews.add(it)
             }
         }
-        if(outputConnectionView == null){
+        if (outputConnectionView == null) {
             inputConnectionViews = mutableListOf()
             throw IllegalArgumentException("Ошибка отрисовки коннекторов для блока ${this.block.id}")
         }

@@ -5,7 +5,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.example.myfirstapplicatioin.model.Connector
 import com.unewexp.superblockly.debug.BlockIllegalStateException
-import com.unewexp.superblockly.debug.ErrorHandler
 import com.unewexp.superblockly.debug.ExecutionContext
 import com.unewexp.superblockly.enums.BlockType
 import com.unewexp.superblockly.enums.ConnectorType

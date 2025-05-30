@@ -43,7 +43,7 @@ sealed class Routes(val route: String) {
 }
 
 
-object Modifiers{
+object Modifiers {
     val homeBtnModifier: Modifier = Modifier
         .width(250.dp)
         .padding(5.dp)
@@ -54,8 +54,8 @@ object Modifiers{
 @Composable
 fun toHomeBtn(
     navController: NavHostController,
-    onClick: () -> Unit = {}
-){
+    onClick: () -> Unit = {},
+) {
     Button(
         {
             navController.navigate(Routes.Home.route)
@@ -71,7 +71,7 @@ fun toHomeBtn(
 @Composable
 fun getColorByBlockType(type: BlockType): Color {
     var color: Color = Color(0xFFE0E0E0)
-    when(type){
+    when (type) {
         BlockType.SET_VARIABLE_VALUE -> color = VariablesColor
         BlockType.START -> color = StartColor
         BlockType.INT_LITERAL -> color = MathColor
@@ -109,7 +109,7 @@ fun getColorByBlockType(type: BlockType): Color {
 fun Spinner(
     size: Dp,
     onClick: () -> Unit,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     Surface(
         shape = CircleShape,

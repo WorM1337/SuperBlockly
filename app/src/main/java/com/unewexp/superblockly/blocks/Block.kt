@@ -17,13 +17,12 @@ import java.util.UUID
 abstract class Block(val id: UUID, val blockType: BlockType) {
     var hasException by mutableStateOf(false)
     var isDebug by mutableStateOf(false)
-    // Возвращает значение
-    // Для выражений
+
     open suspend fun evaluate(): Any? {
         throw UnsupportedOperationException("Этот блок не поддерживает evaluate()")
     }
 
-    // Для инструкций
+
     open suspend fun execute() {
         throw UnsupportedOperationException("Этот блок не поддерживает execute()")
     }
