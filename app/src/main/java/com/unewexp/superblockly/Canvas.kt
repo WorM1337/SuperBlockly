@@ -51,6 +51,7 @@ import com.unewexp.superblockly.blocks.arithmetic.OperandBlock
 import com.unewexp.superblockly.blocks.logic.BooleanLogicBlock
 import com.unewexp.superblockly.blocks.logic.CompareNumbers
 import com.unewexp.superblockly.debug.DebugController
+import com.unewexp.superblockly.debug.DebugPanel
 import com.unewexp.superblockly.debug.ExecutionContext
 import com.unewexp.superblockly.debug.RunProgram
 import com.unewexp.superblockly.ui.theme.ActiveRunProgram
@@ -103,11 +104,14 @@ fun Canvas(
     val iconImageSize = 30.dp
     val cornersButton = 5.dp
 
+    var panelIsVisible by remember { mutableStateOf(true) }
+
     val isActive =
         ExecutionContext.programProgress == RunProgram.RUN || ExecutionContext.programProgress == RunProgram.DEBUG
     val backgroundColorIfActive = if (isActive) ActiveRunProgram else Color.Transparent
 
     fun startExecution() {
+        panelIsVisible = true
         ExecutionContext.executionJob = CoroutineScope(Dispatchers.Main).launch {
             blocks[0].block.execute()
         }
@@ -119,7 +123,6 @@ fun Canvas(
         DebugController.reset()
     }
 
-    var panelIsVisible by remember { mutableStateOf(true) }
 
     val core = DraggableBlock(
         StartBlock(),
@@ -135,7 +138,11 @@ fun Canvas(
 
     Column(modifier = Modifier.fillMaxSize()) {
         Box(
-            modifier = Modifier.fillMaxWidth().height(55.dp).background(Color.White).zIndex(100000f)
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(55.dp)
+                .background(Color.White)
+                .zIndex(100000f)
         ) {
             Box(
                 modifier = Modifier
@@ -170,7 +177,8 @@ fun Canvas(
                                                 true
                                             }
                                             ),
-                                    modifier = Modifier.size(iconButtonSize)
+                                    modifier = Modifier
+                                        .size(iconButtonSize)
                                         .background(
                                             backgroundColorIfActive,
                                             RoundedCornerShape(cornersButton)
@@ -201,7 +209,8 @@ fun Canvas(
                                     ExecutionContext.programProgress = RunProgram.DEBUG
                                     startExecution()
                                 },
-                                modifier = Modifier.size(iconButtonSize)
+                                modifier = Modifier
+                                    .size(iconButtonSize)
                                     .background(backgroundColorIfActive, RoundedCornerShape(5.dp)),
                                 enabled = (
                                         if (ExecutionContext.programProgress == RunProgram.NONE) {
@@ -242,7 +251,8 @@ fun Canvas(
                                     onClick = {
                                         stopExecution()
                                     },
-                                    modifier = Modifier.size(iconButtonSize)
+                                    modifier = Modifier
+                                        .size(iconButtonSize)
                                         .background(stopProgram, RoundedCornerShape(5.dp))
                                 ) {
                                     Image(
@@ -403,8 +413,11 @@ fun Canvas(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.BottomEnd
             ) {
-                if (panelIsVisible) {
+                if (ExecutionContext.programProgress != RunProgram.DEBUG && panelIsVisible) {
                     ConsolePanel()
+                }
+                if (ExecutionContext.programProgress == RunProgram.DEBUG && panelIsVisible) {
+                    DebugPanel()
                 }
             }
         }
@@ -413,16 +426,17 @@ fun Canvas(
 
 
 @Composable
-fun TakeViewBlock (block: DraggableBlock, viewModel: DraggableViewModel = viewModel()){
+fun TakeViewBlock(block: DraggableBlock, viewModel: DraggableViewModel = viewModel()) {
     val blockType = block.block.blockType
-    when(blockType){
-        BlockType.OPERAND -> OperandBlockView (
+    when (blockType) {
+        BlockType.OPERAND -> OperandBlockView(
             { type ->
-            (block.block as OperandBlock).operand = type
+                (block.block as OperandBlock).operand = type
 
-        },
+            },
             block
         )
+
         BlockType.SET_VARIABLE_VALUE -> SetValueVariableView(block)
 
         BlockType.START -> StartBlockView()
@@ -444,9 +458,11 @@ fun TakeViewBlock (block: DraggableBlock, viewModel: DraggableViewModel = viewMo
                 (block.block as CompareNumbers).compareType = type
             }
         )
-        BlockType.BOOLEAN_LOGIC_BLOCK -> BooleanLogicBlockView(block){ type ->
+
+        BlockType.BOOLEAN_LOGIC_BLOCK -> BooleanLogicBlockView(block) { type ->
             (block.block as BooleanLogicBlock).logicOperand = type
         }
+
         BlockType.NOT_BLOCK -> NotBlockView()
         BlockType.IF_BLOCK -> IfBlockView()
         BlockType.ELSE_BLOCK -> ElseBlockView()

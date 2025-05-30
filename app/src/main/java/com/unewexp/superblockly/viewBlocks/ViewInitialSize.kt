@@ -44,7 +44,7 @@ object ViewInitialSize {
             BlockType.COMPARE_NUMBERS_BLOCK ->
                 PairDp(width = 240.dp, height = 60.dp)
             BlockType.BOOLEAN_LOGIC_BLOCK ->
-                PairDp(width = 200.dp, height = 60.dp)
+                PairDp(width = 240.dp, height = 60.dp)
             BlockType.NOT_BLOCK ->
                 PairDp(width = 100.dp, height = 60.dp)
             BlockType.IF_BLOCK ->
