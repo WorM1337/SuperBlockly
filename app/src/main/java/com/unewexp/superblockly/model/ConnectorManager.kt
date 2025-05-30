@@ -613,9 +613,9 @@ object ConnectorManager {
                 ans += mutableListOf(
                     ConnectionView(castedBlock.topConnector, cornerOffset, 0.dp),
                     ConnectionView(castedBlock.bottomConnector, cornerOffset, height),
-                    ConnectionView(castedBlock.listConnector, width/4, height/2, ExtendConnectionViewType.INNER),
-                    ConnectionView(castedBlock.idConnector, width*3/4, height/2, ExtendConnectionViewType.INNER),
-                    ConnectionView(castedBlock.valueConnector, width, height/2, ExtendConnectionViewType.INNER)
+                    ConnectionView(castedBlock.listConnector, width/4, height/2, ExtendConnectionViewType.INNER, height = defaultHeight),
+                    ConnectionView(castedBlock.idConnector, width*3/5, height/2, ExtendConnectionViewType.INNER, height = defaultHeight),
+                    ConnectionView(castedBlock.valueConnector, width, height/2, ExtendConnectionViewType.SIDE, height = defaultHeight)
                 )
             }
             BlockType.GET_LIST_SIZE -> {

@@ -1,6 +1,5 @@
 package com.unewexp.superblockly.viewBlocks
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -31,10 +30,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,6 +50,14 @@ import androidx.compose.ui.unit.sp
 import com.unewexp.superblockly.DraggableBlock
 import com.unewexp.superblockly.R
 import com.unewexp.superblockly.Spinner
+import com.unewexp.superblockly.blocks.arithmetic.OperandBlock
+import com.unewexp.superblockly.blocks.list.AddElementByIndex
+import com.unewexp.superblockly.blocks.list.EditValueByIndex
+import com.unewexp.superblockly.blocks.list.FixedValuesAndSizeList
+import com.unewexp.superblockly.blocks.list.GetValueByIndex
+import com.unewexp.superblockly.blocks.list.RemoveValueByIndex
+import com.unewexp.superblockly.blocks.logic.CompareNumbers
+import com.unewexp.superblockly.blocks.loops.ForBlock
 import com.unewexp.superblockly.enums.CompareType
 import com.unewexp.superblockly.enums.OperandType
 import com.unewexp.superblockly.enums.symbol
@@ -396,13 +401,34 @@ fun DeclarationVariableViewForCard(){
 
 @Composable
 fun CompareNumbersBlockView(
-    onCompareSelected: (CompareType) -> Unit = {}
+    block: DraggableBlock,
+    onCompareSelected: (CompareType) -> Unit
 ) {
+
+    fun determineBlocks(blocks: SnapshotStateList<DraggableBlock>): Pair<DraggableBlock?, DraggableBlock?> {
+        var pair: Pair<DraggableBlock?, DraggableBlock?> = Pair(null, null)
+        blocks.forEach { it ->
+            if (it.block == (block.block as CompareNumbers).leftInputConnector.connectedTo){
+                pair = Pair(it, null)
+            }
+        }
+        blocks.forEach { it ->
+            if (it.block == (block.block as CompareNumbers).rightInputConnector.connectedTo){
+                pair = pair.copy(second = it)
+            }
+        }
+        return pair
+    }
+
+    val (leftBlock, rightBlock) = remember(block.scope, block.scope.map { it.x.value }) {
+        determineBlocks(block.scope)
+    }
+
+    val box1Width by derivedStateOf { leftBlock?.width?.value ?: 60.dp }
+    val box2Width by derivedStateOf { rightBlock?.width?.value ?: 60.dp }
+
     var selectedOperand by remember { mutableStateOf(CompareType.EQUAL) }
     var expanded by remember { mutableStateOf(false) }
-
-    val box1Width = remember { mutableStateOf(70.dp) }
-    val box2Width = remember { mutableStateOf(70.dp) }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -418,7 +444,7 @@ fun CompareNumbersBlockView(
         ) {
             Box(
                 modifier = Modifier
-                    .width(box1Width.value)
+                    .width(box1Width)
                     .fillMaxHeight()
                     .background(
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.1f),
@@ -465,7 +491,7 @@ fun CompareNumbersBlockView(
 
             Box(
                 modifier = Modifier
-                    .width(box2Width.value)
+                    .width(box2Width)
                     .fillMaxHeight()
                     .background(
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.1f),
@@ -749,18 +775,18 @@ fun OperandBlockView(
     var expanded by remember { mutableStateOf(false) }
 
     fun determineBlocks(blocks: SnapshotStateList<DraggableBlock>): Pair<DraggableBlock?, DraggableBlock?> {
-        return when (blocks.size) {
-            0 -> Pair(null, null)
-            1 -> {
-                val singleBlock = blocks.first()
-                val isLeft = singleBlock.x.value < block.x.value + block.width.value.value / 2
-                if (isLeft) Pair(singleBlock, null) else Pair(null, singleBlock)
-            }
-            else -> {
-                val sortedBlocks = blocks.sortedBy { it.x.value }
-                Pair(sortedBlocks.first(), sortedBlocks.last())
+        var pair: Pair<DraggableBlock?, DraggableBlock?> = Pair(null, null)
+        blocks.forEach { it ->
+            if (it.block == (block.block as OperandBlock).leftInputConnector.connectedTo){
+                pair = Pair(it, null)
             }
         }
+        blocks.forEach { it ->
+            if (it.block == (block.block as OperandBlock).rightInputConnector.connectedTo){
+                pair = pair.copy(second = it)
+            }
+        }
+        return pair
     }
 
     val (leftBlock, rightBlock) = remember(block.scope, block.scope.map { it.x.value }) {
@@ -963,8 +989,37 @@ fun WhileBlockViewForCard(
 
 @Composable
 fun ForBlockView(
+    block: DraggableBlock,
     onNameChanged: (String) -> Unit
 ) {
+
+    fun determineBlocks(blocks: SnapshotStateList<DraggableBlock>): List<DraggableBlock?> {
+        var refs: List<DraggableBlock?> = listOf(null, null, null)
+        blocks.forEach { it ->
+            if (it.block == (block.block as ForBlock).initialValueBlock.connectedTo){
+                refs = listOf(it, null, null)
+            }
+        }
+        blocks.forEach { it ->
+            if (it.block == (block.block as ForBlock).maxValueBlock.connectedTo){
+                refs = listOf(refs.first(), it, null)
+            }
+        }
+        blocks.forEach { it ->
+            if (it.block == (block.block as ForBlock).stepBlock.connectedTo){
+                refs = listOf(refs.first(), refs[1], it)
+            }
+        }
+        return refs
+    }
+
+    val (leftBlock, centerBlock, rightBlock) = remember(block.scope, block.scope.map { it.x.value }) {
+        determineBlocks(block.scope)
+    }
+
+    val box1Width by derivedStateOf { leftBlock?.width?.value ?: 60.dp }
+    val box2Width by derivedStateOf { centerBlock?.width?.value ?: 60.dp }
+    val box3Width by derivedStateOf { rightBlock?.width?.value ?: 60.dp }
 
     var name by remember { mutableStateOf(TextFieldValue("i")) }
 
@@ -1031,7 +1086,7 @@ fun ForBlockView(
 
             Box(
                 modifier = Modifier
-                    .width(60.dp)
+                    .width(box1Width)
                     .height(50.dp)
                     .padding(4.dp, 0.dp)
                     .background(EmptySpace)
@@ -1045,7 +1100,7 @@ fun ForBlockView(
 
             Box(
                 modifier = Modifier
-                    .width(60.dp)
+                    .width(box2Width)
                     .height(50.dp)
                     .padding(4.dp, 0.dp)
                     .background(EmptySpace)
@@ -1059,7 +1114,7 @@ fun ForBlockView(
 
             Box(
                 modifier = Modifier
-                    .width(60.dp)
+                    .width(box3Width)
                     .height(50.dp)
                     .padding(4.dp, 0.dp)
                     .background(EmptySpace)
@@ -1098,8 +1153,30 @@ fun ForBlockViewForCard() {
 
 @Composable
 fun FixedValuesAndSizeListView(block: DraggableBlock){
-    Row{
 
+    fun determineBlocks(blocks: SnapshotStateList<DraggableBlock>): Pair<DraggableBlock?, DraggableBlock?> {
+        var pair: Pair<DraggableBlock?, DraggableBlock?> = Pair(null, null)
+        blocks.forEach { it ->
+            if (it.block == (block.block as FixedValuesAndSizeList).valueInput.connectedTo){
+                pair = Pair(it, null)
+            }
+        }
+        blocks.forEach { it ->
+            if (it.block == (block.block as FixedValuesAndSizeList).repeatTimes.connectedTo){
+                pair = pair.copy(second = it)
+            }
+        }
+        return pair
+    }
+
+    val (leftBlock, rightBlock) = remember(block.scope, block.scope.map { it.x.value }) {
+        determineBlocks(block.scope)
+    }
+
+    val box1Width by derivedStateOf { leftBlock?.width?.value ?: 60.dp }
+    val box2Width by derivedStateOf { rightBlock?.width?.value ?: 60.dp }
+
+    Row{
         Text(
             stringResource(R.string.create_list_with),
             style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
@@ -1108,13 +1185,13 @@ fun FixedValuesAndSizeListView(block: DraggableBlock){
 
         Box(
             modifier = Modifier
-                .width(60.dp)
+                .width(box1Width)
                 .fillMaxHeight()
                 .padding(4.dp)
                 .background(EmptySpace)
         ){
             Text(
-                stringResource(R.string.list),
+                stringResource(R.string.value),
                 style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black.copy(alpha = 0.5f), fontSize = 14.sp),
                 modifier = Modifier.padding(4.dp)
             )
@@ -1128,7 +1205,7 @@ fun FixedValuesAndSizeListView(block: DraggableBlock){
 
         Box(
             modifier = Modifier
-                .width(60.dp)
+                .width(box2Width)
                 .fillMaxHeight()
                 .padding(4.dp)
                 .background(EmptySpace)
@@ -1180,34 +1257,18 @@ fun FixedValuesAndSizeListViewForCard(){
 fun AddElementByIndexView(block: DraggableBlock){
 
     fun determineBlocks(blocks: SnapshotStateList<DraggableBlock>): Pair<DraggableBlock?, DraggableBlock?> {
-        return when (blocks.size) {
-            0 -> Pair(null, null)
-            1 -> {
-                val singleBlock = blocks.first()
-                if(singleBlock.y.value > block.y.value + block.height.value.value / 2){
-                    Pair(null, null)
-                }
-                else {
-                    val isLeft = singleBlock.x.value < block.x.value + block.width.value.value / 2
-                    if (isLeft) Pair(singleBlock, null) else Pair(null, singleBlock)
-                }
-            }
-            2 -> {
-                var sortedBlocks = blocks.sortedBy { it.y.value }
-                if(sortedBlocks.first().y.value != sortedBlocks.last().y.value){
-                    Pair(sortedBlocks.first(), null)
-                }else{
-                    sortedBlocks = blocks.sortedBy { it.x.value }
-                    Pair(sortedBlocks.first(), sortedBlocks.last())
-                }
-            }
-            else -> {
-                var sortedBlocks = blocks.sortedBy { it.y.value }
-                sortedBlocks = listOf(sortedBlocks.first(), sortedBlocks[1])
-                sortedBlocks = sortedBlocks.sortedBy { it.x.value }
-                Pair(sortedBlocks.first(), sortedBlocks.last())
+        var pair: Pair<DraggableBlock?, DraggableBlock?> = Pair(null, null)
+        blocks.forEach { it ->
+            if (it.block == (block.block as AddElementByIndex).listConnector.connectedTo){
+                pair = Pair(it, null)
             }
         }
+        blocks.forEach { it ->
+            if (it.block == (block.block as AddElementByIndex).idConnector.connectedTo){
+                pair = pair.copy(second = it)
+            }
+        }
+        return pair
     }
 
     val (leftBlock, rightBlock) = remember(block.scope, block.scope.map { it.x.value }) {
@@ -1290,6 +1351,29 @@ fun AddElementByIndexViewForCard(){
 
 @Composable
 fun GetValueByIndexView(block: DraggableBlock){
+
+    fun determineBlocks(blocks: SnapshotStateList<DraggableBlock>): Pair<DraggableBlock?, DraggableBlock?> {
+        var pair: Pair<DraggableBlock?, DraggableBlock?> = Pair(null, null)
+        blocks.forEach { it ->
+            if (it.block == (block.block as GetValueByIndex).listConnector.connectedTo){
+                pair = Pair(it, null)
+            }
+        }
+        blocks.forEach { it ->
+            if (it.block == (block.block as GetValueByIndex).idConnector.connectedTo){
+                pair = pair.copy(second = it)
+            }
+        }
+        return pair
+    }
+
+    val (leftBlock, rightBlock) = remember(block.scope, block.scope.map { it.x.value }) {
+        determineBlocks(block.scope)
+    }
+
+    val box1Width by derivedStateOf { leftBlock?.width?.value ?: 60.dp }
+    val box2Width by derivedStateOf { rightBlock?.width?.value ?: 60.dp }
+
     Row(
         modifier = Modifier.fillMaxSize()
     ){
@@ -1301,7 +1385,7 @@ fun GetValueByIndexView(block: DraggableBlock){
 
         Box(
             modifier = Modifier
-                .width(60.dp)
+                .width(box1Width)
                 .fillMaxHeight()
                 .padding(4.dp)
                 .background(EmptySpace)
@@ -1321,7 +1405,7 @@ fun GetValueByIndexView(block: DraggableBlock){
 
         Box(
             modifier = Modifier
-                .width(60.dp)
+                .width(box2Width)
                 .fillMaxHeight()
                 .padding(4.dp)
                 .background(EmptySpace)
@@ -1386,34 +1470,18 @@ fun GetListSizeViewForCard(){
 fun RemoveValueByIndexView(block: DraggableBlock){
 
     fun determineBlocks(blocks: SnapshotStateList<DraggableBlock>): Pair<DraggableBlock?, DraggableBlock?> {
-        return when (blocks.size) {
-            0 -> Pair(null, null)
-            1 -> {
-                val singleBlock = blocks.first()
-                if(singleBlock.y.value > block.y.value + block.height.value.value / 2){
-                    Pair(null, null)
-                }
-                else {
-                    val isLeft = singleBlock.x.value < block.x.value + block.width.value.value / 2
-                    if (isLeft) Pair(singleBlock, null) else Pair(null, singleBlock)
-                }
-            }
-            2 -> {
-                var sortedBlocks = blocks.sortedBy { it.y.value }
-                if(sortedBlocks.first().y.value != sortedBlocks.last().y.value){
-                    Pair(sortedBlocks.first(), null)
-                }else{
-                    sortedBlocks = blocks.sortedBy { it.x.value }
-                    Pair(sortedBlocks.first(), sortedBlocks.last())
-                }
-            }
-            else -> {
-                var sortedBlocks = blocks.sortedBy { it.y.value }
-                sortedBlocks = listOf(sortedBlocks.first(), sortedBlocks[1])
-                sortedBlocks = sortedBlocks.sortedBy { it.x.value }
-                Pair(sortedBlocks.first(), sortedBlocks.last())
+        var pair: Pair<DraggableBlock?, DraggableBlock?> = Pair(null, null)
+        blocks.forEach { it ->
+            if (it.block == (block.block as RemoveValueByIndex).listConnector.connectedTo){
+                pair = Pair(it, null)
             }
         }
+        blocks.forEach { it ->
+            if (it.block == (block.block as RemoveValueByIndex).idConnector.connectedTo){
+                pair = pair.copy(second = it)
+            }
+        }
+        return pair
     }
 
     val (leftBlock, rightBlock) = remember(block.scope, block.scope.map { it.x.value }) {
@@ -1490,6 +1558,29 @@ fun RemoveValueByIndexViewForCard(){
 
 @Composable
 fun EditValueByIndexView(block: DraggableBlock){
+
+    fun determineBlocks(blocks: SnapshotStateList<DraggableBlock>): Pair<DraggableBlock?, DraggableBlock?> {
+        var pair: Pair<DraggableBlock?, DraggableBlock?> = Pair(null, null)
+        blocks.forEach { it ->
+            if (it.block == (block.block as EditValueByIndex).listConnector.connectedTo){
+                pair = Pair(it, null)
+            }
+        }
+        blocks.forEach { it ->
+            if (it.block == (block.block as EditValueByIndex).idConnector.connectedTo){
+                pair = pair.copy(second = it)
+            }
+        }
+        return pair
+    }
+
+    val (leftBlock, rightBlock) = remember(block.scope, block.scope.map { it.x.value }) {
+        determineBlocks(block.scope)
+    }
+
+    val box1Width by derivedStateOf { leftBlock?.width?.value ?: 60.dp }
+    val box2Width by derivedStateOf { rightBlock?.width?.value ?: 60.dp }
+
     Row(
         modifier = Modifier.fillMaxSize()
     ){
@@ -1501,7 +1592,7 @@ fun EditValueByIndexView(block: DraggableBlock){
 
         Box(
             modifier = Modifier
-                .width(60.dp)
+                .width(box1Width)
                 .fillMaxHeight()
                 .padding(4.dp)
                 .background(EmptySpace)
@@ -1515,7 +1606,7 @@ fun EditValueByIndexView(block: DraggableBlock){
 
         Box(
             modifier = Modifier
-                .width(60.dp)
+                .width(box2Width)
                 .fillMaxHeight()
                 .padding(4.dp)
                 .background(EmptySpace)
