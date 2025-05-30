@@ -1,6 +1,5 @@
 package com.unewexp.superblockly.viewBlocks
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -31,10 +30,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,13 +48,29 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.myfirstapplicatioin.blocks.literals.IntLiteralBlock
 import com.unewexp.superblockly.DraggableBlock
 import com.unewexp.superblockly.R
 import com.unewexp.superblockly.Spinner
+import com.unewexp.superblockly.blocks.arithmetic.OperandBlock
+import com.unewexp.superblockly.blocks.list.AddElementByIndex
+import com.unewexp.superblockly.blocks.list.EditValueByIndex
+import com.unewexp.superblockly.blocks.list.FixedValuesAndSizeList
+import com.unewexp.superblockly.blocks.list.GetValueByIndex
+import com.unewexp.superblockly.blocks.list.PushBackElement
+import com.unewexp.superblockly.blocks.list.RemoveValueByIndex
+import com.unewexp.superblockly.blocks.literals.BooleanLiteralBlock
+import com.unewexp.superblockly.blocks.literals.StringLiteralBlock
+import com.unewexp.superblockly.blocks.logic.CompareNumbers
+import com.unewexp.superblockly.blocks.loops.ForBlock
+import com.unewexp.superblockly.blocks.returnBlocks.VariableReferenceBlock
+import com.unewexp.superblockly.blocks.voidBlocks.SetValueVariableBlock
+import com.unewexp.superblockly.blocks.voidBlocks.VariableDeclarationBlock
 import com.unewexp.superblockly.enums.CompareType
 import com.unewexp.superblockly.enums.OperandType
 import com.unewexp.superblockly.enums.symbol
 import com.unewexp.superblockly.ui.theme.EmptySpace
+import com.unewexp.superblockly.ui.theme.Pink40
 
 @Composable
 fun StartBlockView() {
@@ -129,9 +143,10 @@ fun TextFieldLike(
 
 @Composable
 fun IntLiteralView(
-    onNameChanged: (String) -> Unit
+    block: DraggableBlock
 ) {
-    var value by remember { mutableStateOf(TextFieldValue("123")) }
+    val currentBlock by rememberUpdatedState(block.block as IntLiteralBlock)
+    var value by remember { mutableStateOf(TextFieldValue(currentBlock.value.toString())) }
 
     Box(
         modifier = Modifier
@@ -143,15 +158,73 @@ fun IntLiteralView(
             value = value,
             onValueChange = {
                 if (it.text.isEmpty()) {
+                    currentBlock.value = 0
                     value = TextFieldValue("0", TextRange(1))
                 } else if (it.text.matches(Regex("^\\d*$"))) {
-                    value = if (it.text.length != 1 && it.text[0] == '0') {
-                        TextFieldValue(it.text.substring(1), TextRange(1))
+                    if (it.text.length != 1 && it.text[0] == '0') {
+                        currentBlock.value = it.text.substring(1).toInt()
+                        value = it.copy(currentBlock.value.toString(), TextRange(1))
                     } else {
-                        it
+                        currentBlock.value = it.text.toInt()
+                        value = it.copy(currentBlock.value.toString())
                     }
                 }
-                onNameChanged(value.text)
+            },
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 12.dp, vertical = 12.dp),
+            singleLine = true,
+            textStyle = MaterialTheme.typography.bodyMedium.copy(
+                color = MaterialTheme.colorScheme.onSurface,
+                textAlign = TextAlign.Start
+            ),
+            decorationBox = { innerTextField ->
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.CenterStart
+                ) {
+                    if (value.text.isEmpty()) {
+                        Text(
+                            stringResource(R.string.value),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                        )
+                    }
+                    innerTextField()
+                }
+            },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Number,
+                imeAction = ImeAction.Done
+            ),
+            cursorBrush = SolidColor(MaterialTheme.colorScheme.primary)
+        )
+    }
+}
+
+@Composable
+fun IntLiteralViewForCard(){
+    TextFieldLike(placeholder = "Num", modifier = Modifier.fillMaxWidth())
+}
+
+@Composable
+fun BooleanLiteralBlockView(
+    block: DraggableBlock
+) {
+    val currentBlock by rememberUpdatedState(block.block as BooleanLiteralBlock)
+    var value by remember { mutableStateOf(TextFieldValue(currentBlock.value.toString())) }
+
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(8.dp))
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surfaceVariant)
+    ) {
+        BasicTextField(
+            value = value,
+            onValueChange = {
+                currentBlock.value = it.text.trim().toBoolean()
+                value = it
             },
             modifier = Modifier
                 .fillMaxSize()
@@ -177,7 +250,6 @@ fun IntLiteralView(
                 }
             },
             keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Number,
                 imeAction = ImeAction.Done
             ),
             cursorBrush = SolidColor(MaterialTheme.colorScheme.primary)
@@ -186,16 +258,71 @@ fun IntLiteralView(
 }
 
 @Composable
-fun IntLiteralViewForCard(){
+fun BooleanLiteralBlockViewForCard(){
+    TextFieldLike(placeholder = "Boolean", modifier = Modifier.fillMaxWidth())
+}
 
-    TextFieldLike(placeholder = "Num", modifier = Modifier.fillMaxWidth())
+@Composable
+fun StringLiteralBlockView(
+    block: DraggableBlock
+) {
+    val currentBlock by rememberUpdatedState(block.block as StringLiteralBlock)
+    var value by remember { mutableStateOf(TextFieldValue(currentBlock.value)) }
+
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(8.dp))
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surfaceVariant)
+    ) {
+        BasicTextField(
+            value = value,
+            onValueChange = {
+                currentBlock.value = it.text
+                value = it.copy(currentBlock.value)
+            },
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 12.dp, vertical = 12.dp),
+            singleLine = true,
+            textStyle = MaterialTheme.typography.bodyMedium.copy(
+                color = MaterialTheme.colorScheme.onSurface,
+                textAlign = TextAlign.Start
+            ),
+            decorationBox = { innerTextField ->
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.CenterStart
+                ) {
+                    if (value.text.isEmpty()) {
+                        Text(
+                            stringResource(R.string.text),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                        )
+                    }
+                    innerTextField()
+                }
+            },
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Done
+            ),
+            cursorBrush = SolidColor(MaterialTheme.colorScheme.primary)
+        )
+    }
+}
+
+@Composable
+fun StringLiteralBlockViewForCard(){
+    TextFieldLike(placeholder = stringResource(R.string.text), modifier = Modifier.fillMaxWidth())
 }
 
 @Composable
 fun SetValueVariableView(
-    onNameChanged: (String) -> Unit
+    block: DraggableBlock
 ) {
-    var name by remember { mutableStateOf(TextFieldValue("")) }
+    val currentBlock by rememberUpdatedState(block.block as SetValueVariableBlock)
+    var name by remember { mutableStateOf(TextFieldValue(currentBlock.selectedVariableName)) }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -209,7 +336,7 @@ fun SetValueVariableView(
                 .padding(horizontal = 12.dp)
         ) {
             Text(
-                "Set",
+                stringResource(R.string.set),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(end = 8.dp)
@@ -218,8 +345,8 @@ fun SetValueVariableView(
             BasicTextField(
                 value = name,
                 onValueChange = {
-                    name = it
-                    onNameChanged(name.text)
+                    currentBlock.selectedVariableName = it.text.trim()
+                    name = it.copy(currentBlock.selectedVariableName)
                 },
                 modifier = Modifier
                     .weight(1f)
@@ -237,7 +364,7 @@ fun SetValueVariableView(
                     ) {
                         if (name.text.isEmpty()) {
                             Text(
-                                "Var",
+                                stringResource(R.string.Var),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
                             )
@@ -262,11 +389,11 @@ fun SetValueVariableViewForCard(){
 
     Row(verticalAlignment = Alignment.CenterVertically){
         Text(
-            "Set",
+            stringResource(R.string.set),
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.padding(end = 4.dp)
         )
-        TextFieldLike(placeholder = "Var", modifier = Modifier.width(150.dp))
+        TextFieldLike(placeholder = stringResource(R.string.Var), modifier = Modifier.width(150.dp))
         Text(
             stringResource(R.string.to),
             style = MaterialTheme.typography.bodyMedium,
@@ -277,9 +404,10 @@ fun SetValueVariableViewForCard(){
 
 @Composable
 fun VariableReferenceView(
-    onNameChanged: (String) -> Unit
+    block: DraggableBlock
 ) {
-    var name by remember { mutableStateOf(TextFieldValue("")) }
+    val currentBlock by rememberUpdatedState( block.block as VariableReferenceBlock)
+    var name by remember { mutableStateOf(TextFieldValue(currentBlock.selectedVariableName)) }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -289,8 +417,8 @@ fun VariableReferenceView(
         BasicTextField(
             value = name,
             onValueChange = {
-                name = if (it.text.isEmpty()) TextFieldValue("") else it
-                onNameChanged(name.text)
+                currentBlock.selectedVariableName = it.text.trim()
+                name = it.copy(currentBlock.selectedVariableName)
             },
             modifier = Modifier
                 .fillMaxSize()
@@ -307,7 +435,7 @@ fun VariableReferenceView(
                 ) {
                     if (name.text.isEmpty()) {
                         Text(
-                            "Var",
+                            stringResource(R.string.Var),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
                         )
@@ -322,14 +450,15 @@ fun VariableReferenceView(
 
 @Composable
 fun VariableReferenceViewForCard(){
-    TextFieldLike(placeholder = "Var", modifier = Modifier.fillMaxWidth())
+    TextFieldLike(placeholder = stringResource(R.string.Var), modifier = Modifier.fillMaxWidth())
 }
 
 @Composable
-fun DeclarationVariableView(
-    onNameChanged: (String) -> Unit
+fun VariableDeclarationBlockView(
+    block: DraggableBlock
 ) {
-    var name by remember { mutableStateOf(TextFieldValue("")) }
+    val currentBlock by rememberUpdatedState( block.block as VariableDeclarationBlock)
+    var name by remember { mutableStateOf(TextFieldValue(currentBlock.name)) }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -343,40 +472,42 @@ fun DeclarationVariableView(
                 .padding(horizontal = 12.dp)
         ) {
             Text(
-                "Init",
+                stringResource(R.string.init),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(end = 8.dp)
             )
 
-            TextField(
+            BasicTextField(
                 value = name,
                 onValueChange = {
-                    name = it
-                    onNameChanged(name.text)
+                    currentBlock.name = it.text.trim()
+                    name = it.copy(currentBlock.name)
                 },
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = Color.Transparent,
-                    unfocusedContainerColor = Color.Transparent,
-                    disabledContainerColor = Color.Transparent,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    cursorColor = MaterialTheme.colorScheme.primary
-                ),
-                placeholder = {
-                    Text(
-                        "Var",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
-                    )
-                },
-                singleLine = true,
                 modifier = Modifier
                     .weight(1f)
-                    .heightIn(min = 48.dp),
+                    .height(24.dp)
+                    .align(Alignment.CenterVertically),
+                singleLine = true,
                 textStyle = MaterialTheme.typography.bodyMedium.copy(
-                    color = MaterialTheme.colorScheme.onSurface
-                )
+                    color = MaterialTheme.colorScheme.onSurface,
+                    textAlign = TextAlign.Start
+                ),
+                decorationBox = { innerTextField ->
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.CenterStart
+                    ) {
+                        if (name.text.isEmpty()) {
+                            Text(
+                                stringResource(R.string.Var),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                            )
+                        }
+                        innerTextField()
+                    }
+                }
             )
         }
     }
@@ -386,23 +517,44 @@ fun DeclarationVariableView(
 fun DeclarationVariableViewForCard(){
     Row(verticalAlignment = Alignment.CenterVertically){
         Text(
-            "Init",
+            stringResource(R.string.init),
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.padding(end = 4.dp)
         )
-        TextFieldLike(placeholder = "Var", modifier = Modifier.fillMaxWidth())
+        TextFieldLike(placeholder = stringResource(R.string.Var), modifier = Modifier.fillMaxWidth())
     }
 }
 
 @Composable
 fun CompareNumbersBlockView(
-    onCompareSelected: (CompareType) -> Unit = {}
+    block: DraggableBlock,
+    onCompareSelected: (CompareType) -> Unit
 ) {
+
+    fun determineBlocks(blocks: SnapshotStateList<DraggableBlock>): Pair<DraggableBlock?, DraggableBlock?> {
+        var pair: Pair<DraggableBlock?, DraggableBlock?> = Pair(null, null)
+        blocks.forEach { it ->
+            if (it.block == (block.block as CompareNumbers).leftInputConnector.connectedTo){
+                pair = Pair(it, null)
+            }
+        }
+        blocks.forEach { it ->
+            if (it.block == (block.block as CompareNumbers).rightInputConnector.connectedTo){
+                pair = pair.copy(second = it)
+            }
+        }
+        return pair
+    }
+
+    val (leftBlock, rightBlock) = remember(block.scope, block.scope.map { it.x.value }) {
+        determineBlocks(block.scope)
+    }
+
+    val box1Width by derivedStateOf { leftBlock?.width?.value ?: 60.dp }
+    val box2Width by derivedStateOf { rightBlock?.width?.value ?: 60.dp }
+
     var selectedOperand by remember { mutableStateOf(CompareType.EQUAL) }
     var expanded by remember { mutableStateOf(false) }
-
-    val box1Width = remember { mutableStateOf(70.dp) }
-    val box2Width = remember { mutableStateOf(70.dp) }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -418,7 +570,7 @@ fun CompareNumbersBlockView(
         ) {
             Box(
                 modifier = Modifier
-                    .width(box1Width.value)
+                    .width(box1Width)
                     .fillMaxHeight()
                     .background(
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.1f),
@@ -465,7 +617,7 @@ fun CompareNumbersBlockView(
 
             Box(
                 modifier = Modifier
-                    .width(box2Width.value)
+                    .width(box2Width)
                     .fillMaxHeight()
                     .background(
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.1f),
@@ -749,18 +901,18 @@ fun OperandBlockView(
     var expanded by remember { mutableStateOf(false) }
 
     fun determineBlocks(blocks: SnapshotStateList<DraggableBlock>): Pair<DraggableBlock?, DraggableBlock?> {
-        return when (blocks.size) {
-            0 -> Pair(null, null)
-            1 -> {
-                val singleBlock = blocks.first()
-                val isLeft = singleBlock.x.value < block.x.value + block.width.value.value / 2
-                if (isLeft) Pair(singleBlock, null) else Pair(null, singleBlock)
-            }
-            else -> {
-                val sortedBlocks = blocks.sortedBy { it.x.value }
-                Pair(sortedBlocks.first(), sortedBlocks.last())
+        var pair: Pair<DraggableBlock?, DraggableBlock?> = Pair(null, null)
+        blocks.forEach { it ->
+            if (it.block == (block.block as OperandBlock).leftInputConnector.connectedTo){
+                pair = Pair(it, null)
             }
         }
+        blocks.forEach { it ->
+            if (it.block == (block.block as OperandBlock).rightInputConnector.connectedTo){
+                pair = pair.copy(second = it)
+            }
+        }
+        return pair
     }
 
     val (leftBlock, rightBlock) = remember(block.scope, block.scope.map { it.x.value }) {
@@ -963,10 +1115,39 @@ fun WhileBlockViewForCard(
 
 @Composable
 fun ForBlockView(
-    onNameChanged: (String) -> Unit
+    block: DraggableBlock
 ) {
 
-    var name by remember { mutableStateOf(TextFieldValue("i")) }
+    fun determineBlocks(blocks: SnapshotStateList<DraggableBlock>): List<DraggableBlock?> {
+        var refs: List<DraggableBlock?> = listOf(null, null, null)
+        blocks.forEach { it ->
+            if (it.block == (block.block as ForBlock).initialValueBlock.connectedTo){
+                refs = listOf(it, null, null)
+            }
+        }
+        blocks.forEach { it ->
+            if (it.block == (block.block as ForBlock).maxValueBlock.connectedTo){
+                refs = listOf(refs.first(), it, null)
+            }
+        }
+        blocks.forEach { it ->
+            if (it.block == (block.block as ForBlock).stepBlock.connectedTo){
+                refs = listOf(refs.first(), refs[1], it)
+            }
+        }
+        return refs
+    }
+
+    val (leftBlock, centerBlock, rightBlock) = remember(block.scope, block.scope.map { it.x.value }) {
+        determineBlocks(block.scope)
+    }
+
+    val box1Width by derivedStateOf { leftBlock?.width?.value ?: 60.dp }
+    val box2Width by derivedStateOf { centerBlock?.width?.value ?: 60.dp }
+    val box3Width by derivedStateOf { rightBlock?.width?.value ?: 60.dp }
+
+    val currentBlock by rememberUpdatedState(block.block as ForBlock)
+    var name by remember { mutableStateOf(TextFieldValue(currentBlock.variableName)) }
 
     val textHeight = 60.dp
     val bottomLineHeight = 1.dp
@@ -993,12 +1174,12 @@ fun ForBlockView(
             BasicTextField(
                 value = name,
                 onValueChange = {
-                    name = it
-                    onNameChanged(name.text)
+                    currentBlock.variableName = it.text.trim()
+                    name = it.copy(currentBlock.variableName)
                 },
                 modifier = Modifier
-                    .weight(1f)
                     .height(24.dp)
+                    .width(100.dp)
                     .padding(4.dp, 0.dp)
                     .align(Alignment.CenterVertically),
                 singleLine = true,
@@ -1008,12 +1189,12 @@ fun ForBlockView(
                 ),
                 decorationBox = { innerTextField ->
                     Box(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth().border(1.dp, EmptySpace, RoundedCornerShape(8.dp)).padding(2.dp),
                         contentAlignment = Alignment.CenterStart
                     ) {
                         if (name.text.isEmpty()) {
                             Text(
-                                "Var",
+                                stringResource(R.string.Var),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
                             )
@@ -1026,44 +1207,65 @@ fun ForBlockView(
             Text(
                 stringResource(R.string.from),
                 style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
-                modifier = Modifier.padding(bottom = 4.dp)
+                modifier = Modifier.weight(1f).padding(bottom = 4.dp)
             )
 
             Box(
                 modifier = Modifier
-                    .width(60.dp)
+                    .width(box1Width)
                     .height(50.dp)
                     .padding(4.dp, 0.dp)
-                    .background(EmptySpace)
-            ){}
+                    .background(EmptySpace),
+                contentAlignment = Alignment.Center
+            ){
+                Text(
+                    stringResource(R.string.from),
+                    style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black.copy(alpha = 0.5f), fontSize = 14.sp),
+                    modifier = Modifier.padding(bottom = 4.dp)
+                )
+            }
 
             Text(
                 stringResource(R.string.to),
                 style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
-                modifier = Modifier.padding(bottom = 4.dp)
+                modifier = Modifier.weight(1f).padding(bottom = 4.dp)
             )
 
             Box(
                 modifier = Modifier
-                    .width(60.dp)
+                    .width(box2Width)
                     .height(50.dp)
                     .padding(4.dp, 0.dp)
-                    .background(EmptySpace)
-            ){}
+                    .background(EmptySpace),
+                contentAlignment = Alignment.Center
+            ){
+                Text(
+                    stringResource(R.string.to),
+                    style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black.copy(alpha = 0.5f), fontSize = 14.sp),
+                    modifier = Modifier.padding(bottom = 4.dp)
+                )
+            }
 
             Text(
                 stringResource(R.string.step),
                 style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
-                modifier = Modifier.padding(bottom = 4.dp)
+                modifier = Modifier.weight(1f).padding(bottom = 4.dp)
             )
 
             Box(
                 modifier = Modifier
-                    .width(60.dp)
+                    .width(box3Width)
                     .height(50.dp)
                     .padding(4.dp, 0.dp)
-                    .background(EmptySpace)
-            ){}
+                    .background(EmptySpace),
+                contentAlignment = Alignment.Center
+            ){
+                Text(
+                    stringResource(R.string.step),
+                    style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black.copy(alpha = 0.5f), fontSize = 14.sp),
+                    modifier = Modifier.padding(bottom = 4.dp)
+                )
+            }
         }
 
         Box(
@@ -1098,8 +1300,30 @@ fun ForBlockViewForCard() {
 
 @Composable
 fun FixedValuesAndSizeListView(block: DraggableBlock){
-    Row{
 
+    fun determineBlocks(blocks: SnapshotStateList<DraggableBlock>): Pair<DraggableBlock?, DraggableBlock?> {
+        var pair: Pair<DraggableBlock?, DraggableBlock?> = Pair(null, null)
+        blocks.forEach { it ->
+            if (it.block == (block.block as FixedValuesAndSizeList).valueInput.connectedTo){
+                pair = Pair(it, null)
+            }
+        }
+        blocks.forEach { it ->
+            if (it.block == (block.block as FixedValuesAndSizeList).repeatTimes.connectedTo){
+                pair = pair.copy(second = it)
+            }
+        }
+        return pair
+    }
+
+    val (leftBlock, rightBlock) = remember(block.scope, block.scope.map { it.x.value }) {
+        determineBlocks(block.scope)
+    }
+
+    val box1Width by derivedStateOf { leftBlock?.width?.value ?: 60.dp }
+    val box2Width by derivedStateOf { rightBlock?.width?.value ?: 60.dp }
+
+    Row(verticalAlignment = Alignment.CenterVertically){
         Text(
             stringResource(R.string.create_list_with),
             style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
@@ -1108,13 +1332,13 @@ fun FixedValuesAndSizeListView(block: DraggableBlock){
 
         Box(
             modifier = Modifier
-                .width(60.dp)
+                .width(box1Width)
                 .fillMaxHeight()
                 .padding(4.dp)
                 .background(EmptySpace)
         ){
             Text(
-                stringResource(R.string.list),
+                stringResource(R.string.value),
                 style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black.copy(alpha = 0.5f), fontSize = 14.sp),
                 modifier = Modifier.padding(4.dp)
             )
@@ -1128,7 +1352,7 @@ fun FixedValuesAndSizeListView(block: DraggableBlock){
 
         Box(
             modifier = Modifier
-                .width(60.dp)
+                .width(box2Width)
                 .fillMaxHeight()
                 .padding(4.dp)
                 .background(EmptySpace)
@@ -1180,34 +1404,18 @@ fun FixedValuesAndSizeListViewForCard(){
 fun AddElementByIndexView(block: DraggableBlock){
 
     fun determineBlocks(blocks: SnapshotStateList<DraggableBlock>): Pair<DraggableBlock?, DraggableBlock?> {
-        return when (blocks.size) {
-            0 -> Pair(null, null)
-            1 -> {
-                val singleBlock = blocks.first()
-                if(singleBlock.y.value > block.y.value + block.height.value.value / 2){
-                    Pair(null, null)
-                }
-                else {
-                    val isLeft = singleBlock.x.value < block.x.value + block.width.value.value / 2
-                    if (isLeft) Pair(singleBlock, null) else Pair(null, singleBlock)
-                }
-            }
-            2 -> {
-                var sortedBlocks = blocks.sortedBy { it.y.value }
-                if(sortedBlocks.first().y.value != sortedBlocks.last().y.value){
-                    Pair(sortedBlocks.first(), null)
-                }else{
-                    sortedBlocks = blocks.sortedBy { it.x.value }
-                    Pair(sortedBlocks.first(), sortedBlocks.last())
-                }
-            }
-            else -> {
-                var sortedBlocks = blocks.sortedBy { it.y.value }
-                sortedBlocks = listOf(sortedBlocks.first(), sortedBlocks[1])
-                sortedBlocks = sortedBlocks.sortedBy { it.x.value }
-                Pair(sortedBlocks.first(), sortedBlocks.last())
+        var pair: Pair<DraggableBlock?, DraggableBlock?> = Pair(null, null)
+        blocks.forEach { it ->
+            if (it.block == (block.block as AddElementByIndex).listConnector.connectedTo){
+                pair = Pair(it, null)
             }
         }
+        blocks.forEach { it ->
+            if (it.block == (block.block as AddElementByIndex).idConnector.connectedTo){
+                pair = pair.copy(second = it)
+            }
+        }
+        return pair
     }
 
     val (leftBlock, rightBlock) = remember(block.scope, block.scope.map { it.x.value }) {
@@ -1218,7 +1426,8 @@ fun AddElementByIndexView(block: DraggableBlock){
     val box2Width by derivedStateOf { rightBlock?.width?.value ?: 60.dp }
 
     Row(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
+        verticalAlignment = Alignment.CenterVertically
     ){
         Text(
             stringResource(R.string.in_list),
@@ -1290,8 +1499,32 @@ fun AddElementByIndexViewForCard(){
 
 @Composable
 fun GetValueByIndexView(block: DraggableBlock){
+
+    fun determineBlocks(blocks: SnapshotStateList<DraggableBlock>): Pair<DraggableBlock?, DraggableBlock?> {
+        var pair: Pair<DraggableBlock?, DraggableBlock?> = Pair(null, null)
+        blocks.forEach { it ->
+            if (it.block == (block.block as GetValueByIndex).listConnector.connectedTo){
+                pair = Pair(it, null)
+            }
+        }
+        blocks.forEach { it ->
+            if (it.block == (block.block as GetValueByIndex).idConnector.connectedTo){
+                pair = pair.copy(second = it)
+            }
+        }
+        return pair
+    }
+
+    val (leftBlock, rightBlock) = remember(block.scope, block.scope.map { it.x.value }) {
+        determineBlocks(block.scope)
+    }
+
+    val box1Width by derivedStateOf { leftBlock?.width?.value ?: 60.dp }
+    val box2Width by derivedStateOf { rightBlock?.width?.value ?: 60.dp }
+
     Row(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
+        verticalAlignment = Alignment.CenterVertically
     ){
         Text(
             stringResource(R.string.in_list),
@@ -1301,7 +1534,7 @@ fun GetValueByIndexView(block: DraggableBlock){
 
         Box(
             modifier = Modifier
-                .width(60.dp)
+                .width(box1Width)
                 .fillMaxHeight()
                 .padding(4.dp)
                 .background(EmptySpace)
@@ -1321,7 +1554,7 @@ fun GetValueByIndexView(block: DraggableBlock){
 
         Box(
             modifier = Modifier
-                .width(60.dp)
+                .width(box2Width)
                 .fillMaxHeight()
                 .padding(4.dp)
                 .background(EmptySpace)
@@ -1358,7 +1591,8 @@ fun GetValueByIndexViewForCard(){
 @Composable
 fun GetListSizeView(){
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
     ){
         Text(
             stringResource(R.string.length_of),
@@ -1386,34 +1620,18 @@ fun GetListSizeViewForCard(){
 fun RemoveValueByIndexView(block: DraggableBlock){
 
     fun determineBlocks(blocks: SnapshotStateList<DraggableBlock>): Pair<DraggableBlock?, DraggableBlock?> {
-        return when (blocks.size) {
-            0 -> Pair(null, null)
-            1 -> {
-                val singleBlock = blocks.first()
-                if(singleBlock.y.value > block.y.value + block.height.value.value / 2){
-                    Pair(null, null)
-                }
-                else {
-                    val isLeft = singleBlock.x.value < block.x.value + block.width.value.value / 2
-                    if (isLeft) Pair(singleBlock, null) else Pair(null, singleBlock)
-                }
-            }
-            2 -> {
-                var sortedBlocks = blocks.sortedBy { it.y.value }
-                if(sortedBlocks.first().y.value != sortedBlocks.last().y.value){
-                    Pair(sortedBlocks.first(), null)
-                }else{
-                    sortedBlocks = blocks.sortedBy { it.x.value }
-                    Pair(sortedBlocks.first(), sortedBlocks.last())
-                }
-            }
-            else -> {
-                var sortedBlocks = blocks.sortedBy { it.y.value }
-                sortedBlocks = listOf(sortedBlocks.first(), sortedBlocks[1])
-                sortedBlocks = sortedBlocks.sortedBy { it.x.value }
-                Pair(sortedBlocks.first(), sortedBlocks.last())
+        var pair: Pair<DraggableBlock?, DraggableBlock?> = Pair(null, null)
+        blocks.forEach { it ->
+            if (it.block == (block.block as RemoveValueByIndex).listConnector.connectedTo){
+                pair = Pair(it, null)
             }
         }
+        blocks.forEach { it ->
+            if (it.block == (block.block as RemoveValueByIndex).idConnector.connectedTo){
+                pair = pair.copy(second = it)
+            }
+        }
+        return pair
     }
 
     val (leftBlock, rightBlock) = remember(block.scope, block.scope.map { it.x.value }) {
@@ -1424,7 +1642,8 @@ fun RemoveValueByIndexView(block: DraggableBlock){
     val box2Width by derivedStateOf { rightBlock?.width?.value ?: 60.dp }
 
     Row(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
+        verticalAlignment = Alignment.CenterVertically
     ){
         Text(
             stringResource(R.string.in_list),
@@ -1490,8 +1709,32 @@ fun RemoveValueByIndexViewForCard(){
 
 @Composable
 fun EditValueByIndexView(block: DraggableBlock){
+
+    fun determineBlocks(blocks: SnapshotStateList<DraggableBlock>): Pair<DraggableBlock?, DraggableBlock?> {
+        var pair: Pair<DraggableBlock?, DraggableBlock?> = Pair(null, null)
+        blocks.forEach { it ->
+            if (it.block == (block.block as EditValueByIndex).listConnector.connectedTo){
+                pair = Pair(it, null)
+            }
+        }
+        blocks.forEach { it ->
+            if (it.block == (block.block as EditValueByIndex).idConnector.connectedTo){
+                pair = pair.copy(second = it)
+            }
+        }
+        return pair
+    }
+
+    val (leftBlock, rightBlock) = remember(block.scope, block.scope.map { it.x.value }) {
+        determineBlocks(block.scope)
+    }
+
+    val box1Width by derivedStateOf { leftBlock?.width?.value ?: 60.dp }
+    val box2Width by derivedStateOf { rightBlock?.width?.value ?: 60.dp }
+
     Row(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
+        verticalAlignment = Alignment.CenterVertically
     ){
         Text(
             stringResource(R.string.in_list),
@@ -1501,11 +1744,17 @@ fun EditValueByIndexView(block: DraggableBlock){
 
         Box(
             modifier = Modifier
-                .width(60.dp)
+                .width(box1Width)
                 .fillMaxHeight()
                 .padding(4.dp)
                 .background(EmptySpace)
-        ){}
+        ){
+            Text(
+                stringResource(R.string.list),
+                style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black.copy(alpha = 0.5f), fontSize = 14.sp),
+                modifier = Modifier.padding(4.dp)
+            )
+        }
 
         Text(
             stringResource(R.string.edit),
@@ -1515,7 +1764,7 @@ fun EditValueByIndexView(block: DraggableBlock){
 
         Box(
             modifier = Modifier
-                .width(60.dp)
+                .width(box2Width)
                 .fillMaxHeight()
                 .padding(4.dp)
                 .background(EmptySpace)
@@ -1548,6 +1797,75 @@ fun EditValueByIndexViewForCard(){
         )
         Text(
             stringResource(R.string.edit),
+            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black, fontSize = 14.sp),
+            modifier = Modifier.padding(2.dp)
+        )
+    }
+}
+
+@Composable
+fun PushBackElementView(block: DraggableBlock){
+    fun determineBlocks(blocks: SnapshotStateList<DraggableBlock>): DraggableBlock? {
+        blocks.forEach { it ->
+            if (it.block == (block.block as PushBackElement).listConnector.connectedTo){
+                return it
+            }
+        }
+        return null
+    }
+
+    val leftBlock = remember(block.scope, block.scope.map { it.x.value }) {
+        determineBlocks(block.scope)
+    }
+
+    val box1Width by derivedStateOf { leftBlock?.width?.value ?: 60.dp }
+
+    Row(
+        modifier = Modifier.fillMaxSize(),
+        verticalAlignment = Alignment.CenterVertically
+    ){
+        Text(
+            stringResource(R.string.in_list),
+            style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
+            modifier = Modifier.padding(4.dp)
+        )
+
+        Box(
+            modifier = Modifier
+                .width(box1Width)
+                .fillMaxHeight()
+                .padding(4.dp)
+                .background(EmptySpace)
+        ){
+            Text(
+                stringResource(R.string.list),
+                style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black.copy(alpha = 0.5f), fontSize = 14.sp),
+                modifier = Modifier.padding(4.dp)
+            )
+        }
+
+        Text(
+            stringResource(R.string.push_back),
+            style = MaterialTheme.typography.bodyMedium.copy(color = Color.White, fontSize = 14.sp),
+            modifier = Modifier.padding(4.dp)
+        )
+    }
+}
+
+@Composable
+fun PushBackElementViewForCard(){
+    Row(
+        modifier = Modifier.fillMaxSize(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        Text(
+            stringResource(R.string.in_list),
+            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black, fontSize = 14.sp),
+            modifier = Modifier.padding(2.dp)
+        )
+        Text(
+            stringResource(R.string.push_back) + " " + stringResource(R.string.value),
             style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black, fontSize = 14.sp),
             modifier = Modifier.padding(2.dp)
         )

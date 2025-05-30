@@ -17,6 +17,7 @@ fun safeConnect(source: Connector, target: Connector){ // для сани, по�
 
                 source.sourceBlock.hasException = true
                 target.sourceBlock.hasException = true
+
         }
 }
 

@@ -27,9 +27,11 @@ import com.unewexp.superblockly.enums.ConnectorType
 import com.unewexp.superblockly.DraggableBlock
 import com.unewexp.superblockly.blocks.arithmetic.ShorthandArithmeticOperatorBlock
 import com.unewexp.superblockly.blocks.list.AddElementByIndex
+import com.unewexp.superblockly.blocks.list.EditValueByIndex
 import com.unewexp.superblockly.blocks.list.FixedValuesAndSizeList
 import com.unewexp.superblockly.blocks.list.GetListSize
 import com.unewexp.superblockly.blocks.list.GetValueByIndex
+import com.unewexp.superblockly.blocks.list.PushBackElement
 import com.unewexp.superblockly.blocks.list.RemoveValueByIndex
 import com.unewexp.superblockly.blocks.logic.BooleanLogicBlock
 import com.unewexp.superblockly.blocks.logic.CompareNumbers
@@ -395,15 +397,15 @@ object ConnectorManager {
 
                 ans += mutableListOf(
                     ConnectionView(castedBlock.outputConnector, 0.dp, height/2),
-                    ConnectionView(castedBlock.leftInputConnector, width/4-defaultWidth/2-innerPadding*2, height/2, ExtendConnectionViewType.INNER, height = defaultHeight-innerPadding*2, width = defaultWidth + innerPadding*2),
-                    ConnectionView(castedBlock.rightInputConnector, width*3/4-defaultWidth/2-innerPadding*2, height/2, ExtendConnectionViewType.INNER, height = defaultHeight-innerPadding*2, width = defaultWidth + innerPadding*2),
+                    ConnectionView(castedBlock.leftInputConnector, width/4-defaultWidth/2-innerPadding*2, height/2, ExtendConnectionViewType.INNER, height = defaultHeight-innerPadding*2, width = defaultWidth),
+                    ConnectionView(castedBlock.rightInputConnector, width*3/4-defaultWidth/2-innerPadding*2, height/2, ExtendConnectionViewType.INNER, height = defaultHeight-innerPadding*2, width = defaultWidth),
                 )
             }
             BlockType.SET_VARIABLE_VALUE -> {
                 val castedBlock = (block as SetValueVariableBlock)
 
                 ans += mutableListOf(
-                    ConnectionView(castedBlock.valueConnector, width, height/2, ExtendConnectionViewType.SIDE, height = defaultHeight-innerPadding*2),
+                    ConnectionView(castedBlock.valueConnector, width, height/2, ExtendConnectionViewType.SIDE, height = defaultHeight),
                     ConnectionView(castedBlock.topConnector, cornerOffset, 0.dp),
                     ConnectionView(castedBlock.bottomConnector, cornerOffset, height),
                 )
@@ -412,7 +414,7 @@ object ConnectorManager {
                 val castedBlock = (block as VariableDeclarationBlock)
 
                 ans += mutableListOf(
-                    ConnectionView(castedBlock.valueInputConnector, width, height/2, ExtendConnectionViewType.SIDE, height = defaultHeight-innerPadding*2),
+                    ConnectionView(castedBlock.valueInputConnector, width, height/2, ExtendConnectionViewType.SIDE, height = defaultHeight),
                     ConnectionView(castedBlock.topConnector, cornerOffset, 0.dp),
                     ConnectionView(castedBlock.bottomConnector, cornerOffset, height),
                 )
@@ -450,15 +452,15 @@ object ConnectorManager {
 
                 ans += mutableListOf(
                     ConnectionView(castedBlock.outputConnector, 0.dp, height/2),
-                    ConnectionView(castedBlock.leftInputConnector, width/4-defaultWidth/2-innerPadding*2, height/2, ExtendConnectionViewType.INNER, height = defaultHeight-innerPadding*2, width = defaultWidth + innerPadding*2),
-                    ConnectionView(castedBlock.rightInputConnector, width*3/4-defaultWidth/2-innerPadding*2, height/2, ExtendConnectionViewType.INNER, height = defaultHeight-innerPadding*2, width = defaultWidth + innerPadding*2),
+                    ConnectionView(castedBlock.leftInputConnector, width/4-defaultWidth/2-innerPadding*2, height/2, ExtendConnectionViewType.INNER, height = defaultHeight-innerPadding*2, width = defaultWidth),
+                    ConnectionView(castedBlock.rightInputConnector, width*3/4-defaultWidth/2-innerPadding*2, height/2, ExtendConnectionViewType.INNER, height = defaultHeight-innerPadding*2, width = defaultWidth),
                 )
             }
             BlockType.STRING_APPEND -> {
                 val castedBlock = (block as StringAppendBlock)
 
                 ans += mutableListOf(
-                    ConnectionView(castedBlock.inputConnector, width, height/2, ExtendConnectionViewType.SIDE),
+                    ConnectionView(castedBlock.inputConnector, width, height/2, ExtendConnectionViewType.SIDE, height = defaultHeight),
                     ConnectionView(castedBlock.topConnector, cornerOffset, 0.dp),
                     ConnectionView(castedBlock.bottomConnector, cornerOffset, height),
                 )
@@ -478,7 +480,7 @@ object ConnectorManager {
                 ans += mutableListOf(
                     ConnectionView(castedBlock.topConnector, cornerOffset, 0.dp),
                     ConnectionView(castedBlock.bottomConnector, cornerOffset, height),
-                    ConnectionView(castedBlock.innerConnector, cornerOffset, defaultHeight, ExtendConnectionViewType.INNER_BOTTOM),
+                    ConnectionView(castedBlock.innerConnector, cornerOffset*2, defaultHeight, ExtendConnectionViewType.INNER_BOTTOM),
                     ConnectionView(castedBlock.conditionConnector, width, defaultHeight/2, ExtendConnectionViewType.SIDE, height = defaultHeight)
                 )
             }
@@ -488,10 +490,10 @@ object ConnectorManager {
                 ans += mutableListOf(
                     ConnectionView(castedBlock.topConnector, cornerOffset, 0.dp),
                     ConnectionView(castedBlock.bottomConnector, cornerOffset, height),
-                    ConnectionView(castedBlock.innerConnector, cornerOffset, defaultHeight, ExtendConnectionViewType.INNER_BOTTOM),
-                    ConnectionView(castedBlock.initialValueBlock, width/3, defaultHeight/2, ExtendConnectionViewType.INNER, width = defaultWidth, height = defaultHeight),
-                    ConnectionView(castedBlock.maxValueBlock, width*5/9, defaultHeight/2, ExtendConnectionViewType.INNER, width = defaultWidth, height = defaultHeight),
-                    ConnectionView(castedBlock.stepBlock, width*7/9, defaultHeight/2, ExtendConnectionViewType.INNER, width = defaultWidth, height = defaultHeight)
+                    ConnectionView(castedBlock.innerConnector, cornerOffset*2, defaultHeight, ExtendConnectionViewType.INNER_BOTTOM),
+                    ConnectionView(castedBlock.initialValueBlock, width/3 + innerPadding*3, defaultHeight/2, ExtendConnectionViewType.INNER, width = defaultWidth, height = defaultHeight-innerPadding*2),
+                    ConnectionView(castedBlock.maxValueBlock, width*5/9+ innerPadding, defaultHeight/2, ExtendConnectionViewType.INNER, width = defaultWidth, height = defaultHeight-innerPadding*2),
+                    ConnectionView(castedBlock.stepBlock, width*7/9+ innerPadding, defaultHeight/2, ExtendConnectionViewType.INNER, width = defaultWidth, height = defaultHeight-innerPadding*2)
                 )
             }
 
@@ -499,7 +501,7 @@ object ConnectorManager {
                 val castedBlock = (block as ShorthandArithmeticOperatorBlock)
 
                 ans += mutableListOf(
-                    ConnectionView(castedBlock.inputConnector, width, height/2, ExtendConnectionViewType.SIDE),
+                    ConnectionView(castedBlock.inputConnector, width, height/2, ExtendConnectionViewType.SIDE, height = defaultHeight),
                     ConnectionView(castedBlock.topConnector, cornerOffset, 0.dp),
                     ConnectionView(castedBlock.bottomConnector, cornerOffset, height),
                 )
@@ -527,7 +529,7 @@ object ConnectorManager {
 
                 ans += mutableListOf(
                     ConnectionView(castedBlock.outputConnector, 0.dp, height/2),
-                    ConnectionView(castedBlock.inputConnector, width, height/2, ExtendConnectionViewType.SIDE),
+                    ConnectionView(castedBlock.inputConnector, width, height/2, ExtendConnectionViewType.SIDE, height = defaultHeight),
                 )
             }
             BlockType.ELSE_BLOCK -> {
@@ -536,7 +538,7 @@ object ConnectorManager {
                 ans += mutableListOf(
                     ConnectionView(castedBlock.topConnector, cornerOffset, 0.dp),
                     ConnectionView(castedBlock.bottomConnector, cornerOffset, height),
-                    ConnectionView(castedBlock.innerConnector, cornerOffset, defaultHeight, ExtendConnectionViewType.INNER_BOTTOM),
+                    ConnectionView(castedBlock.innerConnector, cornerOffset*2, defaultHeight, ExtendConnectionViewType.INNER_BOTTOM),
                 )
             }
             BlockType.IF_ELSE_BLOCK -> {
@@ -545,7 +547,7 @@ object ConnectorManager {
                 ans += mutableListOf(
                     ConnectionView(castedBlock.topConnector, cornerOffset, 0.dp),
                     ConnectionView(castedBlock.bottomConnector, cornerOffset, height),
-                    ConnectionView(castedBlock.innerConnector, cornerOffset, defaultHeight, ExtendConnectionViewType.INNER_BOTTOM),
+                    ConnectionView(castedBlock.innerConnector, cornerOffset*2, defaultHeight, ExtendConnectionViewType.INNER_BOTTOM),
                     ConnectionView(castedBlock.conditionConnector, width, defaultHeight/2, ExtendConnectionViewType.SIDE, height = defaultHeight)
                 )
             }
@@ -555,8 +557,8 @@ object ConnectorManager {
                 ans += mutableListOf(
                     ConnectionView(castedBlock.topConnector, cornerOffset, 0.dp),
                     ConnectionView(castedBlock.bottomConnector, cornerOffset, height),
-                    ConnectionView(castedBlock.innerConnector, cornerOffset, defaultHeight, ExtendConnectionViewType.INNER_BOTTOM),
-                    ConnectionView(castedBlock.countRepeatTimesConnector, width, defaultHeight/2, ExtendConnectionViewType.SIDE),
+                    ConnectionView(castedBlock.innerConnector, cornerOffset*2, defaultHeight, ExtendConnectionViewType.INNER_BOTTOM),
+                    ConnectionView(castedBlock.countRepeatTimesConnector, width, defaultHeight/2, ExtendConnectionViewType.SIDE, height = defaultHeight),
                 )
             }
             BlockType.WHILE_BLOCK -> {
@@ -565,8 +567,8 @@ object ConnectorManager {
                 ans += mutableListOf(
                     ConnectionView(castedBlock.topConnector, cornerOffset, 0.dp),
                     ConnectionView(castedBlock.bottomConnector, cornerOffset, height),
-                    ConnectionView(castedBlock.innerConnector, cornerOffset, 60.dp, ExtendConnectionViewType.INNER_BOTTOM),
-                    ConnectionView(castedBlock.conditionConnector, width, 30.dp, ExtendConnectionViewType.SIDE)
+                    ConnectionView(castedBlock.innerConnector, cornerOffset*2, defaultHeight, ExtendConnectionViewType.INNER_BOTTOM),
+                    ConnectionView(castedBlock.conditionConnector, width, defaultHeight/2, ExtendConnectionViewType.SIDE, height = defaultHeight-innerPadding*2)
                 )
             }
             BlockType.FOR_ELEMENT_IN_LIST -> {
@@ -575,7 +577,7 @@ object ConnectorManager {
                 ans += mutableListOf(
                     ConnectionView(castedBlock.topConnector, cornerOffset, 0.dp),
                     ConnectionView(castedBlock.bottomConnector, cornerOffset, height),
-                    ConnectionView(castedBlock.innerConnector, cornerOffset, defaultHeight, ExtendConnectionViewType.INNER_BOTTOM),
+                    ConnectionView(castedBlock.innerConnector, cornerOffset*2, defaultHeight, ExtendConnectionViewType.INNER_BOTTOM),
                     ConnectionView(castedBlock.listConnector, width*3/4, defaultHeight, ExtendConnectionViewType.INNER),
                 )
             }
@@ -584,8 +586,8 @@ object ConnectorManager {
 
                 ans += mutableListOf(
                     ConnectionView(castedBlock.outputConnector, 0.dp, height/2),
-                    ConnectionView(castedBlock.valueInput, width * 1/3, height/2, ExtendConnectionViewType.INNER, height = defaultHeight, width = defaultWidth),
-                    ConnectionView(castedBlock.repeatTimes, width * 2/3, height/2, ExtendConnectionViewType.INNER, height = defaultHeight, width = defaultWidth),
+                    ConnectionView(castedBlock.valueInput, width * 1/3, height/2, ExtendConnectionViewType.INNER, height = defaultHeight-innerPadding*2, width = defaultWidth),
+                    ConnectionView(castedBlock.repeatTimes, width * 2/3-innerPadding, height/2, ExtendConnectionViewType.INNER, height = defaultHeight-innerPadding*2, width = defaultWidth),
                 )
             }
             BlockType.GET_VALUE_BY_INDEX -> {
@@ -593,8 +595,8 @@ object ConnectorManager {
 
                 ans += mutableListOf(
                     ConnectionView(castedBlock.outputConnector, 0.dp, height/2),
-                    ConnectionView(castedBlock.listConnector, width/4, height/2, ExtendConnectionViewType.INNER),
-                    ConnectionView(castedBlock.idConnector, width*3/4, height/2, ExtendConnectionViewType.INNER)
+                    ConnectionView(castedBlock.listConnector, width/4 + innerPadding, height/2, ExtendConnectionViewType.INNER, height= defaultHeight-innerPadding*2, width = defaultWidth),
+                    ConnectionView(castedBlock.idConnector, width*3/4, height/2, ExtendConnectionViewType.INNER, height= defaultHeight-innerPadding*2, width = defaultWidth/2)
                 )
             }
             BlockType.REMOVE_VALUE_BY_INDEX -> {
@@ -603,8 +605,8 @@ object ConnectorManager {
                 ans += mutableListOf(
                     ConnectionView(castedBlock.topConnector, cornerOffset, 0.dp),
                     ConnectionView(castedBlock.bottomConnector, cornerOffset, height),
-                    ConnectionView(castedBlock.listConnector, width/4, height/2, ExtendConnectionViewType.INNER, height = defaultHeight),
-                    ConnectionView(castedBlock.idConnector, width*3/4, height/2, ExtendConnectionViewType.INNER, height = defaultHeight)
+                    ConnectionView(castedBlock.listConnector, width/4, height/2, ExtendConnectionViewType.INNER, height = defaultHeight-innerPadding*2, width = defaultWidth),
+                    ConnectionView(castedBlock.idConnector, width*3/4, height/2, ExtendConnectionViewType.INNER, height = defaultHeight-innerPadding*2, width = defaultWidth)
                 )
             }
             BlockType.ADD_VALUE_BY_INDEX -> {
@@ -613,9 +615,9 @@ object ConnectorManager {
                 ans += mutableListOf(
                     ConnectionView(castedBlock.topConnector, cornerOffset, 0.dp),
                     ConnectionView(castedBlock.bottomConnector, cornerOffset, height),
-                    ConnectionView(castedBlock.listConnector, width/4, height/2, ExtendConnectionViewType.INNER),
-                    ConnectionView(castedBlock.idConnector, width*3/4, height/2, ExtendConnectionViewType.INNER),
-                    ConnectionView(castedBlock.valueConnector, width, height/2, ExtendConnectionViewType.INNER)
+                    ConnectionView(castedBlock.listConnector, width/4 - innerPadding, height/2, ExtendConnectionViewType.INNER, height = defaultHeight-innerPadding*2, width = defaultWidth),
+                    ConnectionView(castedBlock.idConnector, width*3/5 - innerPadding, height/2, ExtendConnectionViewType.INNER, height = defaultHeight-innerPadding*2, width = defaultWidth),
+                    ConnectionView(castedBlock.valueConnector, width, height/2, ExtendConnectionViewType.SIDE, height = defaultHeight)
                 )
             }
             BlockType.GET_LIST_SIZE -> {
@@ -623,11 +625,30 @@ object ConnectorManager {
 
                 ans += mutableListOf(
                     ConnectionView(castedBlock.outputConnector, 0.dp, height/2),
-                    ConnectionView(castedBlock.listConnector, width/2, height/2),
+                    ConnectionView(castedBlock.listConnector, width, height/2, ExtendConnectionViewType.SIDE, height = defaultHeight),
                 )
             }
-            BlockType.EDIT_VALUE_BY_INDEX -> TODO()
-            BlockType.PUSH_BACK_ELEMENT -> TODO()
+            BlockType.EDIT_VALUE_BY_INDEX -> {
+                val castedBlock = (block as EditValueByIndex)
+
+                ans += mutableListOf(
+                    ConnectionView(castedBlock.listConnector, width/5, height/2, extendType = ExtendConnectionViewType.INNER, height = defaultHeight - innerPadding*2, width = defaultWidth),
+                    ConnectionView(castedBlock.idConnector, width/2+innerPadding, height/2, extendType = ExtendConnectionViewType.INNER, height = defaultHeight - innerPadding*2, width = defaultWidth),
+                    ConnectionView(castedBlock.topConnector, cornerOffset, 0.dp),
+                    ConnectionView(castedBlock.bottomConnector, cornerOffset, height),
+                    ConnectionView(castedBlock.valueConnector, width, height/2, extendType = ExtendConnectionViewType.SIDE, height = defaultHeight)
+                )
+            }
+            BlockType.PUSH_BACK_ELEMENT -> {
+                val castedBlock = (block as PushBackElement)
+
+                ans += mutableListOf(
+                    ConnectionView(castedBlock.listConnector, width/3-innerPadding*2, height/2, extendType = ExtendConnectionViewType.INNER, height = defaultHeight - innerPadding*2, width = defaultWidth),
+                    ConnectionView(castedBlock.topConnector, cornerOffset, 0.dp),
+                    ConnectionView(castedBlock.bottomConnector, cornerOffset, height),
+                    ConnectionView(castedBlock.valueConnector, width, height/2, extendType = ExtendConnectionViewType.SIDE, height = defaultHeight)
+                )
+            }
         }
         return ans
     }
