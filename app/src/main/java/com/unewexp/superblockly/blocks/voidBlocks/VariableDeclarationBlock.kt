@@ -4,6 +4,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.example.myfirstapplicatioin.model.Connector
+import com.unewexp.superblockly.debug.BlockIllegalStateException
+import com.unewexp.superblockly.debug.ErrorHandler
 import com.unewexp.superblockly.debug.ExecutionContext
 import com.unewexp.superblockly.enums.BlockType
 import com.unewexp.superblockly.enums.ConnectorType
@@ -37,28 +39,51 @@ class VariableDeclarationBlock(var initialName: String = "Undefined") : VoidBloc
     override suspend fun execute() {
 
         checkDebugPause()
-
         validateName()
         val value = valueInputConnector.connectedTo?.evaluate()
-            ?: throw IllegalStateException("Не указано значение для переменной '$name'")
+            ?: throw BlockIllegalStateException(this, "В VariableDeclarationBlock не указано значение для переменной '$name'")
 
         checkTypeConsistency(value)
         ExecutionContext.declareVariable(name, value)
         variableType = value.javaClass
+
     }
 
 
 
     private fun validateName() {
-        if (name.isBlank()) throw IllegalStateException("Имя переменной не может быть пустым")
-        if (ExecutionContext.hasVariable(name) || name == "Undefined") {
-            throw IllegalStateException("Имя переменной существует или Undefined")
+        when {
+            name.isBlank() ->
+                throw BlockIllegalStateException(
+                    this,
+                    "Имя переменной не может быть пустым. " +
+                            "Укажите осмысленное имя (например, 'score', 'playerName')."
+                )
+
+            name == "Undefined" ->
+                throw BlockIllegalStateException(
+                    this,
+                    "Имя 'Undefined' зарезервировано системой. " +
+                            "Выберите другое имя для переменной."
+                )
+
+            ExecutionContext.hasVariable(name) ->
+                throw BlockIllegalStateException(
+                    this,
+                    "Переменная '$name' уже существует. " +
+                            "Используйте уникальное имя или измените значение существующей переменной."
+                )
         }
     }
 
     private fun checkTypeConsistency(value: Any) {
         if (variableType != null && variableType != value.javaClass) {
-            throw IllegalStateException("Нельзя изменить тип переменной '$name'")
+            throw BlockIllegalStateException(
+                this,
+                "Несоответствие типов для переменной '$name'. " +
+                        "Ожидается тип: ${variableType?.simpleName}, получен: ${value.javaClass.simpleName}. " +
+                        "Переменная не может менять тип после первого присвоения."
+            )
         }
     }
 

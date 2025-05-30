@@ -93,8 +93,7 @@ fun Canvas(
     onHomeClick: @Composable () -> Unit,
     updateOffset: (newOffset: Offset) -> Unit,
     viewModel: DraggableViewModel = viewModel()
-){
-
+) {
     val density = LocalDensity.current
     val zoomFactor = 0.7f
     val globalOffset = remember { mutableStateOf(Offset.Zero) }
@@ -104,7 +103,8 @@ fun Canvas(
     val iconImageSize = 30.dp
     val cornersButton = 5.dp
 
-    val isActive = ExecutionContext.programProgress == RunProgram.RUN || ExecutionContext.programProgress == RunProgram.DEBUG
+    val isActive =
+        ExecutionContext.programProgress == RunProgram.RUN || ExecutionContext.programProgress == RunProgram.DEBUG
     val backgroundColorIfActive = if (isActive) ActiveRunProgram else Color.Transparent
 
     fun startExecution() {
@@ -124,9 +124,10 @@ fun Canvas(
     val core = DraggableBlock(
         StartBlock(),
         mutableStateOf(100f),
-        mutableStateOf(100f))
+        mutableStateOf(100f)
+    )
 
-    if(blocks.isEmpty()){
+    if (blocks.isEmpty()) {
         viewModel.handleAction(
             DraggableViewModel.BlocklyAction.AddBlock(core)
         )
@@ -152,27 +153,33 @@ fun Canvas(
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically
-                ){
-                    Row(){
+                ) {
+                    Row() {
 
-                        if (ExecutionContext.programProgress != RunProgram.DEBUG){
-                            Box(contentAlignment = Alignment.Center){
+                        if (ExecutionContext.programProgress != RunProgram.DEBUG) {
+                            Box(contentAlignment = Alignment.Center) {
                                 IconButton(
                                     onClick = {
                                         ExecutionContext.programProgress = RunProgram.RUN
                                         startExecution()
                                     },
                                     enabled = (
-                                            if (ExecutionContext.programProgress == RunProgram.RUN){
+                                            if (ExecutionContext.programProgress == RunProgram.RUN) {
                                                 false
                                             } else {
                                                 true
                                             }
                                             ),
                                     modifier = Modifier.size(iconButtonSize)
-                                        .background(backgroundColorIfActive, RoundedCornerShape(cornersButton)),
+                                        .background(
+                                            backgroundColorIfActive,
+                                            RoundedCornerShape(cornersButton)
+                                        ),
                                     content = {
-                                        Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()){
+                                        Box(
+                                            contentAlignment = Alignment.Center,
+                                            modifier = Modifier.fillMaxSize()
+                                        ) {
                                             Image(
                                                 painter = painterResource(id = R.drawable.start_program_button_green),
                                                 contentDescription = "Запуск программы",
@@ -188,7 +195,7 @@ fun Canvas(
 
                         Box(
                             contentAlignment = Alignment.Center
-                        ){
+                        ) {
                             IconButton(
                                 onClick = {
                                     ExecutionContext.programProgress = RunProgram.DEBUG
@@ -197,15 +204,18 @@ fun Canvas(
                                 modifier = Modifier.size(iconButtonSize)
                                     .background(backgroundColorIfActive, RoundedCornerShape(5.dp)),
                                 enabled = (
-                                        if (ExecutionContext.programProgress == RunProgram.NONE){
+                                        if (ExecutionContext.programProgress == RunProgram.NONE) {
                                             true
                                         } else {
                                             false
                                         }
                                         ),
                                 content = {
-                                    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()){
-                                        if (ExecutionContext.programProgress == RunProgram.DEBUG){
+                                    Box(
+                                        contentAlignment = Alignment.Center,
+                                        modifier = Modifier.fillMaxSize()
+                                    ) {
+                                        if (ExecutionContext.programProgress == RunProgram.DEBUG) {
                                             Image(
                                                 painter = painterResource(id = R.drawable.debug_icon_white),
                                                 contentDescription = "Отладка",
@@ -223,11 +233,11 @@ fun Canvas(
                             )
                         }
 
-                        if (ExecutionContext.programProgress != RunProgram.NONE){
+                        if (ExecutionContext.programProgress != RunProgram.NONE) {
                             Spacer(modifier = Modifier.size(16.dp))
                             Box(
 
-                            ){
+                            ) {
                                 IconButton(
                                     onClick = {
                                         stopExecution()
@@ -247,11 +257,11 @@ fun Canvas(
 
                     }
                     Spacer(modifier = Modifier.size(16.dp))
-                    Row{
+                    Row {
                         Box(
                             Modifier
 
-                        ){
+                        ) {
                             IconButton(
                                 onClick = { panelIsVisible = !panelIsVisible },
                                 modifier = Modifier.size(iconButtonSize)
@@ -264,9 +274,9 @@ fun Canvas(
                             }
                         }
 
-                        if (ExecutionContext.programProgress == RunProgram.DEBUG){
+                        if (ExecutionContext.programProgress == RunProgram.DEBUG) {
                             Spacer(modifier = Modifier.size(16.dp))
-                            Box(){
+                            Box() {
                                 IconButton(
                                     onClick = {
                                         DebugController.continueExecution()
@@ -294,9 +304,10 @@ fun Canvas(
                 onHomeClick()
             }
         }
-        Box(modifier = Modifier.fillMaxWidth()){
+
+        Box(modifier = Modifier.fillMaxWidth()) {
             val scale = remember { mutableFloatStateOf(1f) }
-            val currentScale = remember{ mutableStateOf(1f) }
+            val currentScale = remember { mutableStateOf(1f) }
 
             Box(
                 modifier = Modifier
@@ -341,9 +352,11 @@ fun Canvas(
                         },
                         it,
                         onPositionChanged = { offsetX, offsetY ->
-                            viewModel.handleAction(DraggableViewModel.BlocklyAction.MoveBlock(
-                                it, offsetX, offsetY
-                            ))
+                            viewModel.handleAction(
+                                DraggableViewModel.BlocklyAction.MoveBlock(
+                                    it, offsetX, offsetY
+                                )
+                            )
                         },
                         onDoubleTap = {
                             viewModel.handleAction(DraggableViewModel.BlocklyAction.RemoveBlock(it))
@@ -354,7 +367,7 @@ fun Canvas(
                             it.scope.forEach { block ->
                                 queue.add(block)
                             }
-                            while(!queue.isEmpty()){
+                            while (!queue.isEmpty()) {
                                 val item = queue.first()
                                 queue.removeAt(0)
                                 item.scope.forEach { element ->
@@ -365,17 +378,18 @@ fun Canvas(
                             }
                         },
                         onDragEnd = {
-                            if (it.block !is StartBlock){
+                            if (it.block !is StartBlock) {
                                 ConnectorManager.tryConnectAndDisconnectDrag(it, viewModel, density)
-                                it.connectedParent?.let{ parent ->
+                                it.connectedParent?.let { parent ->
                                     val queue: MutableList<DraggableBlock> = mutableListOf(parent)
-                                    while(!queue.isEmpty()){
+                                    while (!queue.isEmpty()) {
                                         val item = queue.first()
                                         queue.removeAt(0)
                                         item.scope.forEach { element ->
                                             queue.add(element)
                                             element.zIndex.value = item.zIndex.value + 0.1f
-                                            viewModel.maxZIndex = max(element.zIndex.value, viewModel.maxZIndex)
+                                            viewModel.maxZIndex =
+                                                max(element.zIndex.value, viewModel.maxZIndex)
                                         }
                                     }
                                 }
@@ -388,8 +402,8 @@ fun Canvas(
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.BottomEnd
-            ){
-                if(panelIsVisible){
+            ) {
+                if (panelIsVisible) {
                     ConsolePanel()
                 }
             }

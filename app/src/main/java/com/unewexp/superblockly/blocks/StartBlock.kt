@@ -3,6 +3,7 @@ package com.unewexp.superblockly.blocks
 import android.os.Debug
 import com.example.myfirstapplicatioin.blocks.Block
 import com.unewexp.superblockly.blocks.voidBlocks.VoidBlock
+import com.unewexp.superblockly.debug.BlockIllegalStateException
 import com.unewexp.superblockly.debug.DebugController
 import com.unewexp.superblockly.debug.ErrorHandler
 import com.unewexp.superblockly.debug.ExecutionContext
@@ -26,7 +27,11 @@ class StartBlock : VoidBlock(UUID.randomUUID(), BlockType.START) {
                 while (current != null) {
                     try {
                         current.execute()
-                    } catch (e: Exception) {
+                    } catch (e: BlockIllegalStateException){
+                        ErrorHandler.setBlockError(e.block, "${e.message}")
+                        return
+                    }
+                    catch (e: Exception) {
                         ErrorHandler.setBlockError(current, e.message ?: "Неизвестная ошибка")
                         break
                     }

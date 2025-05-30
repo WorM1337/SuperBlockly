@@ -5,6 +5,10 @@ import com.example.myfirstapplicatioin.blocks.Block
 import com.unewexp.superblockly.debug.Logger.LogType
 import java.util.UUID
 
+class BlockIllegalStateException(
+    val block: Block,
+    message: String,
+) : IllegalStateException(message)
 
 object ErrorHandler {
     private val blockErrors = mutableStateMapOf<Block, String>()
