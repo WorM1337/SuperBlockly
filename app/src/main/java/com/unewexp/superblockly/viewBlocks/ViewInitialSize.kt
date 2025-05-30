@@ -13,7 +13,7 @@ object ViewInitialSize {
     val cornerOffset: Dp = 15.dp
     val defaultHeight = 60.dp
     val defaultWidth = 60.dp
-    val defaultInnerPadding = 5.dp
+    val defaultInnerPadding = 8.dp
 
     fun getInitialSizeByBlockType(blockType: BlockType) : PairDp?{
         return when(blockType){

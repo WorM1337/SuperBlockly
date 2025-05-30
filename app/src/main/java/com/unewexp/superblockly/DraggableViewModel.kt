@@ -43,6 +43,7 @@ class DraggableViewModel: ViewModel() {
     }
 
     private fun addBlock(dragBlock: DraggableBlock) {
+        dragBlock.zIndex.value = maxZIndex
         _blocks.update {
             (_blocks.value + dragBlock)
         }

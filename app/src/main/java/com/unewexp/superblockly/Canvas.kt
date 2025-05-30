@@ -49,6 +49,7 @@ import com.unewexp.superblockly.viewBlocks.DeclarationVariableView
 import com.unewexp.superblockly.viewBlocks.DraggableBase
 import com.unewexp.superblockly.DraggableBlock
 import com.unewexp.superblockly.blocks.arithmetic.OperandBlock
+import com.unewexp.superblockly.blocks.logic.CompareNumbers
 import com.unewexp.superblockly.enums.symbol
 import com.unewexp.superblockly.viewBlocks.AddElementByIndexView
 import com.unewexp.superblockly.viewBlocks.CompareNumbersBlockView
@@ -295,7 +296,11 @@ fun TakeViewBlock (block: DraggableBlock, viewModel: DraggableViewModel = viewMo
         BlockType.STRING_APPEND -> TODO()
         BlockType.PRINT_BLOCK -> PrintBlockView()
         BlockType.SHORTHAND_ARITHMETIC_BLOCK -> TODO()
-        BlockType.COMPARE_NUMBERS_BLOCK -> CompareNumbersBlockView()
+        BlockType.COMPARE_NUMBERS_BLOCK -> CompareNumbersBlockView(
+            { type ->
+                (block.block as CompareNumbers).compareType = type
+            }
+        )
         BlockType.BOOLEAN_LOGIC_BLOCK -> TODO()
         BlockType.NOT_BLOCK -> TODO()
         BlockType.IF_BLOCK -> IfBlockView()
