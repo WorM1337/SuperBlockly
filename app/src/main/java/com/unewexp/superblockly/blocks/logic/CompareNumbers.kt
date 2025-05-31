@@ -5,22 +5,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.example.myfirstapplicatioin.blocks.Block
 import com.example.myfirstapplicatioin.model.Connector
+import com.unewexp.superblockly.debug.BlockIllegalStateException
 import com.unewexp.superblockly.enums.BlockType
 import com.unewexp.superblockly.enums.CompareType
 import com.unewexp.superblockly.enums.ConnectorType
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
 import java.util.UUID
-
-@Serializable
-data class SerializedDataCompareBlock(
-    val blockId: String,
-    val compareType: CompareType,
-    val connectedLeftBlockId: String?,
-    val connectedRightBlockId: String?,
-)
 
 class CompareNumbers(
     id: UUID = UUID.randomUUID()
@@ -45,11 +34,13 @@ class CompareNumbers(
 
     var compareType by mutableStateOf(CompareType.EQUAL)
 
-    override fun evaluate(): Boolean {
+    override suspend fun evaluate(): Boolean {
+        checkDebugPause()
+
         val leftValue = leftInputConnector.connectedTo?.evaluate() as? Int
-            ?: throw IllegalStateException("Левое выражение отсутствует или не Int")
+            ?: throw BlockIllegalStateException(this, "Левое выражение отсутствует или не Int")
         val rightValue = rightInputConnector.connectedTo?.evaluate() as? Int
-            ?: throw IllegalStateException("Правое выражение отсутствует или не Int")
+            ?: throw BlockIllegalStateException(this, "Правое выражение отсутствует или не Int")
 
         return compareElements(leftValue, rightValue)
     }
@@ -65,38 +56,4 @@ class CompareNumbers(
         }
     }
 
-    companion object {
-
-        // Сериализация объекта в ByteArray
-        fun CompareNumbers.toByteArray(): ByteArray {
-            val data = SerializedDataCompareBlock(
-                blockId = this.id.toString(),
-                compareType = this.compareType,
-                connectedLeftBlockId = this.leftInputConnector.connectedTo?.id?.toString(),
-                connectedRightBlockId = this.rightInputConnector.connectedTo?.id?.toString()
-            )
-            return Json.encodeToString(data).toByteArray()
-        }
-
-        // Десериализация из ByteArray и восстановление блока и связей
-        fun ByteArray.toCompareNumbers(): Pair<CompareNumbers, List<Pair<Connector, String>>> {
-            val jsonString = String(this)
-            val data = Json.decodeFromString<SerializedDataCompareBlock>(jsonString)
-
-            val block = CompareNumbers(UUID.fromString(data.blockId))
-            block.compareType = data.compareType
-
-            val connections = mutableListOf<Pair<Connector, String>>()
-
-            data.connectedLeftBlockId?.let {
-                connections.add(block.leftInputConnector to it)
-            }
-
-            data.connectedRightBlockId?.let {
-                connections.add(block.rightInputConnector to it)
-            }
-
-            return block to connections
-        }
-    }
 }

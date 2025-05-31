@@ -5,10 +5,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.example.myfirstapplicatioin.blocks.Block
 import com.example.myfirstapplicatioin.model.Connector
+import com.unewexp.superblockly.debug.BlockIllegalStateException
 import com.unewexp.superblockly.enums.BlockType
 import com.unewexp.superblockly.enums.BooleanLogicType
 import com.unewexp.superblockly.enums.ConnectorType
-import java.lang.IllegalStateException
 import java.util.UUID
 
 class BooleanLogicBlock : Block(UUID.randomUUID(), BlockType.BOOLEAN_LOGIC_BLOCK){
@@ -33,12 +33,14 @@ class BooleanLogicBlock : Block(UUID.randomUUID(), BlockType.BOOLEAN_LOGIC_BLOCK
 
     var logicOperand by mutableStateOf(BooleanLogicType.AND)
 
-    override fun evaluate(): Boolean {
+    override suspend fun evaluate(): Boolean {
+        checkDebugPause()
+
         val leftValue = leftInputConnector.connectedTo?.evaluate() as? Boolean
-            ?: throw IllegalStateException("Левое соединение отсутствует или не Boolean")
+            ?: throw BlockIllegalStateException(this, "Левое соединение отсутствует или не Boolean")
 
         val rightValue = rightInputConnector.connectedTo?.evaluate() as? Boolean
-            ?: throw IllegalStateException("Правое соединение отсутствует или не Boolean")
+            ?: throw BlockIllegalStateException(this, "Правое соединение отсутствует или не Boolean")
 
         return compareElements(leftValue, rightValue)
     }

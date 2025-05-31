@@ -17,5 +17,8 @@ class BooleanLiteralBlock(var initialValue: Boolean = false) : Block(UUID.random
 
     var value by mutableStateOf(initialValue)
 
-    override fun evaluate(): Boolean = value
+    override suspend fun evaluate(): Boolean{
+        checkDebugPause()
+        return value
+    }
 }

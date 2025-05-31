@@ -2,9 +2,8 @@ package com.unewexp.superblockly.blocks.loops
 
 import com.example.myfirstapplicatioin.blocks.Block
 import com.example.myfirstapplicatioin.model.Connector
-import com.unewexp.superblockly.debug.ErrorHandler
-import com.unewexp.superblockly.debug.ExecutionContext
 import com.unewexp.superblockly.blocks.voidBlocks.VoidBlock
+import com.unewexp.superblockly.debug.ExecutionContext
 import com.unewexp.superblockly.enums.BlockType
 import com.unewexp.superblockly.enums.ConnectorType
 import java.util.UUID
@@ -31,18 +30,16 @@ open class LoopBlock(
             BlockType.FOR_ELEMENT_IN_LIST,
             BlockType.ADD_VALUE_BY_INDEX,
             BlockType.REMOVE_VALUE_BY_INDEX,
+            BlockType.PUSH_BACK_ELEMENT,
+            BlockType.EDIT_VALUE_BY_INDEX,
         )
     )
 
-    fun executeInnerBlocks(firstBlock: Block){
+    suspend fun executeInnerBlocks(firstBlock: Block){
             try {
                 var current: Block? = firstBlock
                 while (current != null){
-                    try{
-                        current.execute()
-                    } catch (ex: Exception){
-                        ErrorHandler.setBlockError(current.id, ex.message ?: "Неизвестная ошибка")
-                    }
+                    current.execute()
                     current = ExecutionContext.getNextBlockInScope()
                 }
             } finally{

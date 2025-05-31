@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.example.myfirstapplicatioin.model.Connector
+import com.unewexp.superblockly.debug.BlockIllegalStateException
 import com.unewexp.superblockly.debug.ExecutionContext
 import com.unewexp.superblockly.enums.BlockType
 import com.unewexp.superblockly.enums.ConnectorType
@@ -36,12 +37,14 @@ class StringAppendBlock : VoidBlock(UUID.randomUUID(), BlockType.STRING_APPEND) 
         )
     )
 
-    override fun execute() {
+    override suspend fun execute() {
+        checkDebugPause()
+
         if (!ExecutionContext.hasVariable(variableName)) {
-            throw IllegalStateException("Переменная $variableName не существует или неверное название")
+            throw BlockIllegalStateException(this, "Переменная $variableName не существует или неверное название")
         }
         var currentValue = ExecutionContext.getVariable(variableName) as? String
-            ?: throw IllegalStateException("Переменная $variableName не является строкой")
+            ?: throw BlockIllegalStateException(this, "Переменная $variableName не является строкой")
 
         var stringToAppend = inputConnector.connectedTo?.evaluate()
 

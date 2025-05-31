@@ -31,6 +31,8 @@ open class VoidBlock(
             BlockType.FOR_ELEMENT_IN_LIST,
             BlockType.ADD_VALUE_BY_INDEX,
             BlockType.REMOVE_VALUE_BY_INDEX,
+            BlockType.PUSH_BACK_ELEMENT,
+            BlockType.EDIT_VALUE_BY_INDEX
         )
     )
 
@@ -52,13 +54,13 @@ open class VoidBlock(
             BlockType.FOR_ELEMENT_IN_LIST,
             BlockType.ADD_VALUE_BY_INDEX,
             BlockType.REMOVE_VALUE_BY_INDEX,
+            BlockType.PUSH_BACK_ELEMENT,
+            BlockType.EDIT_VALUE_BY_INDEX
         )
     )
 
     fun getNextBlock(): Block?{
         return bottomConnector.connectedTo
     }
-
-
 
 }

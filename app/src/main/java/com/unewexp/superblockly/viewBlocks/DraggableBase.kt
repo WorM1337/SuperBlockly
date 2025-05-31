@@ -9,11 +9,13 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
@@ -22,6 +24,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.unewexp.superblockly.DraggableBlock
 import com.unewexp.superblockly.getColorByBlockType
+import com.unewexp.superblockly.ui.theme.debugCurrent
+import com.unewexp.superblockly.ui.theme.errorStroke
 import kotlin.math.roundToInt
 
 
@@ -47,15 +51,18 @@ fun DraggableBase(
 
     val border = if (draggableBlock.block.hasException) {
         Log.i(currentBlock.block.blockType.toString(), "ошибка на блоке")
-        BorderStroke(3.dp, Color.Red)
+        BorderStroke(3.dp, errorStroke)
+    } else if (draggableBlock.block.isDebug){
+        BorderStroke(3.dp, debugCurrent)
     } else {
-        BorderStroke(0.dp, Color.Red.copy(alpha = 0f))
+        BorderStroke(0.dp, errorStroke.copy(alpha = 0f))
     }
 
     Box(
         modifier = Modifier
             .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
-            .size(currentBlock.width.value, currentBlock.height.value)
+            .wrapContentSize(unbounded = true, align = Alignment.TopCenter)
+            .requiredSize(currentBlock.width.value, currentBlock.height.value)
             .background(color, shape = MaterialTheme.shapes.small)
             .border(border, MaterialTheme.shapes.small)
             .pointerInput(Unit) {

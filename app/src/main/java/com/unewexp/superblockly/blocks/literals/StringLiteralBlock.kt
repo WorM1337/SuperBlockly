@@ -18,5 +18,8 @@ class StringLiteralBlock(var initialValue: String = "Empty String") : Block(UUID
         sourceBlock = this
     )
 
-    override fun evaluate(): String = value
+    override suspend fun evaluate(): String {
+        checkDebugPause()
+        return value
+    }
 }

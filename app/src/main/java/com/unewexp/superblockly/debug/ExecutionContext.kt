@@ -1,25 +1,44 @@
 package com.unewexp.superblockly.debug
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.snapshots.SnapshotStateMap
 import com.example.myfirstapplicatioin.blocks.Block
 import com.unewexp.superblockly.blocks.voidBlocks.VoidBlock
-import java.lang.IllegalStateException
+import kotlinx.coroutines.Job
+
+enum class RunProgram{
+    RUN,
+    DEBUG,
+    NONE
+}
 
 object ExecutionContext {
-    private val scopes = mutableListOf(mutableMapOf<String, Any?>())
-    private val variableTypes = mutableMapOf<String, Class<*>>() // Class<*> означает что туда будет поступать класс неопределенного типа
+    private val _scopes = mutableStateListOf<SnapshotStateMap<String, Any?>>(
+        mutableStateMapOf()
+    )
+    private val variableTypes = mutableMapOf<String, Class<*>>()
     private val scopesBlocks = mutableListOf<Block>()
 
+    internal var executionJob: Job? = null
 
+    var programProgress by mutableStateOf(RunProgram.NONE)
+
+    val scopes: SnapshotStateList<SnapshotStateMap<String, Any?>> get() = _scopes
 
 
     fun enterNewScope(startBlock: Block) {
-        scopes.add(mutableMapOf())
+        _scopes.add(mutableStateMapOf())
         scopesBlocks.add(startBlock)
     }
 
     fun exitCurrentScope() {
         if (scopes.size > 1){
-            scopes.removeAt(scopes.lastIndex)
+            _scopes.removeAt(scopes.lastIndex)
         }
         scopesBlocks.removeLastOrNull()
     }
@@ -29,7 +48,7 @@ object ExecutionContext {
             "Переменная $name уже объявлена в текущей области"
         }
 
-        scopes.last()[name] = value
+        _scopes.last()[name] = value
         if (value != null){
             variableTypes[name] = value.javaClass
         }
@@ -50,11 +69,11 @@ object ExecutionContext {
     }
 
     private fun findVariableScope(name: String): MutableMap<String, Any?>? {
-        return scopes.asReversed().firstOrNull { it.containsKey(name) }
+        return _scopes.asReversed().firstOrNull { it.containsKey(name) }
     }
 
     private fun isVariableDeclaredInCurrentScope(name: String): Boolean {
-        return scopes.last().containsKey(name)
+        return _scopes.last().containsKey(name)
     }
 
 
@@ -86,12 +105,12 @@ object ExecutionContext {
     }
 
 
-    fun getVariableNames(): Set<String> = scopes.flatMap{it.keys}.toSet() // flatMap проходит по каждой области
+    fun getVariableNames(): Set<String> = scopes.flatMap { it.keys }.toSet()
 
     fun getVariableType(name: String): Class<*>? = variableTypes[name]
 
     fun clearVariables(){
-        scopes.clear()
+        _scopes.clear()
     }
 
 

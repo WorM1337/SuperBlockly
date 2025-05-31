@@ -36,8 +36,6 @@ object SizeManager {
 
         val connectionView = child.connectedParentConnectionView!!.copy()
 
-
-
         if(parent.isInner && connectionView.extendType == ExtendConnectionViewType.NONE){
 
             var currentBlock = parent
@@ -51,14 +49,12 @@ object SizeManager {
                     connection.positionY += deltaHeight * plusOrMinus
                 }
             }
-            val oldHeight = currentBlock.height.value
 
             currentBlock.height.value += deltaHeight * plusOrMinus
 
-            val diffrenceHeight = if(currentBlock.height.value - oldHeight < 0.dp) oldHeight - currentBlock.height.value else currentBlock.height.value - oldHeight
-
-            changeParentParams(currentBlock,viewModel, deltaHeight = diffrenceHeight, isPositive = isPositive)
-            ConnectorManager.normalizeConnectorsPositions(parent,viewModel, besides = child)
+            changeParentParams(currentBlock,viewModel, deltaHeight = deltaHeight, isPositive = isPositive)
+            if(!isPositive)ConnectorManager.normalizeConnectorsPositions(currentBlock,viewModel, besides = child)
+            else ConnectorManager.normalizeConnectorsPositions(currentBlock,viewModel)
             return
         }
 
@@ -80,6 +76,9 @@ object SizeManager {
                         else if(connection.positionY == connectionView.positionY){
                             connection.positionY += delta/2 * plusOrMinus
                         }
+                    }
+                    if(parent.outputConnectionView!!.positionY == connectionView.positionY){
+                        parent.outputConnectionView!!.positionY += delta/2 * plusOrMinus
                     }
                     parent.height.value += delta * plusOrMinus
 
@@ -106,6 +105,9 @@ object SizeManager {
                         else if(connection.positionY == connectionView.positionY){
                             connection.positionY += deltaHeight/2 * plusOrMinus
                         }
+                    }
+                    if(parent.outputConnectionView!!.positionY == connectionView.positionY){
+                        parent.outputConnectionView!!.positionY += deltaHeight/2 * plusOrMinus
                     }
                     parent.height.value += deltaHeight * plusOrMinus
                     diffrenceHeight = deltaHeight
@@ -141,10 +143,11 @@ object SizeManager {
             }
             ExtendConnectionViewType.NONE -> {}
         }
-        ConnectorManager.normalizeConnectorsPositions(parent,viewModel, besides = child)
+        if(!isPositive)ConnectorManager.normalizeConnectorsPositions(parent,viewModel, besides = child)
+        else ConnectorManager.normalizeConnectorsPositions(parent,viewModel)
     }
     fun changeParentParams(child: DraggableBlock,viewModel: DraggableViewModel, deltaWidth: Dp = 0.dp, deltaHeight: Dp = 0.dp, isPositive: Boolean = true){ // Вызывается рекурсивно из верхней
-        // перегрузки для пересчета размеров родительских блоков
+
 
         val parent = child.connectedParent
 
@@ -169,7 +172,8 @@ object SizeManager {
             currentBlock.height.value += deltaHeight * plusOrMinus
             changeParentParams(currentBlock,viewModel, deltaWidth, deltaHeight, isPositive = isPositive)
 
-            ConnectorManager.normalizeConnectorsPositions(parent,viewModel)
+            if(!isPositive)ConnectorManager.normalizeConnectorsPositions(currentBlock,viewModel, besides = child)
+            else ConnectorManager.normalizeConnectorsPositions(currentBlock,viewModel)
             return
         }
 
@@ -185,6 +189,9 @@ object SizeManager {
                         else if(connection.positionY == connectionView.positionY){
                             connection.positionY += deltaHeight/2 * plusOrMinus
                         }
+                    }
+                    if(parent.outputConnectionView!!.positionY == connectionView.positionY){
+                        parent.outputConnectionView!!.positionY += deltaHeight/2 * plusOrMinus
                     }
                     parent.height.value += deltaHeight * plusOrMinus
 
@@ -203,6 +210,9 @@ object SizeManager {
                         else if(connection.positionY == connectionView.positionY){
                             connection.positionY += deltaHeight/2 * plusOrMinus
                         }
+                    }
+                    if(parent.outputConnectionView!!.positionY == connectionView.positionY){
+                        parent.outputConnectionView!!.positionY += deltaHeight/2 * plusOrMinus
                     }
                     parent.height.value += deltaHeight * plusOrMinus
                 }
@@ -228,6 +238,7 @@ object SizeManager {
             }
             ExtendConnectionViewType.NONE -> {}
         }
-        ConnectorManager.normalizeConnectorsPositions(parent,viewModel)
+        if(!isPositive)ConnectorManager.normalizeConnectorsPositions(parent,viewModel, besides = child)
+        else ConnectorManager.normalizeConnectorsPositions(parent,viewModel)
     }
 }

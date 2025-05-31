@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -30,6 +31,7 @@ import com.unewexp.superblockly.ui.theme.LoopColor
 import com.unewexp.superblockly.ui.theme.MathColor
 import com.unewexp.superblockly.ui.theme.PrintColor
 import com.unewexp.superblockly.ui.theme.StartColor
+import com.unewexp.superblockly.ui.theme.StringColor
 import com.unewexp.superblockly.ui.theme.VariablesColor
 
 sealed class Routes(val route: String) {
@@ -41,7 +43,7 @@ sealed class Routes(val route: String) {
 }
 
 
-object Modifiers{
+object Modifiers {
     val homeBtnModifier: Modifier = Modifier
         .width(250.dp)
         .padding(5.dp)
@@ -52,8 +54,8 @@ object Modifiers{
 @Composable
 fun toHomeBtn(
     navController: NavHostController,
-    onClick: () -> Unit = {}
-){
+    onClick: () -> Unit = {},
+) {
     Button(
         {
             navController.navigate(Routes.Home.route)
@@ -62,53 +64,29 @@ fun toHomeBtn(
         Modifiers.toHomeBtnMod,
         shape = RectangleShape,
     ) {
-        Text("Домой")
-    }
-}
-
-
-class DragState {
-    var isGhostVisible by mutableStateOf(false)
-    var ghostPosition by mutableStateOf(Offset.Zero)
-    var globalOffset by mutableStateOf(Offset.Zero)
-
-    fun onDragStart(dragStartPosition: Offset) {
-        ghostPosition = dragStartPosition
-        isGhostVisible = true
-    }
-
-    fun onDrag(dragAmount: Offset) {
-        ghostPosition += dragAmount
-    }
-
-    fun onDragEnd() {
-        isGhostVisible = false
-    }
-
-    fun onDragCancel() {
-        isGhostVisible = false
+        Text(stringResource(R.string.to_home))
     }
 }
 
 @Composable
 fun getColorByBlockType(type: BlockType): Color {
     var color: Color = Color(0xFFE0E0E0)
-    when(type){
+    when (type) {
         BlockType.SET_VARIABLE_VALUE -> color = VariablesColor
         BlockType.START -> color = StartColor
         BlockType.INT_LITERAL -> color = MathColor
-        BlockType.STRING_LITERAL -> TODO()
         BlockType.BOOLEAN_LITERAL -> color = BooleanColor
         BlockType.OPERAND -> color = MathColor
-        BlockType.SHORTHAND_ARITHMETIC_BLOCK -> TODO()
+        BlockType.SHORTHAND_ARITHMETIC_BLOCK -> color = MathColor
         BlockType.VARIABLE_DECLARATION -> color = VariablesColor
         BlockType.VARIABLE_REFERENCE -> color = VariablesColor
-        BlockType.STRING_CONCAT -> TODO()
-        BlockType.STRING_APPEND -> TODO()
+        BlockType.STRING_CONCAT -> color = StringColor
+        BlockType.STRING_APPEND -> color = StringColor
+        BlockType.STRING_LITERAL -> color = StringColor
         BlockType.PRINT_BLOCK -> color = PrintColor
         BlockType.COMPARE_NUMBERS_BLOCK -> color = BooleanColor
         BlockType.BOOLEAN_LOGIC_BLOCK -> color = BooleanColor
-        BlockType.NOT_BLOCK -> TODO()
+        BlockType.NOT_BLOCK -> color = BooleanColor
         BlockType.IF_BLOCK -> color = BooleanColor
         BlockType.ELSE_BLOCK -> color = BooleanColor
         BlockType.IF_ELSE_BLOCK -> color = BooleanColor
@@ -121,8 +99,8 @@ fun getColorByBlockType(type: BlockType): Color {
         BlockType.REMOVE_VALUE_BY_INDEX -> color = ListColor
         BlockType.ADD_VALUE_BY_INDEX -> color = ListColor
         BlockType.GET_LIST_SIZE -> color = ListColor
-        BlockType.EDIT_VALUE_BY_INDEX -> TODO()
-        BlockType.PUSH_BACK_ELEMENT -> TODO()
+        BlockType.EDIT_VALUE_BY_INDEX -> color = ListColor
+        BlockType.PUSH_BACK_ELEMENT -> color = ListColor
     }
     return color
 }
@@ -131,7 +109,7 @@ fun getColorByBlockType(type: BlockType): Color {
 fun Spinner(
     size: Dp,
     onClick: () -> Unit,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     Surface(
         shape = CircleShape,
