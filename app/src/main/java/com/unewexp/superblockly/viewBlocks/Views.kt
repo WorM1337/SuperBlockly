@@ -1,6 +1,5 @@
 package com.unewexp.superblockly.viewBlocks
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -71,13 +70,12 @@ import com.unewexp.superblockly.enums.BooleanLogicType
 import com.unewexp.superblockly.enums.CompareType
 import com.unewexp.superblockly.enums.OperandType
 import com.unewexp.superblockly.enums.symbol
-import com.unewexp.superblockly.ui.theme.EmptySpace
-import com.unewexp.superblockly.ui.theme.innerBlockField
-import com.unewexp.superblockly.ui.theme.textColor
-import com.unewexp.superblockly.ui.theme.textFieldColorForCard
 import com.unewexp.superblockly.ui.theme.backgoundForCard
 import com.unewexp.superblockly.ui.theme.cornerColor
+import com.unewexp.superblockly.ui.theme.innerBlockField
 import com.unewexp.superblockly.ui.theme.spinnerColor
+import com.unewexp.superblockly.ui.theme.textColor
+import com.unewexp.superblockly.ui.theme.textFieldColorForCard
 
 @Composable
 fun StartBlockView() {

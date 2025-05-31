@@ -13,9 +13,9 @@ import com.unewexp.superblockly.blocks.loops.ForBlock
 import com.unewexp.superblockly.blocks.returnBlocks.VariableReferenceBlock
 import com.unewexp.superblockly.blocks.voidBlocks.SetValueVariableBlock
 import com.unewexp.superblockly.blocks.voidBlocks.VariableDeclarationBlock
+import com.unewexp.superblockly.enums.BlockType
 import com.unewexp.superblockly.enums.ConnectorType
 import com.unewexp.superblockly.model.CalculationsManager
-import com.unewexp.superblockly.enums.BlockType
 import com.unewexp.superblockly.model.ConnectorManager
 import com.unewexp.superblockly.model.SizeManager
 import kotlinx.coroutines.flow.MutableStateFlow
