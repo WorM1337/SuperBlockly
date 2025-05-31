@@ -4,7 +4,6 @@ package com.unewexp.superblockly
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
@@ -18,7 +17,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.MaterialTheme
@@ -52,13 +50,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.myfirstapplicatioin.blocks.literals.IntLiteralBlock
-import com.unewexp.superblockly.blocks.logic.IfBlock
-import com.unewexp.superblockly.blocks.returnBlocks.VariableReferenceBlock
-import com.unewexp.superblockly.blocks.voidBlocks.PrintBlock
-import com.unewexp.superblockly.blocks.voidBlocks.SetValueVariableBlock
-import com.unewexp.superblockly.blocks.voidBlocks.VariableDeclarationBlock
-import com.unewexp.superblockly.ui.theme.DrawerColor
-import com.unewexp.superblockly.ui.theme.SuperBlocklyTheme
 import com.unewexp.superblockly.blocks.arithmetic.OperandBlock
 import com.unewexp.superblockly.blocks.list.AddElementByIndex
 import com.unewexp.superblockly.blocks.list.EditValueByIndex
@@ -73,19 +64,21 @@ import com.unewexp.superblockly.blocks.logic.BooleanLogicBlock
 import com.unewexp.superblockly.blocks.logic.CompareNumbers
 import com.unewexp.superblockly.blocks.logic.ElseBlock
 import com.unewexp.superblockly.blocks.logic.ElseIfBlock
+import com.unewexp.superblockly.blocks.logic.IfBlock
 import com.unewexp.superblockly.blocks.logic.NotBlock
 import com.unewexp.superblockly.blocks.loops.ForBlock
 import com.unewexp.superblockly.blocks.loops.ForElementInListBlock
 import com.unewexp.superblockly.blocks.loops.WhileBlock
 import com.unewexp.superblockly.blocks.returnBlocks.StringConcatenationBlock
+import com.unewexp.superblockly.blocks.returnBlocks.VariableReferenceBlock
+import com.unewexp.superblockly.blocks.voidBlocks.PrintBlock
+import com.unewexp.superblockly.blocks.voidBlocks.SetValueVariableBlock
+import com.unewexp.superblockly.blocks.voidBlocks.VariableDeclarationBlock
 import com.unewexp.superblockly.debug.Logger
 import com.unewexp.superblockly.ui.theme.DrawerButtonColor
-import com.unewexp.superblockly.ui.theme.buttonColor
-import com.unewexp.superblockly.ui.theme.buttonMyColor
+import com.unewexp.superblockly.ui.theme.DrawerColor
+import com.unewexp.superblockly.ui.theme.SuperBlocklyTheme
 import com.unewexp.superblockly.ui.theme.canvasBackground
-import com.unewexp.superblockly.viewBlocks.AddElementByIndexView
-import com.unewexp.superblockly.viewBlocks.GetListSizeView
-import com.unewexp.superblockly.viewBlocks.GetValueByIndexView
 import kotlinx.coroutines.launch
 
 
