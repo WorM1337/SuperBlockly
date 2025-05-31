@@ -404,8 +404,7 @@ fun StringConcatenationBlockForCard() {
     Surface(
         modifier = Modifier,
         shape = RoundedCornerShape(8.dp),
-        color = MaterialTheme.colorScheme.surfaceVariant,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+        color = backgoundForCard,
         shadowElevation = 1.dp
     ) {
         Row(
@@ -420,7 +419,7 @@ fun StringConcatenationBlockForCard() {
                     .width(60.dp)
                     .fillMaxHeight()
                     .background(
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.1f),
+                        color = textFieldColorForCard,
                         shape = RoundedCornerShape(4.dp)
                     )
             )
@@ -447,7 +446,7 @@ fun StringConcatenationBlockForCard() {
                     .width(60.dp)
                     .fillMaxHeight()
                     .background(
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.1f),
+                        color = textFieldColorForCard,
                         shape = RoundedCornerShape(4.dp)
                     )
             )
@@ -525,7 +524,12 @@ fun SetValueVariableView(
 @Composable
 fun SetValueVariableViewForCard(){
 
-    Row(verticalAlignment = Alignment.CenterVertically){
+    Row(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(backgoundForCard),
+        verticalAlignment = Alignment.CenterVertically
+    ){
         Text(
             stringResource(R.string.set),
             style = MaterialTheme.typography.bodyMedium,
@@ -653,7 +657,12 @@ fun VariableDeclarationBlockView(
 
 @Composable
 fun DeclarationVariableViewForCard(){
-    Row(verticalAlignment = Alignment.CenterVertically){
+    Row(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(backgoundForCard),
+        verticalAlignment = Alignment.CenterVertically
+    ){
         Text(
             stringResource(R.string.init),
             style = MaterialTheme.typography.bodyMedium,
@@ -775,8 +784,7 @@ fun BooleanLogicBlockForCard(
     Surface(
         modifier = modifier,
         shape = RoundedCornerShape(8.dp),
-        color = MaterialTheme.colorScheme.surfaceVariant,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+        color = backgoundForCard,
         shadowElevation = 1.dp
     ) {
         Row(
@@ -791,7 +799,7 @@ fun BooleanLogicBlockForCard(
                     .width(70.dp)
                     .fillMaxHeight()
                     .background(
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.1f),
+                        color = textFieldColorForCard,
                         shape = RoundedCornerShape(4.dp)
                     )
             )
@@ -818,7 +826,7 @@ fun BooleanLogicBlockForCard(
                     .width(70.dp)
                     .fillMaxHeight()
                     .background(
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.1f),
+                        color = textFieldColorForCard,
                         shape = RoundedCornerShape(4.dp)
                     )
             )
@@ -936,10 +944,9 @@ fun CompareNumbersBlockForCard(
     modifier: Modifier = Modifier
 ) {
     Surface(
-        modifier = modifier,
+        modifier = modifier.fillMaxSize(),
         shape = RoundedCornerShape(8.dp),
-        color = MaterialTheme.colorScheme.surfaceVariant,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+        color = backgoundForCard,
         shadowElevation = 1.dp
     ) {
         Row(
@@ -954,7 +961,7 @@ fun CompareNumbersBlockForCard(
                     .width(70.dp)
                     .fillMaxHeight()
                     .background(
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.1f),
+                        color = textFieldColorForCard,
                         shape = RoundedCornerShape(4.dp)
                     )
             )
@@ -981,7 +988,7 @@ fun CompareNumbersBlockForCard(
                     .width(70.dp)
                     .fillMaxHeight()
                     .background(
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.1f),
+                        color = textFieldColorForCard,
                         shape = RoundedCornerShape(4.dp)
                     )
             )
@@ -1334,7 +1341,6 @@ fun OperandBlockForCard(
         modifier = modifier,
         shape = RoundedCornerShape(8.dp),
         color = backgoundForCard,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         shadowElevation = 1.dp
     ) {
         Row(
