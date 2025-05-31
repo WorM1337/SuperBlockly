@@ -25,6 +25,7 @@ data class DraggableBlock(
     var connectedParentConnectionView: ConnectionView? = null,
     var isInner: Boolean = false,
     var zIndex: MutableState<Float> = mutableStateOf(0f),
+    var isConnected: MutableState<Boolean> = mutableStateOf(false)
 ) {
     init {
 

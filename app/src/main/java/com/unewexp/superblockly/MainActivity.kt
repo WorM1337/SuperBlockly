@@ -18,6 +18,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalNavigationDrawer
@@ -35,6 +37,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
@@ -76,6 +79,7 @@ import com.unewexp.superblockly.blocks.loops.ForElementInListBlock
 import com.unewexp.superblockly.blocks.loops.WhileBlock
 import com.unewexp.superblockly.blocks.returnBlocks.StringConcatenationBlock
 import com.unewexp.superblockly.debug.Logger
+import com.unewexp.superblockly.ui.theme.DrawerButtonColor
 import com.unewexp.superblockly.ui.theme.buttonColor
 import com.unewexp.superblockly.ui.theme.buttonMyColor
 import com.unewexp.superblockly.ui.theme.canvasBackground
@@ -124,19 +128,22 @@ fun Home(navController: NavHostController) {
         Column {
             Button(
                 { navController.navigate(Routes.CreateProject.route) },
-                Modifiers.homeBtnModifier
+                Modifiers.homeBtnModifier,
+                shape = RectangleShape
             ) {
                 Text(stringResource(R.string.create_new_project))
             }
             Button(
                 { navController.navigate(Routes.MyProjects.route) },
-                Modifiers.homeBtnModifier
+                Modifiers.homeBtnModifier,
+                shape = RectangleShape
             ) {
                 Text(stringResource(R.string.my_projects))
             }
             Button(
                 { navController.navigate(Routes.About.route) },
-                Modifiers.homeBtnModifier
+                Modifiers.homeBtnModifier,
+                shape = RectangleShape
             ) {
                 Text(stringResource(R.string.about))
             }
@@ -180,7 +187,12 @@ fun CreateNewProject(
                 Button(onClick = {
                     scope.launch { drawerState.close() }
                     gesturesEnabled.value = false
-                }) {
+                },
+                    colors = buttonColors(
+                        containerColor = DrawerButtonColor
+                    ),
+                    shape = RectangleShape,
+                ) {
                     Text(stringResource(R.string.close))
                 }
                 LazyColumn(
@@ -696,7 +708,8 @@ fun About(navController: NavHostController) {
             stringResource(R.string.about),
             style = MaterialTheme.typography.titleLarge,
             fontSize = 24.sp,
-            modifier = Modifier.padding(2.dp)
+            modifier = Modifier.padding(2.dp),
+            color = Color.White
         )
     }
     Box(
@@ -705,24 +718,31 @@ fun About(navController: NavHostController) {
             .padding(5.dp, 0.dp, 0.dp, 0.dp)
     ) {
         Column {
-            Text(stringResource(R.string.about_title), style = MaterialTheme.typography.titleLarge)
+            Text(
+                stringResource(R.string.about_title),
+                style = MaterialTheme.typography.titleLarge,
+                color = Color.White
+            )
             Text(
                 stringResource(R.string.about_body1),
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier
-                    .padding(10.dp, 0.dp, 0.dp, 0.dp)
+                    .padding(10.dp, 0.dp, 0.dp, 0.dp),
+                color = Color.White
             )
             Text(
                 stringResource(R.string.about_body2),
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier
-                    .padding(10.dp, 0.dp, 0.dp, 0.dp)
+                    .padding(10.dp, 0.dp, 0.dp, 0.dp),
+                color = Color.White
             )
             Text(
                 stringResource(R.string.about_body3),
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier
-                    .padding(10.dp, 0.dp, 0.dp, 0.dp)
+                    .padding(10.dp, 0.dp, 0.dp, 0.dp),
+                color = Color.White
             )
         }
     }

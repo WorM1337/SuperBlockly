@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.List
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -49,7 +50,6 @@ import com.unewexp.superblockly.debug.RunProgram
 import com.unewexp.superblockly.enums.BlockType
 import com.unewexp.superblockly.model.ConnectorManager
 import com.unewexp.superblockly.ui.theme.ActiveRunProgram
-import com.unewexp.superblockly.ui.theme.ConnectorColor
 import com.unewexp.superblockly.ui.theme.canvasBackground
 import com.unewexp.superblockly.ui.theme.stopProgram
 import com.unewexp.superblockly.ui.theme.topBarBackground
@@ -344,7 +344,6 @@ fun Canvas(
                         content = {
 
                             TakeViewBlock(it, viewModel)
-
                             if (it.block.blockType != BlockType.START) {
                                 TopConnector(
                                     modifier = Modifier
@@ -352,9 +351,7 @@ fun Canvas(
                                             it.outputConnectionView!!.positionX - 10.dp - 16.dp,
                                             it.outputConnectionView!!.positionY - 12.dp - 8.dp
                                         ),
-                                    color = if (it.connectedParent != null) ConnectorColor else Color.Gray.copy(
-                                        alpha = 0.5f
-                                    )
+                                    isConnected = it.isConnected.value
                                 )
                             }
 
@@ -403,6 +400,7 @@ fun Canvas(
                                     }
                                 }
                             }
+                            it.isConnected.value = it.connectedParent != null
                             viewModel.normalizeZIndex()
                         }
                     )

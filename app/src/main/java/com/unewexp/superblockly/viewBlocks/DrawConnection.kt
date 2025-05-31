@@ -4,6 +4,10 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -13,18 +17,23 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.unewexp.superblockly.ui.theme.ConnectorColor
 
-@Preview
 @Composable
 fun TopConnector(
     modifier: Modifier = Modifier,
-    color: Color = Color(0xFF2069B8),
-    isConnected: Boolean = false
-) {
+    isConnected: Boolean
+){
     val connectorWidth = 20.dp
     val connectorHeight = 16.dp
+
+    val color by remember(isConnected) {
+        derivedStateOf {
+            if (isConnected) ConnectorColor
+            else Color.Gray.copy(alpha = 0.5f)
+        }
+    }
 
     Box(
         modifier = modifier
